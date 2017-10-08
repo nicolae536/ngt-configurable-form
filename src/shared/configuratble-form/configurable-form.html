@@ -1,0 +1,47 @@
+<form *ngIf="renderComponentDom | async"
+      novalidate
+      autocomplete="off"
+      [class.ngt-card]="formStaticConfig.addCardClass"
+      [name]="formStaticConfig.name"
+      [formGroup]="ngFormGroup"
+      (ngSubmit)="handleSubmit()">
+    <div *ngFor="let rowConfig of formStaticConfig.groupElements"
+         class="ngt-group-wrapper">
+        <div *ngIf="rowConfig.wrapInExpansionPane">
+            <!--<mat-expansion-panel>-->
+                <!--<mat-expansion-panel-header collapsedHeight="42px"-->
+                                            <!--expandedHeight="42px">-->
+                    <!--<mat-panel-title class="ngt-group-title">-->
+                        <!--{{rowConfig.title}}-->
+                    <!--</mat-panel-title>-->
+                    <!--<mat-panel-description class="ngt-group-description">-->
+                        <!--{{rowConfig.description}}-->
+                    <!--</mat-panel-description>-->
+                <!--</mat-expansion-panel-header>-->
+
+                <ngt-form-elements *ngFor="let rowElements of rowConfig.elements"
+                                   [formName]="formStaticConfig.name"
+                                   [parentFormGroup]="ngFormGroup"
+                                   [elements]="rowElements.elementsOnLine">
+                </ngt-form-elements>
+            <!--</mat-expansion-panel>-->
+        </div>
+        <div *ngIf="!rowConfig.wrapInExpansionPane">
+            <div class="ngt-group-title">
+                {{rowConfig.title}}
+            </div>
+            <div class="ngt-group-description">
+                {{rowConfig.description}}
+            </div>
+
+            <ngt-form-elements *ngFor="let rowElements of rowConfig.elements"
+                               [formName]="formStaticConfig.name"
+                               [parentFormGroup]="ngFormGroup"
+                               [elements]="rowElements.elementsOnLine">
+            </ngt-form-elements>
+        </div>
+    </div>
+    <!--{{ ngFormGroup?.getRawValue() | json }}-->
+    <!--{{ ngFormGroup.value | json }}-->
+    <!--{{ ngFormGroup?.valid }}-->
+</form>

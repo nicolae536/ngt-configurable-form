@@ -1,0 +1,66 @@
+<div *ngFor="let field of elements"
+     class="ngt-form-element ngt-element-size-{{field.size || 1}}"
+     [formGroup]="parentFormGroup">
+    <div *ngIf="matInputContainerElements[field.type]">
+        <mat-form-field>
+            <input matInput
+                   [type]="field.type === 'text' || field.type === 'email' ? 'text': field.type"
+                   [required]="field.required"
+                   [formControlName]="field.name"/>
+            <mat-placeholder *ngIf="field.placeholder">
+                {{field.placeholder}}
+            </mat-placeholder>
+            <div matPrefix>
+                <div *ngIf="field?.prefix?.renderAs === 'html'" [innerHtml]="field.prefix.text"></div>
+                <div *ngIf="field?.prefix?.renderAs === 'string'">{{field.prefix.text}}</div>
+                <mat-icon *ngIf="field?.prefix?.renderAs === 'icon'">{{field.prefix.text}}</mat-icon>
+            </div>
+            <div matSuffix>
+                <div *ngIf="field?.suffix?.renderAs === 'html'" [innerHtml]="field.suffix.text"></div>
+                <div *ngIf="field?.suffix?.renderAs === 'string'">{{field.suffix.text}}</div>
+                <mat-icon *ngIf="field?.suffix?.renderAs === 'icon'">{{field.suffix.text}}</mat-icon>
+            </div>
+            <mat-hint *ngIf="field.hint"
+                      [align]="field.alignHint">
+                {{field.hint}}
+            </mat-hint>
+            <mat-error *ngIf="parentFormGroup?.get(field.name)?.invalid && parentFormGroup?.get(field.name)?.touched">
+                {{getErrorMessage()}}
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+    <ng-template [ngIf]="field.type === 'checkbox'">
+        <mat-checkbox [attr.e2e-name]="formName + field.name"
+                      [formControlName]="field.name">
+            {{field.placeholder}}
+        </mat-checkbox>
+        <mat-error *ngIf="parentFormGroup?.get(field.name)?.invalid && parentFormGroup?.get(field.name)?.touched">
+            {{getErrorMessage()}}
+        </mat-error>
+    </ng-template>
+
+    <ng-template [ngIf]="field.type === 'radiogroup'">
+        <mat-radio-group [formControlName]="field.name">
+            <mat-radio-button [attr.e2e-name]="formName + field.name + i"
+                              *ngFor="let radio of field.radioElements; let i = index"
+                              [value]="radio.value"
+                              [checked]="radio.checked">
+                {{radio.label}}
+            </mat-radio-button>
+        </mat-radio-group>
+        <mat-error *ngIf="parentFormGroup?.get(field.name)?.invalid && parentFormGroup?.get(field.name)?.touched">
+            {{getErrorMessage()}}
+        </mat-error>
+    </ng-template>
+
+    <ng-template [ngIf]="field.type === 'slidetoggle'">
+        <mat-slide-toggle [attr.e2e-name]="formName + field.name"
+                          [formControlName]="field.name">
+            {{field.placeholder}}
+        </mat-slide-toggle>
+        <mat-error *ngIf="parentFormGroup?.get(field.name)?.invalid && parentFormGroup?.get(field.name)?.touched">
+            {{getErrorMessage()}}
+        </mat-error>
+    </ng-template>
+</div>

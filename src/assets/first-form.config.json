@@ -1,0 +1,39 @@
+{
+    "name": "first-form",
+    "addCardClass": false,
+    "groupElements": [
+        {
+            "class": "first-row",
+            "wrapInExpansionPane": true,
+            "title": "Address",
+            "description": "",
+            "elements": [
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "street",
+                            "required": true,
+                            "type": "text",
+                            "placeholder": "Address",
+                            "size": 2
+                        },
+                        {
+                            "name": "streetNumber",
+                            "required": true,
+                            "type": "number",
+                            "placeholder": "Number",
+                            "size": 1
+                        },
+                        {
+                            "name": "postCode",
+                            "required": true,
+                            "type": "number",
+                            "placeholder": "Post code",
+                            "size": 1
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
