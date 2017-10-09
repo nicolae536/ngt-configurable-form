@@ -1,4 +1,10 @@
 @import '~@angular/material/theming';
-@include mat-core();
-
+@import "../shared/form-elements/form-elements.theme";
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+@include mat-core();
+//$element-settings: (
+//    elementMarginLeft : 50px
+//);
+//
+//@include ngt-element-settings($element-settings)

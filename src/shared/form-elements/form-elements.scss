@@ -1,0 +1,20 @@
+ngt-form-elements {
+    display: flex;
+    flex-direction: row;
+
+    .ngt-form-element {
+        &:not(:last-of-type) {
+            margin-right: 30px;
+        }
+
+        > * {
+            width: 100%;
+        }
+    }
+
+    @for $elmSize from 1 through 12 {
+        .ngt-element-size-#{$elmSize} {
+            flex: $elmSize;
+        }
+    }
+}

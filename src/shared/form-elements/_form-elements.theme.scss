@@ -1,0 +1,12 @@
+
+@mixin ngt-element-settings($themeMap) {
+    $elementMarginLeft: map-get($themeMap, elementMarginLeft);
+
+    ngt-form-elements.ngt-component {
+        .ngt-form-element {
+            &:not(:last-of-type) {
+                margin-right: $elementMarginLeft;
+            }
+        }
+    }
+}

@@ -1,4 +1,5 @@
 export const MAT_INPUT_ELEMENTS = {
+    'textarea': true,
     'text': true,
     'number': true,
     'email': true,

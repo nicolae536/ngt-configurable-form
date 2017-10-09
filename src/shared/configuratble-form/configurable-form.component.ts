@@ -1,14 +1,14 @@
-import { Component, ViewEncapsulation, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ViewEncapsulation, Input, HostBinding } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-
+import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
+
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { IFormConfig, IElementConfig, Dictionary, IMappedFormConfig } from './configurable-form.interfaces';
-import { Subject } from 'rxjs/Subject';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Component({
     selector: 'ngt-configurable-form',
@@ -18,6 +18,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfigurableFormComponent {
+    @HostBinding('class.ngt-component') isNgtComponent = true;
+
     @Input()
     set formConfig(config$: Observable<IFormConfig>) {
         this.subscribeToConfig(config$);
@@ -72,6 +74,10 @@ export class ConfigurableFormComponent {
                 elem.elementsOnLine.forEach(lineElem => {
                     ngFormControls[lineElem.name] = new FormControl();
                     this.flattenConfigRef.set(lineElem.name, lineElem);
+
+                    if (lineElem.type === 'select' && !(lineElem.config.options instanceof Observable)) {
+                        lineElem.config.options = Observable.of(lineElem.config.options);
+                    }
                 });
             });
         });

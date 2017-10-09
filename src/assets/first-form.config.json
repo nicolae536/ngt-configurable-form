@@ -4,9 +4,51 @@
     "groupElements": [
         {
             "class": "first-row",
+            "wrapInExpansionPane": false,
+            "title": "Personal information",
+            "description": "",
+            "elements": [
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "name",
+                            "required": true,
+                            "type": "text",
+                            "placeholder": "First Name",
+                            "size": 1
+                        },
+                        {
+                            "name": "lastName",
+                            "required": true,
+                            "type": "text",
+                            "placeholder": "Last name",
+                            "size": 1
+                        },
+                        {
+                            "name": "uniqueIdentifier",
+                            "required": true,
+                            "type": "number",
+                            "placeholder": "Unique code",
+                            "size": 2
+                        }
+                    ]
+                },
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "description",
+                            "type": "textarea",
+                            "placeholder": "Short description",
+                            "size": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "wrapInExpansionPane": true,
             "title": "Address",
-            "description": "",
+            "description": "Your adress",
             "elements": [
                 {
                     "elementsOnLine": [
@@ -26,6 +68,38 @@
                         },
                         {
                             "name": "postCode",
+                            "required": true,
+                            "type": "number",
+                            "placeholder": "Post code",
+                            "size": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "wrapInExpansionPane": true,
+            "title": "Delivery",
+            "description": "Delivery location",
+            "elements": [
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "deliveryStreet",
+                            "required": true,
+                            "type": "text",
+                            "placeholder": "Address",
+                            "size": 2
+                        },
+                        {
+                            "name": "deliveryNumber",
+                            "required": true,
+                            "type": "number",
+                            "placeholder": "Number",
+                            "size": 1
+                        },
+                        {
+                            "name": "deliveryPostCode",
                             "required": true,
                             "type": "number",
                             "placeholder": "Post code",

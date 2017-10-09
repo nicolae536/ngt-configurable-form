@@ -1,12 +1,17 @@
 <div *ngFor="let field of elements"
      class="ngt-form-element ngt-element-size-{{field.size || 1}}"
      [formGroup]="parentFormGroup">
-    <div *ngIf="matInputContainerElements[field.type]">
-        <mat-form-field>
-            <input matInput
+    <ng-template [ngIf]="matInputContainerElements[field.type]">
+        <mat-form-field [attr.e2e-name]="formName + field.name">
+            <input *ngIf="field.type !== 'textarea'"
+                   matInput
                    [type]="field.type === 'text' || field.type === 'email' ? 'text': field.type"
                    [required]="field.required"
                    [formControlName]="field.name"/>
+            <textarea *ngIf="field.type === 'textarea'"
+                      matInput
+                      [required]="field.required"
+                      [formControlName]="field.name"></textarea>
             <mat-placeholder *ngIf="field.placeholder">
                 {{field.placeholder}}
             </mat-placeholder>
@@ -25,10 +30,28 @@
                 {{field.hint}}
             </mat-hint>
             <mat-error *ngIf="parentFormGroup?.get(field.name)?.invalid && parentFormGroup?.get(field.name)?.touched">
-                {{getErrorMessage()}}
+                {{getErrorMessage(parentFormGroup?.get(field.name))}}
             </mat-error>
         </mat-form-field>
-    </div>
+    </ng-template>
+
+    <ng-template [ngIf]="field.type === 'select'">
+        <mat-form-field [attr.e2e-name]="formName + field.name">
+            <mat-select [placeholder]="field.name"
+                        [formControlName]="field.name">
+                <mat-option *ngFor="let option of field?.config?.options | async"
+                            [ngClass]="field?.config?.optionClassMap || {}"
+                            [value]="option[field?.config?.valueField]">
+                    <span *ngFor="let visibleKey of field?.config?.visibleProps">
+                        {{option[visibleKey]}}
+                    </span>
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-error *ngIf="parentFormGroup?.get(field.name)?.invalid && parentFormGroup?.get(field.name)?.touched">
+            {{getErrorMessage()}}
+        </mat-error>
+    </ng-template>
 
     <ng-template [ngIf]="field.type === 'checkbox'">
         <mat-checkbox [attr.e2e-name]="formName + field.name"
@@ -50,7 +73,7 @@
             </mat-radio-button>
         </mat-radio-group>
         <mat-error *ngIf="parentFormGroup?.get(field.name)?.invalid && parentFormGroup?.get(field.name)?.touched">
-            {{getErrorMessage()}}
+            {{getErrorMessage(parentFormGroup?.get(field.name))}}
         </mat-error>
     </ng-template>
 

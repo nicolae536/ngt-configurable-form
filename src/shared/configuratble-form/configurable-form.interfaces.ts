@@ -4,6 +4,7 @@
  * ======================================================
  */
 import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
 
 export interface IFormConfig {
     name: string; // unique identifier
@@ -23,12 +24,11 @@ export interface IRowElementsConfig {
     description: string;
 }
 
-
 export interface IGroupElementConfig {
     elementsOnLine: IElementConfig[];
 }
 
-export interface IElementConfig extends IMatInputElement, IMatRadioElement {
+export interface IElementConfig extends IElementBase, IMatInputElement, IMatRadioElement, IMatSelectElement {
     guid?: string;
 }
 
@@ -47,7 +47,7 @@ interface IPrefixSuffixConfig {
     text: string;
 }
 
-export interface IMatInputElement extends IElementBase {
+export interface IMatInputElement {
     hint: string;
     alignHint: string;
     prefix: IPrefixSuffixConfig;
@@ -59,8 +59,17 @@ export interface IMatRadioButtonElement {
     checked: boolean;
 }
 
-export interface IMatRadioElement extends IElementBase {
+export interface IMatRadioElement {
     radioElements: IMatRadioButtonElement;
+}
+
+export interface IMatSelectElement {
+    config: {
+        options: Observable<any[]>;
+        valueField: string;
+        visibleProps: string;
+        optionClassMap: Dictionary<string>;
+    };
 }
 
 /**

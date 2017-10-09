@@ -6,8 +6,9 @@
       [formGroup]="ngFormGroup"
       (ngSubmit)="handleSubmit()">
     <div *ngFor="let rowConfig of formStaticConfig.groupElements"
-         class="ngt-group-wrapper">
-        <div *ngIf="rowConfig.wrapInExpansionPane">
+         class="ngt-group-wrapper"
+         [class.ngt-group-card]="!rowConfig.wrapInExpansionPane">
+        <ng-template [ngIf]="rowConfig.wrapInExpansionPane">
             <mat-expansion-panel>
                 <mat-expansion-panel-header>
                     <mat-panel-title class="ngt-group-title">
@@ -24,8 +25,8 @@
                                    [elements]="rowElements.elementsOnLine">
                 </ngt-form-elements>
             </mat-expansion-panel>
-        </div>
-        <div *ngIf="!rowConfig.wrapInExpansionPane">
+        </ng-template>
+        <ng-template [ngIf]="!rowConfig.wrapInExpansionPane">
             <div class="ngt-group-title">
                 {{rowConfig.title}}
             </div>
@@ -38,7 +39,7 @@
                                [parentFormGroup]="ngFormGroup"
                                [elements]="rowElements.elementsOnLine">
             </ngt-form-elements>
-        </div>
+        </ng-template>
     </div>
     <!--{{ ngFormGroup?.getRawValue() | json }}-->
     <!--{{ ngFormGroup.value | json }}-->
