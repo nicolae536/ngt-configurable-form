@@ -8,3 +8,10 @@
 //);
 //
 //@include ngt-element-settings($element-settings)
+
+app-root {
+    ngt-configurable-form {
+        max-width: 780px;
+        min-width: 320px;
+    }
+}

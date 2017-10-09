@@ -1,10 +1,10 @@
 {
     "name": "first-form",
-    "addCardClass": false,
     "groupElements": [
         {
             "class": "first-row",
             "wrapInExpansionPane": false,
+            "addCardClass": true,
             "title": "Personal information",
             "description": "",
             "elements": [

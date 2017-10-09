@@ -20,6 +20,7 @@ export interface IRowElementsConfig {
     class: string;
     elements: IGroupElementConfig[];
     wrapInExpansionPane?: boolean;
+    addCardClass?: boolean;
     title?: string;
     description: string;
 }

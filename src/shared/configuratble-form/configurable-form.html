@@ -7,7 +7,7 @@
       (ngSubmit)="handleSubmit()">
     <div *ngFor="let rowConfig of formStaticConfig.groupElements"
          class="ngt-group-wrapper"
-         [class.ngt-group-card]="!rowConfig.wrapInExpansionPane">
+         [class.ngt-card]="!rowConfig.wrapInExpansionPane && rowConfig.addCardClass">
         <ng-template [ngIf]="rowConfig.wrapInExpansionPane">
             <mat-expansion-panel>
                 <mat-expansion-panel-header>
