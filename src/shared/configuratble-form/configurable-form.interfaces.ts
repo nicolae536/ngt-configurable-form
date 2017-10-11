@@ -33,6 +33,17 @@ export interface IElementConfig extends IElementBase, IMatInputElement, IMatRadi
     guid?: string;
 }
 
+export interface IChangeConfig {
+    dataProviderType: string; //'formModel', 'formDataProvider', 'observable'
+    expectedValue: any;
+    newConfiguration: IElementConfig;
+}
+
+export interface IElementCustomConfig {
+    defaultConfig: IElementConfig;
+    changeConfig: IChangeConfig[];
+}
+
 export interface IElementBase {
     name: string; // unique name
     required: boolean;
@@ -41,6 +52,7 @@ export interface IElementBase {
     placeholder: string;
     showTooltip?: boolean;
     size: number;
+    configurationChange: IElementCustomConfig;
 }
 
 interface IPrefixSuffixConfig {
@@ -81,4 +93,5 @@ export interface IMatSelectElement {
 export interface IMappedFormConfig {
     formConfig: IFormConfig;
     ngFormControls: Dictionary<FormControl>;
+    flattenConfigRef: Map<string, IElementConfig>;
 }

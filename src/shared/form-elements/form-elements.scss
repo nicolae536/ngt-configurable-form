@@ -1,3 +1,5 @@
+@import "../style/mixins";
+
 ngt-form-elements {
     display: flex;
     flex-direction: row;
@@ -8,7 +10,7 @@ ngt-form-elements {
         }
 
         > * {
-            width: 100%;
+            @include cover-full-width;
         }
     }
 

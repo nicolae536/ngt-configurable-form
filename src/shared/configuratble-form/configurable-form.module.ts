@@ -5,6 +5,7 @@ import { MatExpansionModule } from '@angular/material';
 import { FormElementsComponentModule } from '../form-elements/form-elements.module';
 
 import { ConfigurableFormComponent } from './configurable-form.component';
+import { ConfigurableFormService } from './configurable-form.service';
 
 @NgModule({
     imports: [
@@ -16,7 +17,9 @@ import { ConfigurableFormComponent } from './configurable-form.component';
     ],
     exports: [ConfigurableFormComponent],
     declarations: [ConfigurableFormComponent],
-    providers: [],
+    providers: [
+        ConfigurableFormService
+    ],
 })
 export class ConfigurableFormComponentModule {
 }

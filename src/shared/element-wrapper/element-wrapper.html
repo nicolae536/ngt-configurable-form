@@ -1,0 +1,88 @@
+<div [formGroup]="parentFormGroup"
+     class="ngt-element-wrapper">
+    <ng-template [ngIf]="matInputContainerElements[currentElement.type]">
+        <mat-form-field [attr.e2e-name]="formName + currentElement.name">
+            <input *ngIf="currentElement.type !== 'textarea'"
+                   matInput
+                   [type]="currentElement.type === 'text' || currentElement.type === 'email' ? 'text': currentElement.type"
+                   [required]="currentElement.required"
+                   [formControlName]="currentElement.name"/>
+            <textarea *ngIf="currentElement.type === 'textarea'"
+                      matInput
+                      [required]="currentElement.required"
+                      [formControlName]="currentElement.name"></textarea>
+            <mat-placeholder *ngIf="currentElement.placeholder">
+                {{currentElement.placeholder}}
+            </mat-placeholder>
+            <div matPrefix>
+                <div *ngIf="currentElement?.prefix?.renderAs === 'html'" [innerHtml]="currentElement.prefix.text"></div>
+                <div *ngIf="currentElement?.prefix?.renderAs === 'string'">{{currentElement.prefix.text}}</div>
+                <mat-icon *ngIf="currentElement?.prefix?.renderAs === 'icon'">{{currentElement.prefix.text}}</mat-icon>
+            </div>
+            <div matSuffix>
+                <div *ngIf="currentElement?.suffix?.renderAs === 'html'" [innerHtml]="currentElement.suffix.text"></div>
+                <div *ngIf="currentElement?.suffix?.renderAs === 'string'">{{currentElement.suffix.text}}</div>
+                <mat-icon *ngIf="currentElement?.suffix?.renderAs === 'icon'">{{currentElement.suffix.text}}</mat-icon>
+            </div>
+            <mat-hint *ngIf="currentElement.hint"
+                      [align]="currentElement.alignHint">
+                {{currentElement.hint}}
+            </mat-hint>
+            <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
+                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+            </mat-error>
+        </mat-form-field>
+    </ng-template>
+
+    <ng-template [ngIf]="currentElement.type === 'select'">
+        <mat-form-field [attr.e2e-name]="formName + currentElement.name">
+            <mat-select [placeholder]="currentElement.name"
+                        [formControlName]="currentElement.name">
+                <mat-option *ngFor="let option of currentElement?.config?.options | async"
+                            [ngClass]="currentElement?.config?.optionClassMap || {}"
+                            [value]="option[currentElement?.config?.valueField]">
+                    <span *ngFor="let visibleKey of currentElement?.config?.visibleProps">
+                        {{option[visibleKey]}}
+                    </span>
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
+            {{getErrorMessage()}}
+        </mat-error>
+    </ng-template>
+
+    <ng-template [ngIf]="currentElement.type === 'checkbox'">
+        <mat-checkbox [attr.e2e-name]="formName + currentElement.name"
+                      [formControlName]="currentElement.name">
+            {{currentElement.placeholder}}
+        </mat-checkbox>
+        <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
+            {{getErrorMessage()}}
+        </mat-error>
+    </ng-template>
+
+    <ng-template [ngIf]="currentElement.type === 'radiogroup'">
+        <mat-radio-group [formControlName]="currentElement.name">
+            <mat-radio-button [attr.e2e-name]="formName + currentElement.name + i"
+                              *ngFor="let radio of currentElement.radioElements; let i = index"
+                              [value]="radio.value"
+                              [checked]="radio.checked">
+                {{radio.label}}
+            </mat-radio-button>
+        </mat-radio-group>
+        <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
+            {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+        </mat-error>
+    </ng-template>
+
+    <ng-template [ngIf]="currentElement.type === 'slidetoggle'">
+        <mat-slide-toggle [attr.e2e-name]="formName + currentElement.name"
+                          [formControlName]="currentElement.name">
+            {{currentElement.placeholder}}
+        </mat-slide-toggle>
+        <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
+            {{getErrorMessage()}}
+        </mat-error>
+    </ng-template>
+</div>

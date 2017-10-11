@@ -1,5 +1,5 @@
 import { Component, ViewEncapsulation, Input, HostBinding } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
@@ -8,7 +8,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-import { IFormConfig, IElementConfig, Dictionary, IMappedFormConfig } from './configurable-form.interfaces';
+import { IFormConfig, IElementConfig, IMappedFormConfig, Dictionary } from './configurable-form.interfaces';
+import { ConfigurableFormService } from './configurable-form.service';
 
 @Component({
     selector: 'ngt-configurable-form',
@@ -25,14 +26,26 @@ export class ConfigurableFormComponent {
         this.subscribeToConfig(config$);
     }
 
+    @Input()
+    set sharedData(data: Dictionary<any>) {
+        this.outsideSharedData = data;
+    }
+
+    @Input()
+    set dataProviders(data: Dictionary<Observable<any>>) {
+        this.outsideDataProviders = data;
+    }
+
     renderComponentDom: BehaviorSubject<boolean> = new BehaviorSubject(false);
     formStaticConfig: IFormConfig = null;
     ngFormGroup: FormGroup = null;
     flattenConfigRef: Map<string, IElementConfig> = new Map<string, IElementConfig>();
+    outsideSharedData: Dictionary<any>;
+    outsideDataProviders: Dictionary<Observable<any>>;
 
     private _configSubscription$: Subscription;
 
-    constructor() {
+    constructor(private _configurableForm: ConfigurableFormService) {
     }
 
     handleSubmit() {
@@ -46,49 +59,20 @@ export class ConfigurableFormComponent {
 
         if (!(config$ instanceof Observable)) {
             this.renderComponentDom.next(false);
-            this.setConfig(this.flattenElementsConfig(config$));
+            this.setFormConfig(this._configurableForm.parseInitialConfig(config$));
             return;
         }
 
         this._configSubscription$ = config$
             .do(() => this.renderComponentDom.next(false))
-            .map((v: IFormConfig) => this.flattenElementsConfig(v))
+            .map((config: IFormConfig) => this._configurableForm.parseInitialConfig(config))
             .subscribe(transformed => {
-                this.setConfig(transformed);
+                this.setFormConfig(transformed);
             });
     }
 
-    private flattenElementsConfig(config: IFormConfig): IMappedFormConfig {
-        this.flattenConfigRef = new Map<string, IElementConfig>();
-        const ngFormControls: Dictionary<FormControl> = {};
-
-        if (!config || !Array.isArray(config.groupElements)) {
-            return;
-        }
-        config.groupElements.forEach(group => {
-            if (!group || !Array.isArray(group.elements)) {
-                return;
-            }
-
-            group.elements.forEach(elem => {
-                elem.elementsOnLine.forEach(lineElem => {
-                    ngFormControls[lineElem.name] = new FormControl();
-                    this.flattenConfigRef.set(lineElem.name, lineElem);
-
-                    if (lineElem.type === 'select' && !(lineElem.config.options instanceof Observable)) {
-                        lineElem.config.options = Observable.of(lineElem.config.options);
-                    }
-                });
-            });
-        });
-
-        return {
-            formConfig: config,
-            ngFormControls: ngFormControls
-        };
-    }
-
-    private setConfig(transformed: IMappedFormConfig) {
+    private setFormConfig(transformed: IMappedFormConfig) {
+        this.flattenConfigRef = transformed.flattenConfigRef;
         this.formStaticConfig = transformed.formConfig;
         this.ngFormGroup = new FormGroup(transformed.ngFormControls);
         this.renderComponentDom.next(true);

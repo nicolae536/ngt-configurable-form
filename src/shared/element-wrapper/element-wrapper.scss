@@ -1,0 +1,15 @@
+@import "../style/mixins";
+
+ngt-element-wrapper {
+    @include default-element;
+    @include cover-full-width;
+
+    .ngt-element-wrapper {
+        @include default-element;
+        @include cover-full-width;
+
+        > * {
+            @include cover-full-width;
+        }
+    }
+}

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatFormFieldModule, MatIconModule, MatRadioModule, MatCheckboxModule, MatSlideToggleModule, MatInputModule, MatSelectModule, MatOptionModule } from '@angular/material';
+import { ElementWrapperComponentModule } from '../element-wrapper/element-wrapper.module';
 
 import { FormElementsComponent } from './form-elements.component';
 
@@ -10,14 +10,7 @@ import { FormElementsComponent } from './form-elements.component';
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatIconModule,
-        MatRadioModule,
-        MatCheckboxModule,
-        MatSlideToggleModule,
-        MatSelectModule,
-        MatOptionModule
+        ElementWrapperComponentModule
     ],
     exports: [FormElementsComponent],
     declarations: [FormElementsComponent],

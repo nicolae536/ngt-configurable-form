@@ -1,7 +1,7 @@
 import { Component, Input, ViewEncapsulation, HostBinding, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
-import { IElementConfig } from '../configuratble-form/configurable-form.interfaces';
-import { MAT_INPUT_ELEMENTS } from './form-elements.consts';
+import { FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import { IElementConfig, Dictionary } from '../configuratble-form/configurable-form.interfaces';
 
 @Component({
     selector: 'ngt-form-elements',
@@ -15,14 +15,9 @@ export class FormElementsComponent {
     @Input() formName: boolean;
     @Input() parentFormGroup: FormGroup;
     @Input() elements: IElementConfig[];
-
-    matInputContainerElements = MAT_INPUT_ELEMENTS;
+    @Input() outsideSharedData: Dictionary<any>;
+    @Input() outsideDataProviders: Dictionary<Observable<any>>;
 
     constructor() {
-    }
-
-    getErrorMessage(errorField: FormControl) {
-        console.info(errorField);
-        return '';
     }
 }
