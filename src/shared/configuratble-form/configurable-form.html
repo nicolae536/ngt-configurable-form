@@ -1,10 +1,13 @@
-<form *ngIf="renderComponentDom | async"
+<form *ngIf="renderedFormStaticConfig | async as formStaticConfig"
       novalidate
       autocomplete="off"
       [class.ngt-card]="formStaticConfig.addCardClass"
       [name]="formStaticConfig.name"
       [formGroup]="ngFormGroup"
       (ngSubmit)="handleSubmit()">
+    <div style="height: 0px; overflow: hidden;">
+        {{formStaticConfig | json}}
+    </div>
     <div *ngFor="let rowConfig of formStaticConfig.groupElements"
          class="ngt-group-wrapper"
          [class.ngt-card]="!rowConfig.wrapInExpansionPane && rowConfig.addCardClass">
@@ -22,6 +25,7 @@
                 <ngt-form-elements *ngFor="let rowElements of rowConfig.elements"
                                    [formName]="formStaticConfig.name"
                                    [parentFormGroup]="ngFormGroup"
+                                   [outsideDataProviders]="outsideDataProviders"
                                    [elements]="rowElements.elementsOnLine">
                 </ngt-form-elements>
             </mat-expansion-panel>
@@ -37,6 +41,7 @@
             <ngt-form-elements *ngFor="let rowElements of rowConfig.elements"
                                [formName]="formStaticConfig.name"
                                [parentFormGroup]="ngFormGroup"
+                               [outsideDataProviders]="outsideDataProviders"
                                [elements]="rowElements.elementsOnLine">
             </ngt-form-elements>
         </ng-template>

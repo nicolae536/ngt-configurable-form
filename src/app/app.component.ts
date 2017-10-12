@@ -12,8 +12,25 @@ import { IFormConfig } from '../shared/configuratble-form/configurable-form.inte
 export class AppComponent {
     title = 'app';
     config: Observable<IFormConfig>;
+    dataProviders: { selectCity: Observable<{ cityId: number; cityName: string }[]> };
 
     constructor(private _http: Http) {
         this.config = this._http.get('/assets/first-form.config.json', {headers: new Headers({'Content-Type': 'application/json'})}).map(r => r.json());
+        this.dataProviders = {
+            "selectCity": Observable.of([
+                {
+                    cityId: 0,
+                    cityName: "Cluj",
+                },
+                {
+                    cityId: 1,
+                    cityName: "Bucuresti",
+                },
+                {
+                    cityId: 2,
+                    cityName: "Iasi",
+                }
+            ])
+        }
     }
 }

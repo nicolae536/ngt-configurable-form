@@ -5,6 +5,7 @@
  */
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
+import { IConfigurationChange } from './configurable-form.service';
 
 export interface IFormConfig {
     name: string; // unique identifier
@@ -19,6 +20,7 @@ export interface Dictionary<T> {
 export interface IRowElementsConfig {
     class: string;
     elements: IGroupElementConfig[];
+    name: string;
     wrapInExpansionPane?: boolean;
     addCardClass?: boolean;
     title?: string;
@@ -30,18 +32,18 @@ export interface IGroupElementConfig {
 }
 
 export interface IElementConfig extends IElementBase, IMatInputElement, IMatRadioElement, IMatSelectElement {
-    guid?: string;
+    isDefaultConfig?: boolean;
 }
 
 export interface IChangeConfig {
-    dataProviderType: string; //'formModel', 'formDataProvider', 'observable'
     expectedValue: any;
-    newConfiguration: IElementConfig;
+    linkedElement: string;
+    configurationChange: IConfigurationChange;
 }
 
 export interface IElementCustomConfig {
     defaultConfig: IElementConfig;
-    changeConfig: IChangeConfig[];
+    configurationChange: IChangeConfig[];
 }
 
 export interface IElementBase {
@@ -52,7 +54,8 @@ export interface IElementBase {
     placeholder: string;
     showTooltip?: boolean;
     size: number;
-    configurationChange: IElementCustomConfig;
+    configurationChangeMap: IElementCustomConfig;
+    hidden: boolean;
 }
 
 interface IPrefixSuffixConfig {
@@ -78,10 +81,10 @@ export interface IMatRadioElement {
 
 export interface IMatSelectElement {
     config: {
-        options: Observable<any[]>;
         valueField: string;
-        visibleProps: string;
-        optionClassMap: Dictionary<string>;
+        visibleProps: string[];
+        optionClassMap?: Dictionary<string>;
+        updateProperties?: Dictionary<string>;
     };
 }
 

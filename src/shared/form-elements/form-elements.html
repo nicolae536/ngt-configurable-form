@@ -3,6 +3,7 @@
      [formGroup]="parentFormGroup">
     <ngt-element-wrapper [formName]="formName"
                          [currentElement]="field"
+                         [elementDataProvider]="outsideDataProviders[field.name]"
                          [parentFormGroup]="parentFormGroup">
     </ngt-element-wrapper>
 </div>

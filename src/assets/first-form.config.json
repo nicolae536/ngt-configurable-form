@@ -53,6 +53,19 @@
                 {
                     "elementsOnLine": [
                         {
+                            "name": "selectCity",
+                            "required": true,
+                            "type": "select",
+                            "placeholder": "City",
+                            "config": {
+                                "valueField": "cityId",
+                                "visibleProps": [
+                                    "cityName"
+                                ]
+                            },
+                            "size": 1
+                        },
+                        {
                             "name": "street",
                             "required": true,
                             "type": "text",
@@ -71,6 +84,35 @@
                             "required": true,
                             "type": "number",
                             "placeholder": "Post code",
+                            "configurationChangeMap": {
+                                "defaultConfig": {
+                                    "hidden": false
+                                },
+                                "configurationChange": [{
+                                    "linkedElement": "selectCity",
+                                    "expectedValue": 0,
+                                    "configurationChange": {
+                                        "type": "UPDATE_ELEMENT",
+                                        "payload": {
+                                            "element": {
+                                                "hidden": true
+                                            }
+                                        }
+                                    }
+                                },{
+                                    "linkedElement": "selectCity",
+                                    "expectedValue": 1,
+                                    "configurationChange": {
+                                        "type": "UPDATE_ELEMENT",
+                                        "payload": {
+                                            "element": {
+                                                "type": "textarea",
+                                                "hidden": false
+                                            }
+                                        }
+                                    }
+                                }]
+                            },
                             "size": 1
                         }
                     ]

@@ -1,15 +1,17 @@
-import { Component, ViewEncapsulation, Input, HostBinding } from '@angular/core';
+import { Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { IFormConfig, IElementConfig, IMappedFormConfig, Dictionary } from './configurable-form.interfaces';
-import { ConfigurableFormService } from './configurable-form.service';
+import { ConfigurableFormService, IConfigurationChange } from './configurable-form.service';
 
 @Component({
     selector: 'ngt-configurable-form',
@@ -18,7 +20,7 @@ import { ConfigurableFormService } from './configurable-form.service';
     encapsulation: ViewEncapsulation.None,
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConfigurableFormComponent {
+export class ConfigurableFormComponent implements OnDestroy {
     @HostBinding('class.ngt-component') isNgtComponent = true;
 
     @Input()
@@ -32,49 +34,118 @@ export class ConfigurableFormComponent {
     }
 
     @Input()
-    set dataProviders(data: Dictionary<Observable<any>>) {
+    set fieldsDataProviders(data: Dictionary<Observable<any>>) {
         this.outsideDataProviders = data;
     }
 
-    renderComponentDom: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    formStaticConfig: IFormConfig = null;
+    @Input()
+    set fieldsListenersMap(listeners: Dictionary<Subject<any>>) {
+        this.outsideDataListener = listeners;
+    }
+
+    @Input()
+    set updateValues(values: Object) {
+        this.updateFormValues(values);
+    }
+
+    @Output() onValueChange: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onConfigurationChange: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onValidityChange: EventEmitter<any> = new EventEmitter<any>();
+
+    renderedFormStaticConfig: BehaviorSubject<IFormConfig> = new BehaviorSubject(null);
+
     ngFormGroup: FormGroup = null;
     flattenConfigRef: Map<string, IElementConfig> = new Map<string, IElementConfig>();
     outsideSharedData: Dictionary<any>;
     outsideDataProviders: Dictionary<Observable<any>>;
+    outsideDataListener: Dictionary<Subject<any>>;
 
     private _configSubscription$: Subscription;
+    private _subscriptions$: Subscription[] = [];
+    private _lastValueFromParent: Object;
 
     constructor(private _configurableForm: ConfigurableFormService) {
+    }
+
+    ngOnDestroy(): void {
+        throw new Error("Method not implemented.");
     }
 
     handleSubmit() {
 
     }
 
+    handleConfigurationChange(change: IConfigurationChange) {
+        let newConfiguration = this._configurableForm.doConfigurationChange(change, this.renderedFormStaticConfig.value, this.flattenConfigRef, this.ngFormGroup);
+        this.renderedFormStaticConfig.next(newConfiguration);
+    }
+
     private subscribeToConfig(config$: Observable<IFormConfig>) {
-        if (this._configSubscription$) {
-            this._configSubscription$.unsubscribe();
+        if (this._subscriptions$) {
+            this._subscriptions$.forEach(v => v.unsubscribe());
         }
 
         if (!(config$ instanceof Observable)) {
-            this.renderComponentDom.next(false);
-            this.setFormConfig(this._configurableForm.parseInitialConfig(config$));
+            this.setFormConfig(this._configurableForm.parseConfiguration(config$));
             return;
         }
 
-        this._configSubscription$ = config$
-            .do(() => this.renderComponentDom.next(false))
-            .map((config: IFormConfig) => this._configurableForm.parseInitialConfig(config))
+        this._subscriptions$.push(config$
+            .map((config: IFormConfig) => this._configurableForm.parseConfiguration(config))
             .subscribe(transformed => {
                 this.setFormConfig(transformed);
-            });
+            }));
     }
 
     private setFormConfig(transformed: IMappedFormConfig) {
         this.flattenConfigRef = transformed.flattenConfigRef;
-        this.formStaticConfig = transformed.formConfig;
         this.ngFormGroup = new FormGroup(transformed.ngFormControls);
-        this.renderComponentDom.next(true);
+        this.patchFormValue(this._lastValueFromParent);
+        this.renderedFormStaticConfig.next(transformed.formConfig);
+        this.setValueChangeSubscription();
+    }
+
+    private updateFormValues(values: Object) {
+        if (!values) {
+            return;
+        }
+
+        this._lastValueFromParent = values;
+        this.patchFormValue(values);
+    }
+
+    private patchFormValue(values: Object) {
+        if (!this.ngFormGroup || !values) {
+            return;
+        }
+
+        this.ngFormGroup.patchValue(values, {
+            onlySelf: true,
+            emitEvent: false
+        });
+    }
+
+    private setValueChangeSubscription() {
+        this._subscriptions$.push(
+            this.ngFormGroup
+                .valueChanges
+                .debounceTime(0)
+                .map(v => this._configurableForm.changeConfigurationIfNeeded(
+                    this.renderedFormStaticConfig.value,
+                    this.flattenConfigRef,
+                    this.ngFormGroup
+                ))
+                .do((configChanged) => {
+                    if (configChanged) {
+                        this.renderedFormStaticConfig.next(configChanged)
+                        this.onConfigurationChange.emit(configChanged);
+                    }
+                })
+                .map(v => this._configurableForm.unWrapFormValue(this.ngFormGroup))
+                .subscribe(value => {
+                    this.onValueChange.emit(value.formValue);
+                    this.onValueChange.emit(value.formValidity);
+                })
+        )
     }
 }

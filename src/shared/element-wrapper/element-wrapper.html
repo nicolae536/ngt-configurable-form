@@ -1,6 +1,6 @@
 <div [formGroup]="parentFormGroup"
      class="ngt-element-wrapper">
-    <ng-template [ngIf]="matInputContainerElements[currentElement.type]">
+    <ng-template [ngIf]="matInputContainerElements[currentElement.type] && !currentElement.hidden">
         <mat-form-field [attr.e2e-name]="formName + currentElement.name">
             <input *ngIf="currentElement.type !== 'textarea'"
                    matInput
@@ -34,12 +34,13 @@
         </mat-form-field>
     </ng-template>
 
-    <ng-template [ngIf]="currentElement.type === 'select'">
+    <ng-template [ngIf]="currentElement.type === 'select' && !currentElement.hidden">
         <mat-form-field [attr.e2e-name]="formName + currentElement.name">
-            <mat-select [placeholder]="currentElement.name"
+            <mat-select *ngIf="isSelectConfigurationValid(currentElement)"
+                        [placeholder]="currentElement.name"
                         [formControlName]="currentElement.name">
-                <mat-option *ngFor="let option of currentElement?.config?.options | async"
-                            [ngClass]="currentElement?.config?.optionClassMap || {}"
+                <mat-option *ngFor="let option of elementDataProvider | async"
+                            [ngClass]="currentElement?.config?.optionClassMap"
                             [value]="option[currentElement?.config?.valueField]">
                     <span *ngFor="let visibleKey of currentElement?.config?.visibleProps">
                         {{option[visibleKey]}}
@@ -52,7 +53,7 @@
         </mat-error>
     </ng-template>
 
-    <ng-template [ngIf]="currentElement.type === 'checkbox'">
+    <ng-template [ngIf]="currentElement.type === 'checkbox' && !currentElement.hidden">
         <mat-checkbox [attr.e2e-name]="formName + currentElement.name"
                       [formControlName]="currentElement.name">
             {{currentElement.placeholder}}
@@ -62,7 +63,7 @@
         </mat-error>
     </ng-template>
 
-    <ng-template [ngIf]="currentElement.type === 'radiogroup'">
+    <ng-template [ngIf]="currentElement.type === 'radiogroup' && !currentElement.hidden">
         <mat-radio-group [formControlName]="currentElement.name">
             <mat-radio-button [attr.e2e-name]="formName + currentElement.name + i"
                               *ngFor="let radio of currentElement.radioElements; let i = index"
@@ -76,7 +77,7 @@
         </mat-error>
     </ng-template>
 
-    <ng-template [ngIf]="currentElement.type === 'slidetoggle'">
+    <ng-template [ngIf]="currentElement.type === 'slidetoggle' && !currentElement.hidden">
         <mat-slide-toggle [attr.e2e-name]="formName + currentElement.name"
                           [formControlName]="currentElement.name">
             {{currentElement.placeholder}}
