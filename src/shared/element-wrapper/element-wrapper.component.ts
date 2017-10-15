@@ -1,8 +1,7 @@
 import { Component, HostBinding, Input, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
-import { IElementConfig, Dictionary, IMatSelectElement } from '../configuratble-form/configurable-form.interfaces';
-import { IElementChangePayload } from '../configuratble-form/configurable-form.service';
+import { IElementConfig, Dictionary, IMatSelectElement, IElementChangePayload } from '../configuratble-form/configurable-form.interfaces';
 import { MAT_INPUT_ELEMENTS } from '../form-elements/form-elements.consts';
 import { elementWrapperError } from './element-wrapper.consts';
 

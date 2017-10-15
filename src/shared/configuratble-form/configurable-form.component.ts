@@ -10,8 +10,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-import { IFormConfig, IElementConfig, IMappedFormConfig, Dictionary } from './configurable-form.interfaces';
-import { ConfigurableFormService, IElementChangePayload } from './configurable-form.service';
+import { IFormConfig, IElementConfig, IMappedFormConfig, Dictionary, IElementChangePayload } from './configurable-form.interfaces';
+import { ConfigurableFormService } from './configurable-form.service';
 
 @Component({
     selector: 'ngt-configurable-form',

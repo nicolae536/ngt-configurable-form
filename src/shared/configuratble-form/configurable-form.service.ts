@@ -1,15 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { IElementConfig, Dictionary, IFormConfig, IMappedFormConfig, IRowElementsConfig } from './configurable-form.interfaces';
+import { IElementConfig, Dictionary, IFormConfig, IMappedFormConfig, IRowElementsConfig, IElementChangePayload, IFoundElementParams } from './configurable-form.interfaces';
 import { ValidationFactoryService } from './validation-factory.service';
-
-interface IFoundElementParams {
-    index: number;
-    element: IElementConfig;
-    group: IRowElementsConfig;
-    lineIndex: number;
-    parentElementArray: IElementConfig[] | IRowElementsConfig[];
-}
 
 @Injectable()
 export class ConfigurableFormService {
@@ -244,10 +236,4 @@ export class ConfigurableFormService {
             !value.configurationChangeMap.defaultConfig ||
             !value.configurationChangeMap.configurationChange;
     }
-}
-
-export interface IElementChangePayload {
-    element: IElementConfig;
-    groupName?: string;
-    afterElement?: string;
 }

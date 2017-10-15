@@ -112,3 +112,17 @@ export interface IMappedFormConfig {
     ngFormControls: FormGroup;
     flattenConfigRef: Map<string, IElementConfig>;
 }
+
+export interface IFoundElementParams {
+    index: number;
+    element: IElementConfig;
+    group: IRowElementsConfig;
+    lineIndex: number;
+    parentElementArray: IElementConfig[] | IRowElementsConfig[];
+}
+
+export interface IElementChangePayload {
+    element: IElementConfig;
+    groupName?: string;
+    afterElement?: string;
+}
