@@ -41,4 +41,17 @@ export class ElementWrapperComponent {
     handleConfigurationChange(change: IElementChangePayload) {
 
     }
+
+    patchElementsValues(option: Object, updateFields: Dictionary<string>) {
+        if (!updateFields || !option || !(option instanceof Object)) {
+            return;
+        }
+
+        for (const key in updateFields) {
+            if (this.parentFormGroup.get(updateFields[key]) &&
+                option.hasOwnProperty(key)) {
+                this.parentFormGroup.get(updateFields[key]).patchValue(option[key]);
+            }
+        }
+    }
 }

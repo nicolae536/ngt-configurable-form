@@ -145,6 +145,7 @@ export class ConfigurableFormComponent implements OnDestroy {
                 })
                 .map(v => this._configurableForm.unWrapFormValue(this.ngFormGroup))
                 .subscribe(value => {
+                    console.info("Values change", JSON.parse(JSON.stringify(value.formValue)));
                     this.onValueChange.emit(value.formValue);
                     this.onValidityChange.emit(value.formValidity);
                 })

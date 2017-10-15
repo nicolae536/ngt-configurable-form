@@ -76,6 +76,9 @@
                                     "population"
                                 ]
                             },
+                            "updateFields": {
+                                "population": "populationField"
+                            },
                             "size": 1
                         },
                         {
@@ -89,6 +92,12 @@
                                     "cityName"
                                 ]
                             },
+                            "size": 1
+                        },
+                        {
+                            "name": "populationField",
+                            "type": "text",
+                            "placeholder": "Population",
                             "size": 1
                         }
                     ]

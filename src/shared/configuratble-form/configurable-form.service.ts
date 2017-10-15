@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { IElementConfig, Dictionary, IFormConfig, IMappedFormConfig, IRowElementsConfig, IElementChangePayload, IFoundElementParams } from './configurable-form.interfaces';
+import {
+    IElementConfig, Dictionary, IFormConfig, IMappedFormConfig, IRowElementsConfig, IElementChangePayload, IFoundElementParams
+} from './configurable-form.interfaces';
 import { ValidationFactoryService } from './validation-factory.service';
 
 @Injectable()
@@ -116,8 +118,11 @@ export class ConfigurableFormService {
                 }
 
                 if (changeConfig.expectedValue === currentControl.value) {
-                    elementDesc.isDefaultConfig = false;
-                    configurationChangeChain.push(this.getConfigChangeAction(elementDesc, changeConfig.configurationChange));
+                    const changeAction = this.getConfigChangeAction(elementDesc, changeConfig.configurationChange);
+                    if (this.areElementsEquals(changeAction.element, elementDesc)) {
+                        elementDesc.isDefaultConfig = false;
+                        configurationChangeChain.push(this.getConfigChangeAction(elementDesc, changeConfig.configurationChange));
+                    }
                     return;
                 }
             }
@@ -235,5 +240,26 @@ export class ConfigurableFormService {
             !value.configurationChangeMap ||
             !value.configurationChangeMap.defaultConfig ||
             !value.configurationChangeMap.configurationChange;
+    }
+
+    private areElementsEquals(element: IElementConfig, newElement: IElementConfig) {
+        const elementKeys = Object.keys(element);
+        const newElementKeys = Object.keys(newElement);
+
+        if (elementKeys.length !== newElementKeys.length) {
+            return false;
+        }
+
+        for (const key of newElementKeys) {
+            if (key === 'isDefaultConfig' || key === 'configurationChangeMap') {
+                continue;
+            }
+
+            if (!element[key] || newElement[key] !== element[key]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

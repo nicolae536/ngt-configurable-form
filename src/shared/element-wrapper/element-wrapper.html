@@ -162,7 +162,8 @@
             <mat-autocomplete #auto="matAutocomplete">
                 <mat-option *ngFor="let option of elementDataProvider | async"
                             [ngClass]="currentElement?.selectConfig?.optionClassMap"
-                            [value]="option[currentElement?.selectConfig?.valueField]">
+                            [value]="option[currentElement?.selectConfig?.valueField]"
+                            (click)="patchElementsValues(option, currentElement.updateFields)">
                     <span *ngFor="let visibleKey of currentElement?.selectConfig?.visibleProps">
                         {{option[visibleKey]}}
                     </span>

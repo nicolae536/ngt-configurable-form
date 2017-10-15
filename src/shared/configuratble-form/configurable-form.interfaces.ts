@@ -55,6 +55,7 @@ export interface IElementBase {
     configurationChangeMap: IElementCustomConfig;
     hidden: boolean;
     validation: FormGroupValidatorMetadata[];
+    updateFields: Dictionary<string>;
 }
 
 export interface FormGroupValidatorMetadata {
