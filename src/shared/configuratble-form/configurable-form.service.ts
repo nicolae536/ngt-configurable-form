@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { IElementConfig, Dictionary, IFormConfig, IMappedFormConfig, IRowElementsConfig } from './configurable-form.interfaces';
+import { ValidationFactoryService } from './validation-factory.service';
 
 interface IFoundElementParams {
     index: number;
@@ -13,7 +14,7 @@ interface IFoundElementParams {
 @Injectable()
 export class ConfigurableFormService {
 
-    constructor() {
+    constructor(private _validationFactory: ValidationFactoryService) {
     }
 
     parseConfiguration(config: IFormConfig): IMappedFormConfig {
@@ -42,6 +43,10 @@ export class ConfigurableFormService {
             flattenConfigRef,
             formGroup
         );
+        flattenConfigRef.forEach(value => this.updateElementValidation(
+            formGroup,
+            value
+        ));
 
         return {
             formConfig: config,
@@ -58,14 +63,9 @@ export class ConfigurableFormService {
         const elementConfig: IElementConfig = flattenConfigRef.get(payload.element.name) || {} as IElementConfig;
         const newElConfig = {...elementConfig, ...payload.element};
         flattenConfigRef.set(payload.element.name, newElConfig);
-
         ngFormControls.removeControl(payload.element.name);
         ngFormControls.addControl(payload.element.name, new FormControl());
-        if (elementConfig.hidden) {
-            const control = ngFormControls.get(elementConfig.name);
-            control.validator = () => null;
-            control.updateValueAndValidity({onlySelf: false, emitEvent: false});
-        }
+        this.updateElementValidation(ngFormControls, newElConfig);
 
         this.findInConfig(currentConfig, null, newElConfig.name,
             (params: IFoundElementParams) => {
@@ -84,73 +84,6 @@ export class ConfigurableFormService {
             }
         );
         return currentConfig;
-    }
-
-    private findInConfig(currentConfig: IFormConfig,
-                         groupIndex: string,
-                         elementId: string = null,
-                         elementCallback: (foundElementParams: IFoundElementParams) => void) {
-        for (const gIdx in currentConfig.groupElements) {
-            if (!currentConfig.groupElements[gIdx]) {
-                continue;
-            }
-
-            const group = currentConfig.groupElements[gIdx];
-            if (gIdx === groupIndex) {
-                if (!elementId) {
-                    elementCallback({
-                        index: -1,
-                        element: null,
-                        group: group,
-                        lineIndex: +gIdx,
-                        parentElementArray: currentConfig.groupElements
-                    });
-                    return;
-                }
-
-                if (this.findElement(group, elementId, elementCallback)) {
-                    return;
-                }
-                continue;
-            }
-
-            if (this.findElement(group, elementId, elementCallback)) {
-                return;
-            }
-        }
-    }
-
-    private findElement(group: IRowElementsConfig,
-                        elementId: string = null,
-                        elementCallback: (foundElementParams: IFoundElementParams) => any) {
-        if (!elementId) {
-            return false;
-        }
-
-        for (const lineIdx in group.elements) {
-            const line = group.elements[lineIdx]
-            if (!line) {
-                continue;
-            }
-
-            for (const idx in line.elementsOnLine) {
-                if (!line.elementsOnLine[idx]) {
-                    continue;
-                }
-                const element = line.elementsOnLine[idx];
-                if (elementId === element.name) {
-                    elementCallback({
-                        index: +idx,
-                        element: element,
-                        group: group,
-                        lineIndex: +lineIdx,
-                        parentElementArray: line.elementsOnLine
-                    });
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     unWrapFormValue(ngFormGroup: FormGroup): { formValue: any, formValidity: Dictionary<boolean> } {
@@ -207,6 +140,93 @@ export class ConfigurableFormService {
             newConfig = this.doConfigurationChange(c, newConfig || formConfiguration, flattenConfigRef, ngFormGroup);
         });
         return newConfig;
+    }
+
+    private findInConfig(currentConfig: IFormConfig,
+                         groupIndex: string,
+                         elementId: string = null,
+                         elementCallback: (foundElementParams: IFoundElementParams) => void) {
+        for (const gIdx in currentConfig.groupElements) {
+            if (!currentConfig.groupElements[gIdx]) {
+                continue;
+            }
+
+            const group = currentConfig.groupElements[gIdx];
+            if (gIdx === groupIndex) {
+                if (!elementId) {
+                    elementCallback({
+                        index: -1,
+                        element: null,
+                        group: group,
+                        lineIndex: +gIdx,
+                        parentElementArray: currentConfig.groupElements
+                    });
+                    return;
+                }
+
+                if (this.findElement(group, elementId, elementCallback)) {
+                    return;
+                }
+                continue;
+            }
+
+            if (this.findElement(group, elementId, elementCallback)) {
+                return;
+            }
+        }
+    }
+
+    private updateElementValidation(ngFormControls: FormGroup, newElConfig: IElementConfig) {
+        if (newElConfig.hidden) {
+            const control = ngFormControls.get(newElConfig.name);
+            control.validator = () => null;
+            control.updateValueAndValidity({onlySelf: false, emitEvent: false});
+            return;
+        }
+
+        if (newElConfig && !newElConfig.validation) {
+            return;
+        }
+
+        ngFormControls.get(newElConfig.name).setValidators(
+            this._validationFactory.getElementValidation(
+                ngFormControls,
+                newElConfig,
+            )
+        );
+    }
+
+    private findElement(group: IRowElementsConfig,
+                        elementId: string = null,
+                        elementCallback: (foundElementParams: IFoundElementParams) => any) {
+        if (!elementId) {
+            return false;
+        }
+
+        for (const lineIdx in group.elements) {
+            if (!group.elements[lineIdx]) {
+                continue;
+            }
+            const line = group.elements[lineIdx];
+
+            for (const idx in line.elementsOnLine) {
+                if (!line.elementsOnLine[idx]) {
+                    continue;
+                }
+                const element = line.elementsOnLine[idx];
+                if (elementId === element.name) {
+                    elementCallback({
+                        index: +idx,
+                        element: element,
+                        group: group,
+                        lineIndex: +lineIdx,
+                        parentElementArray: line.elementsOnLine
+                    });
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private getConfigChangeAction(element: IElementConfig, newConfig: IElementConfig): IElementChangePayload {

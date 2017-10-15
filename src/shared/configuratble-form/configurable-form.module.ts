@@ -6,6 +6,7 @@ import { FormElementsComponentModule } from '../form-elements/form-elements.modu
 
 import { ConfigurableFormComponent } from './configurable-form.component';
 import { ConfigurableFormService } from './configurable-form.service';
+import { ValidationFactoryService } from './validation-factory.service';
 
 @NgModule({
     imports: [
@@ -18,7 +19,8 @@ import { ConfigurableFormService } from './configurable-form.service';
     exports: [ConfigurableFormComponent],
     declarations: [ConfigurableFormComponent],
     providers: [
-        ConfigurableFormService
+        ConfigurableFormService,
+        ValidationFactoryService
     ],
 })
 export class ConfigurableFormComponentModule {

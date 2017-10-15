@@ -54,6 +54,14 @@ export interface IElementBase {
     size: number;
     configurationChangeMap: IElementCustomConfig;
     hidden: boolean;
+    validation: FormGroupValidatorMetadata[];
+}
+
+export interface FormGroupValidatorMetadata {
+    type: string;
+    staticMetadata: any;
+    fieldsMap: any;
+    errorField: string;
 }
 
 interface IPrefixSuffixConfig {

@@ -90,7 +90,11 @@
                                 ]
                             },
                             "size": 1
-                        },
+                        }
+                    ]
+                },
+                {
+                    "elementsOnLine": [
                         {
                             "name": "street",
                             "required": true,
