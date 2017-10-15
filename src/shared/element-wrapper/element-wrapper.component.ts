@@ -2,9 +2,9 @@ import { Component, HostBinding, Input, ViewEncapsulation, ChangeDetectionStrate
 import { FormGroup, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { IElementConfig, Dictionary, IMatSelectElement } from '../configuratble-form/configurable-form.interfaces';
+import { IElementChangePayload } from '../configuratble-form/configurable-form.service';
 import { MAT_INPUT_ELEMENTS } from '../form-elements/form-elements.consts';
-import { elementWrapperError } from "./element-wrapper.consts";
-import { IConfigurationChange } from '../configuratble-form/configurable-form.service';
+import { elementWrapperError } from './element-wrapper.consts';
 
 @Component({
     selector: 'ngt-element-wrapper',
@@ -39,7 +39,7 @@ export class ElementWrapperComponent {
         return true;
     }
 
-    handleConfigurationChange(change: IConfigurationChange) {
+    handleConfigurationChange(change: IElementChangePayload) {
 
     }
 }

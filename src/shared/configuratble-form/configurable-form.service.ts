@@ -28,26 +28,43 @@ export class ConfigurableFormService {
             });
         });
 
+        const formGroup = new FormGroup(ngFormControls);
+        config = this.changeConfigurationIfNeeded(
+            config,
+            flattenConfigRef,
+            formGroup
+        );
+
         return {
             formConfig: config,
-            ngFormControls: ngFormControls,
+            ngFormControls: formGroup,
             flattenConfigRef: flattenConfigRef
         };
     }
 
-    doConfigurationChange(change: IConfigurationChange,
+    doConfigurationChange(payload: IElementChangePayload,
                           currentConfig: IFormConfig,
                           flattenConfigRef: Map<string, IElementConfig>,
                           ngFormControls: FormGroup): IFormConfig {
+        // TODO ngFormControls compile validation
+        const elementConfig: IElementConfig = flattenConfigRef.get(payload.element.name) || {} as IElementConfig;
+        const newElConfig = {...elementConfig, ...payload.element};
+        flattenConfigRef.set(payload.element.name, newElConfig);
 
-        switch (change.type) {
-            case CONFIGURATION_CHANGE_ACTIONS.INSERT_ELEMENT:
-                return this.insertElementInConfig(change.payload, currentConfig, flattenConfigRef, ngFormControls);
-            case CONFIGURATION_CHANGE_ACTIONS.UPDATE_ELEMENT:
-                return this.updateElement(change.payload, currentConfig, flattenConfigRef, ngFormControls);
-            case CONFIGURATION_CHANGE_ACTIONS.REMOVE_ELEMENT:
-                return this.removeElement(change.payload, currentConfig, flattenConfigRef, ngFormControls);
+        ngFormControls.removeControl(payload.element.name);
+        ngFormControls.addControl(payload.element.name, new FormControl());
+        if (elementConfig.hidden) {
+            const control = ngFormControls.get(elementConfig.name);
+            control.validator = () => null;
+            control.updateValueAndValidity({onlySelf: false, emitEvent: false});
         }
+
+        this.findInConfig(currentConfig, null, newElConfig.name,
+            (index: number, element: any, parentArray: any[], isGroup: boolean) => {
+                parentArray[index] = newElConfig;
+            }
+        );
+        return currentConfig;
     }
 
     private insertElementInConfig(payload: IElementChangePayload,
@@ -68,54 +85,16 @@ export class ConfigurableFormService {
         return currentConfig;
     }
 
-    private updateElement(payload: IElementChangePayload,
-                          currentConfig: IFormConfig,
-                          flattenConfigRef: Map<string, IElementConfig>,
-                          ngFormControls: FormGroup): IFormConfig {
-        // TODO ngFormControls compile validation
-        let elementConfig: IElementConfig = flattenConfigRef.get(payload.element.name) || {} as IElementConfig;
-        elementConfig = {...elementConfig, ...payload.element};
-        flattenConfigRef.set(payload.element.name, elementConfig);
-
-        ngFormControls.removeControl(payload.element.name);
-        ngFormControls.addControl(payload.element.name, new FormControl());
-
-        this.findInConfig(currentConfig, payload.groupName, payload.element.name,
-            (index: number, element: any, parentArray: any[], isGroup: boolean) => {
-                parentArray[index] = elementConfig;
-                if (elementConfig.hidden) {
-                    let control = ngFormControls.get(element.name);
-                    control.validator = () => null;
-                    control.updateValueAndValidity({onlySelf: false, emitEvent: false});
-                }
-            });
-        return currentConfig;
-    }
-
-    private removeElement(payload: IElementChangePayload,
-                          currentConfig: IFormConfig,
-                          flattenConfigRef: Map<string, IElementConfig>,
-                          ngFormControls: FormGroup): IFormConfig {
-        // TODO ngFormControls compile validation
-        if (flattenConfigRef.get(payload.element.name)) {
-            flattenConfigRef.delete(payload.element.name);
-        }
-
-        ngFormControls.removeControl(payload.element.name);
-
-        this.findInConfig(currentConfig, payload.groupName, payload.element.name,
-            (index: number, element: any, parentArray: any[], isGroup: boolean) => {
-                parentArray.splice(index, 1);
-            });
-        return currentConfig;
-    }
-
     private findInConfig(currentConfig: IFormConfig,
                          groupId: string,
                          elementId: string = null,
                          callback: (index: number, element: any, parentArray: any[], isGroup: boolean) => any) {
-        for (let gIdx in currentConfig.groupElements) {
-            let group = currentConfig.groupElements[gIdx];
+        for (const gIdx in currentConfig.groupElements) {
+            if (!currentConfig.groupElements[gIdx]) {
+                continue;
+            }
+
+            const group = currentConfig.groupElements[gIdx];
             if (groupId && group.name === groupId) {
                 if (!elementId) {
                     callback(+gIdx, group, currentConfig.groupElements, true);
@@ -141,9 +120,16 @@ export class ConfigurableFormService {
             return false;
         }
 
-        for (let line of group.elements) {
-            for (let idx in line.elementsOnLine) {
-                let element = line.elementsOnLine[idx];
+        for (const line of group.elements) {
+            if (!line) {
+                continue;
+            }
+
+            for (const idx in line.elementsOnLine) {
+                if (!line.elementsOnLine[idx]) {
+                    continue;
+                }
+                const element = line.elementsOnLine[idx];
                 if (elementId === element.name) {
                     callback(+idx, element, line.elementsOnLine, false);
                     return true;
@@ -154,11 +140,13 @@ export class ConfigurableFormService {
     }
 
     unWrapFormValue(ngFormGroup: FormGroup): { formValue: any, formValidity: Dictionary<boolean> } {
-        let formValue = ngFormGroup.getRawValue();
-        let formValidity = {};
+        const formValue = ngFormGroup.getRawValue();
+        const formValidity = {};
 
-        for (let name in ngFormGroup.controls) {
-            formValidity[name] = ngFormGroup.get(name).valid;
+        for (const name in ngFormGroup.controls) {
+            if (ngFormGroup.get(name)) {
+                formValidity[name] = ngFormGroup.get(name).valid;
+            }
         }
 
         return {
@@ -168,66 +156,52 @@ export class ConfigurableFormService {
     }
 
     changeConfigurationIfNeeded(formConfiguration: IFormConfig, flattenConfigRef: Map<string, IElementConfig>, ngFormGroup: FormGroup) {
-        let configurationChangeChain: IConfigurationChange[] = [];
+        const configurationChangeChain: IElementChangePayload[] = [];
         let newConfig = null;
-        formConfiguration.groupElements.forEach(group => {
-            group.elements.forEach(groupElement => {
-                groupElement.elementsOnLine.forEach(element => {
+        flattenConfigRef.forEach(elementDesc => {
+            if (!elementDesc || !elementDesc.configurationChangeMap) {
+                return;
+            }
 
-                    if (this.noConfigurationChange(element)) {
-                        return;
-                    }
+            const configurationChange = {
+                element: {
+                    name: elementDesc.name,
+                    isDefaultConfig: true
+                }
+            };
 
-                    let elementName = element.name;
-                    let configurationChange = {
-                        type: CONFIGURATION_CHANGE_ACTIONS.UPDATE_ELEMENT,
-                        payload: {
-                            element: {
-                                name: element.name
-                            }
-                        }
-                    };
+            for (const changeConfig of elementDesc.configurationChangeMap.configurationChange) {
+                const currentControl = ngFormGroup.get(changeConfig.linkedElement);
+                if (!currentControl) {
+                    continue;
+                }
 
-                    for (let changeConfig of element.configurationChangeMap.configurationChange) {
-                        let currentControl = ngFormGroup.get(changeConfig.linkedElement);
-                        if (!currentControl) {
-                            continue;
-                        }
+                if (changeConfig.expectedValue === currentControl.value) {
+                    elementDesc.isDefaultConfig = false;
+                    configurationChangeChain.push(this.getConfigChangeAction(elementDesc, changeConfig.configurationChange));
+                    return;
+                }
+            }
 
-                        if (changeConfig.expectedValue === currentControl.value) {
-                            configurationChangeChain.push(this.getConfigChangeAction(element, changeConfig.configurationChange));
-                            return;
-                        }
-                    }
-
-                    if (!element.isDefaultConfig) {
-                        configurationChangeChain.push(this.getConfigChangeAction(element, element.configurationChangeMap.defaultConfig));
-                    }
-                })
-            })
+            if (!elementDesc.isDefaultConfig) {
+                elementDesc.isDefaultConfig = true;
+                configurationChangeChain.push(this.getConfigChangeAction(elementDesc, elementDesc.configurationChangeMap.defaultConfig));
+            }
         });
+
         configurationChangeChain.forEach(c => {
             newConfig = this.doConfigurationChange(c, newConfig || formConfiguration, flattenConfigRef, ngFormGroup);
         });
-
         return newConfig;
     }
 
-    private getConfigChangeAction(elment: any, newConfig) {
-        let data = {
-            type: newConfig && newConfig.type ? newConfig.type : CONFIGURATION_CHANGE_ACTIONS.UPDATE_ELEMENT,
-            payload: newConfig && newConfig.payload
-                ? {...newConfig.payload}
-                : newConfig ? {element: {...newConfig}} : {}
+    private getConfigChangeAction(element: IElementConfig, newConfig: IElementConfig): IElementChangePayload {
+        return {
+            element: {
+                ...element,
+                ...newConfig
+            }
         };
-
-        if (!data.payload.element) {
-            data.payload.element = {};
-        }
-
-        data.payload.element.name = elment.name;
-
-        return data;
     }
 
     private noConfigurationChange(value) {
@@ -238,19 +212,8 @@ export class ConfigurableFormService {
     }
 }
 
-export interface IConfigurationChange {
-    type: string;
-    payload: IElementChangePayload;
-}
-
 export interface IElementChangePayload {
-    element: IElementConfig,
+    element: IElementConfig;
     groupName?: string;
     afterElement?: string;
 }
-
-export const CONFIGURATION_CHANGE_ACTIONS = {
-    UPDATE_ELEMENT: "UPDATE_ELEMENT",
-    INSERT_ELEMENT: "INSERT_ELEMENT",
-    REMOVE_ELEMENT: "REMOVE_ELEMENT"
-};

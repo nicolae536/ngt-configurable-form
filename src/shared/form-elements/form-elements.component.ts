@@ -2,7 +2,7 @@ import { Component, Input, ViewEncapsulation, HostBinding, ChangeDetectionStrate
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { IElementConfig, Dictionary } from '../configuratble-form/configurable-form.interfaces';
-import { IConfigurationChange } from '../configuratble-form/configurable-form.service';
+import { IElementChangePayload } from '../configuratble-form/configurable-form.service';
 
 @Component({
     selector: 'ngt-form-elements',
@@ -19,12 +19,12 @@ export class FormElementsComponent {
     @Input() outsideSharedData: Dictionary<any>;
     @Input() outsideDataProviders: Dictionary<Observable<any>>;
 
-    @Output() onConfigurationChange: EventEmitter<IConfigurationChange> = new EventEmitter();
+    @Output() onConfigurationChange: EventEmitter<IElementChangePayload> = new EventEmitter();
 
     constructor() {
     }
 
-    handleConfigurationChange(change: IConfigurationChange) {
+    handleConfigurationChange(change: IElementChangePayload) {
         this.onConfigurationChange.next(change);
     }
 }

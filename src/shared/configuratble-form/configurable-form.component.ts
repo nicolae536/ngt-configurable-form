@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/debounceTime';
@@ -11,14 +11,14 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { IFormConfig, IElementConfig, IMappedFormConfig, Dictionary } from './configurable-form.interfaces';
-import { ConfigurableFormService, IConfigurationChange } from './configurable-form.service';
+import { ConfigurableFormService, IElementChangePayload } from './configurable-form.service';
 
 @Component({
     selector: 'ngt-configurable-form',
     templateUrl: 'configurable-form.html',
     styleUrls: ['./configurable-form.scss'],
     encapsulation: ViewEncapsulation.None,
-    // changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfigurableFormComponent implements OnDestroy {
     @HostBinding('class.ngt-component') isNgtComponent = true;
@@ -68,15 +68,16 @@ export class ConfigurableFormComponent implements OnDestroy {
     }
 
     ngOnDestroy(): void {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
 
     handleSubmit() {
 
     }
 
-    handleConfigurationChange(change: IConfigurationChange) {
-        let newConfiguration = this._configurableForm.doConfigurationChange(change, this.renderedFormStaticConfig.value, this.flattenConfigRef, this.ngFormGroup);
+    handleConfigurationChange(change: IElementChangePayload) {
+        const newConfiguration = this._configurableForm
+            .doConfigurationChange(change, this.renderedFormStaticConfig.value, this.flattenConfigRef, this.ngFormGroup);
         this.renderedFormStaticConfig.next(newConfiguration);
     }
 
@@ -99,7 +100,7 @@ export class ConfigurableFormComponent implements OnDestroy {
 
     private setFormConfig(transformed: IMappedFormConfig) {
         this.flattenConfigRef = transformed.flattenConfigRef;
-        this.ngFormGroup = new FormGroup(transformed.ngFormControls);
+        this.ngFormGroup = transformed.ngFormControls;
         this.patchFormValue(this._lastValueFromParent);
         this.renderedFormStaticConfig.next(transformed.formConfig);
         this.setValueChangeSubscription();
@@ -137,15 +138,15 @@ export class ConfigurableFormComponent implements OnDestroy {
                 ))
                 .do((configChanged) => {
                     if (configChanged) {
-                        this.renderedFormStaticConfig.next(configChanged)
+                        this.renderedFormStaticConfig.next(configChanged);
                         this.onConfigurationChange.emit(configChanged);
                     }
                 })
                 .map(v => this._configurableForm.unWrapFormValue(this.ngFormGroup))
                 .subscribe(value => {
                     this.onValueChange.emit(value.formValue);
-                    this.onValueChange.emit(value.formValidity);
+                    this.onValidityChange.emit(value.formValidity);
                 })
-        )
+        );
     }
 }

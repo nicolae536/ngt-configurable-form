@@ -3,9 +3,7 @@
  * 1. JSON types
  * ======================================================
  */
-import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
-import { IConfigurationChange } from './configurable-form.service';
+import { FormGroup } from '@angular/forms';
 
 export interface IFormConfig {
     name: string; // unique identifier
@@ -38,7 +36,7 @@ export interface IElementConfig extends IElementBase, IMatInputElement, IMatRadi
 export interface IChangeConfig {
     expectedValue: any;
     linkedElement: string;
-    configurationChange: IConfigurationChange;
+    configurationChange: IElementConfig;
 }
 
 export interface IElementCustomConfig {
@@ -95,6 +93,6 @@ export interface IMatSelectElement {
  */
 export interface IMappedFormConfig {
     formConfig: IFormConfig;
-    ngFormControls: Dictionary<FormControl>;
+    ngFormControls: FormGroup;
     flattenConfigRef: Map<string, IElementConfig>;
 }

@@ -86,32 +86,25 @@
                             "placeholder": "Post code",
                             "configurationChangeMap": {
                                 "defaultConfig": {
-                                    "hidden": false
+                                    "hidden": true
                                 },
-                                "configurationChange": [{
-                                    "linkedElement": "selectCity",
-                                    "expectedValue": 0,
-                                    "configurationChange": {
-                                        "type": "UPDATE_ELEMENT",
-                                        "payload": {
-                                            "element": {
-                                                "hidden": true
-                                            }
+                                "configurationChange": [
+                                    {
+                                        "linkedElement": "selectCity",
+                                        "expectedValue": 0,
+                                        "configurationChange": {
+                                            "hidden": true
+                                        }
+                                    },
+                                    {
+                                        "linkedElement": "selectCity",
+                                        "expectedValue": 1,
+                                        "configurationChange": {
+                                            "type": "textarea",
+                                            "hidden": false
                                         }
                                     }
-                                },{
-                                    "linkedElement": "selectCity",
-                                    "expectedValue": 1,
-                                    "configurationChange": {
-                                        "type": "UPDATE_ELEMENT",
-                                        "payload": {
-                                            "element": {
-                                                "type": "textarea",
-                                                "hidden": false
-                                            }
-                                        }
-                                    }
-                                }]
+                                ]
                             },
                             "size": 1
                         }
