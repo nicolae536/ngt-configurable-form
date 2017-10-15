@@ -89,6 +89,8 @@ export interface IMatSelectElement {
 export interface IMatDatePicker {
     dateConfig: {
         startView: 'month' | 'year';
+        useTogglePrefix: boolean;
+        useToggleSuffix: boolean;
     };
 }
 

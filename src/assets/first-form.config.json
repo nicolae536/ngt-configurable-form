@@ -36,9 +36,21 @@
                 {
                     "elementsOnLine": [
                         {
-                            "name": "description",
-                            "type": "textarea",
-                            "placeholder": "Short description",
+                            "name": "startDt",
+                            "type": "datepicker",
+                            "placeholder": "Start date",
+                            "dateConfig": {
+                                "useToggleSuffix": true
+                            },
+                            "size": 1
+                        },
+                        {
+                            "name": "endDate",
+                            "type": "datepicker",
+                            "dateConfig": {
+                                "useToggleSuffix": true
+                            },
+                            "placeholder": "End date",
                             "size": 1
                         }
                     ]
@@ -52,6 +64,20 @@
             "elements": [
                 {
                     "elementsOnLine": [
+                        {
+                            "name": "country",
+                            "required": true,
+                            "type": "autocomplete",
+                            "placeholder": "Country",
+                            "selectConfig": {
+                                "valueField": "name",
+                                "visibleProps": [
+                                    "name",
+                                    "population"
+                                ]
+                            },
+                            "size": 1
+                        },
                         {
                             "name": "selectCity",
                             "required": true,

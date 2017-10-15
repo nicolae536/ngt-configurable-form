@@ -2,6 +2,14 @@ import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { IElementConfig, Dictionary, IFormConfig, IMappedFormConfig, IRowElementsConfig } from './configurable-form.interfaces';
 
+interface IFoundElementParams {
+    index: number;
+    element: IElementConfig;
+    group: IRowElementsConfig;
+    lineIndex: number;
+    parentElementArray: IElementConfig[] | IRowElementsConfig[];
+}
+
 @Injectable()
 export class ConfigurableFormService {
 
@@ -60,54 +68,53 @@ export class ConfigurableFormService {
         }
 
         this.findInConfig(currentConfig, null, newElConfig.name,
-            (index: number, element: any, parentArray: any[], isGroup: boolean) => {
-                parentArray[index] = newElConfig;
+            (params: IFoundElementParams) => {
+                if (params && !params.element) {
+                    return;
+                }
+
+                params.parentElementArray[params.index] = newElConfig;
+
+                if (params.parentElementArray && params.parentElementArray.length === 1) {
+                    params.group.elements[params.lineIndex] = {
+                        ...params.group.elements[params.lineIndex],
+                        elementsOnLine: [...params.group.elements[params.lineIndex].elementsOnLine]
+                    };
+                }
             }
         );
         return currentConfig;
     }
 
-    private insertElementInConfig(payload: IElementChangePayload,
-                                  currentConfig: IFormConfig,
-                                  flattenConfigRef: Map<string, IElementConfig>,
-                                  ngFormControls: FormGroup): IFormConfig {
-        // TODO ngFormControls compile validation
-        if (!flattenConfigRef.get(payload.element.name)) {
-            flattenConfigRef.set(payload.element.name, payload.element);
-        }
-
-        ngFormControls.addControl(payload.element.name, new FormControl());
-
-        this.findInConfig(currentConfig, payload.groupName, payload.afterElement,
-            (index: number, element: any, parentArray: any[], isGroup: boolean) => {
-                parentArray.splice(index, 0, payload.element);
-            });
-        return currentConfig;
-    }
-
     private findInConfig(currentConfig: IFormConfig,
-                         groupId: string,
+                         groupIndex: string,
                          elementId: string = null,
-                         callback: (index: number, element: any, parentArray: any[], isGroup: boolean) => any) {
+                         elementCallback: (foundElementParams: IFoundElementParams) => void) {
         for (const gIdx in currentConfig.groupElements) {
             if (!currentConfig.groupElements[gIdx]) {
                 continue;
             }
 
             const group = currentConfig.groupElements[gIdx];
-            if (groupId && group.name === groupId) {
+            if (gIdx === groupIndex) {
                 if (!elementId) {
-                    callback(+gIdx, group, currentConfig.groupElements, true);
+                    elementCallback({
+                        index: -1,
+                        element: null,
+                        group: group,
+                        lineIndex: +gIdx,
+                        parentElementArray: currentConfig.groupElements
+                    });
                     return;
                 }
 
-                if (this.findElement(group, elementId, callback)) {
+                if (this.findElement(group, elementId, elementCallback)) {
                     return;
                 }
                 continue;
             }
 
-            if (this.findElement(group, elementId, callback)) {
+            if (this.findElement(group, elementId, elementCallback)) {
                 return;
             }
         }
@@ -115,12 +122,13 @@ export class ConfigurableFormService {
 
     private findElement(group: IRowElementsConfig,
                         elementId: string = null,
-                        callback: (index: number, element: any, parentArray: any[], isGroup: boolean) => any) {
+                        elementCallback: (foundElementParams: IFoundElementParams) => any) {
         if (!elementId) {
             return false;
         }
 
-        for (const line of group.elements) {
+        for (const lineIdx in group.elements) {
+            const line = group.elements[lineIdx]
             if (!line) {
                 continue;
             }
@@ -131,7 +139,13 @@ export class ConfigurableFormService {
                 }
                 const element = line.elementsOnLine[idx];
                 if (elementId === element.name) {
-                    callback(+idx, element, line.elementsOnLine, false);
+                    elementCallback({
+                        index: +idx,
+                        element: element,
+                        group: group,
+                        lineIndex: +lineIdx,
+                        parentElementArray: line.elementsOnLine
+                    });
                     return true;
                 }
             }

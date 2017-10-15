@@ -138,6 +138,7 @@ export class ConfigurableFormComponent implements OnDestroy {
                 ))
                 .do((configChanged) => {
                     if (configChanged) {
+                        console.info("Configuration change", JSON.parse(JSON.stringify(configChanged)));
                         this.renderedFormStaticConfig.next(configChanged);
                         this.onConfigurationChange.emit(configChanged);
                     }

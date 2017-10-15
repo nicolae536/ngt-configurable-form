@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-    MatFormFieldModule, MatInputModule, MatIconModule, MatRadioModule, MatCheckboxModule, MatSlideToggleModule, MatSelectModule, MatOptionModule, MatDatepickerModule, MatAutocompleteModule
+    MatFormFieldModule, MatInputModule, MatIconModule, MatRadioModule, MatCheckboxModule, MatSlideToggleModule, MatSelectModule, MatOptionModule, MatDatepickerModule, MatAutocompleteModule,
+    MatNativeDateModule
 } from '@angular/material';
 
 import { ElementWrapperComponent } from './element-wrapper.component';
@@ -21,6 +22,7 @@ import { ElementWrapperComponent } from './element-wrapper.component';
         MatSelectModule,
         MatOptionModule,
         MatDatepickerModule,
+        MatNativeDateModule,
         MatAutocompleteModule
     ],
     exports: [ElementWrapperComponent],

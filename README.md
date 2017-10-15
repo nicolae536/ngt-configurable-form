@@ -27,8 +27,9 @@ Before running the tests make sure you are serving the app via `ng serve`.
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
-## Ascunzi elemente din configuratie
-## Le aretin in functie de configuratie
-## Refaci validatori in functie de stateul curent
-
-## Cum foloesti asta cu ngrx
+## TODO list
+1. Build extensible validation factory
+2. Build selection which can propagate values to multiple fields
+3. Do static field listeners which help you clear/change values
+3. Find a api to build demos for the module
+4. Build demos on how I can integrate this component in redux 
