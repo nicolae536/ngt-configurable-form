@@ -14,11 +14,11 @@ export const elementWrapperError = {
     },
 
     throwIfConfigInvalid(elment: IMatSelectElement, elementDataProvider) {
-        if (!elment.config) {
+        if (!elment.selectConfig) {
             throw new Error(elementErrorMessages.invalidConfig + ' , ' + JSON.stringify(elment));
         }
 
-        if (!Array.isArray(elment.config.visibleProps)) {
+        if (!Array.isArray(elment.selectConfig.visibleProps)) {
             throw new Error(elementErrorMessages.invalidConfig + ', ' + JSON.stringify(elment));
         }
 

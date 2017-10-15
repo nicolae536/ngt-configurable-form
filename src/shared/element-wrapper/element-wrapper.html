@@ -40,9 +40,9 @@
                         [placeholder]="currentElement.name"
                         [formControlName]="currentElement.name">
                 <mat-option *ngFor="let option of elementDataProvider | async"
-                            [ngClass]="currentElement?.config?.optionClassMap"
-                            [value]="option[currentElement?.config?.valueField]">
-                    <span *ngFor="let visibleKey of currentElement?.config?.visibleProps">
+                            [ngClass]="currentElement?.selectConfig?.optionClassMap"
+                            [value]="option[currentElement?.selectConfig?.valueField]">
+                    <span *ngFor="let visibleKey of currentElement?.selectConfig?.visibleProps">
                         {{option[visibleKey]}}
                     </span>
                 </mat-option>
@@ -85,5 +85,59 @@
         <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
             {{getErrorMessage()}}
         </mat-error>
+    </ng-template>
+
+    <ng-template [ngIf]="currentElement.type === 'datepicker' && !currentElement.hidden">
+        <mat-form-field>
+            <input matInput
+                   [formControlName]="currentElement.name"
+                   [matDatepicker]="datepickerInputRef"/>
+            <mat-hint *ngIf="currentElement.hint"
+                      [align]="currentElement.alignHint">
+                {{currentElement.hint}}
+            </mat-hint>
+            <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
+                {{getErrorMessage()}}
+            </mat-error>
+        </mat-form-field>
+        <mat-datepicker #datepickerInputRef
+                        [startView]="currentElement?.dateConfig?.startView || 'month'">
+        </mat-datepicker>
+    </ng-template>
+    <ng-template [ngIf]="currentElement.type === 'autocomplete' && !currentElement.hidden">
+        <mat-form-field>
+            <input matInput
+                   [formControlName]="currentElement.name"
+                   [matAutocomplete]="autocompleteInputRef"/>
+            <mat-placeholder *ngIf="currentElement.placeholder">
+                {{currentElement.placeholder}}
+            </mat-placeholder>
+            <div matPrefix>
+                <div *ngIf="currentElement?.prefix?.renderAs === 'html'" [innerHtml]="currentElement.prefix.text"></div>
+                <div *ngIf="currentElement?.prefix?.renderAs === 'string'">{{currentElement.prefix.text}}</div>
+                <mat-icon *ngIf="currentElement?.prefix?.renderAs === 'icon'">{{currentElement.prefix.text}}</mat-icon>
+            </div>
+            <div matSuffix>
+                <div *ngIf="currentElement?.suffix?.renderAs === 'html'" [innerHtml]="currentElement.suffix.text"></div>
+                <div *ngIf="currentElement?.suffix?.renderAs === 'string'">{{currentElement.suffix.text}}</div>
+                <mat-icon *ngIf="currentElement?.suffix?.renderAs === 'icon'">{{currentElement.suffix.text}}</mat-icon>
+            </div>
+            <mat-hint *ngIf="currentElement.hint"
+                      [align]="currentElement.alignHint">
+                {{currentElement.hint}}
+            </mat-hint>
+            <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
+                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+            </mat-error>
+        </mat-form-field>
+        <mat-autocomplete #autocompleteInputRef="matAutocomplete">
+            <mat-option *ngFor="let option of elementDataProvider | async"
+                        [ngClass]="currentElement?.selectConfig?.optionClassMap"
+                        [value]="option[currentElement?.selectConfig?.valueField]">
+                    <span *ngFor="let visibleKey of currentElement?.selectConfig?.visibleProps">
+                        {{option[visibleKey]}}
+                    </span>
+            </mat-option>
+        </mat-autocomplete>
     </ng-template>
 </div>

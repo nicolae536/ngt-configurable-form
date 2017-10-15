@@ -19,4 +19,9 @@ ngt-form-elements {
             flex: $elmSize;
         }
     }
+
+    .ngt-element-size-0 {
+        display: none;
+        width: 0;
+    }
 }

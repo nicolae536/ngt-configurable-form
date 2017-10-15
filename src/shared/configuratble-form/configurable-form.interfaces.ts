@@ -29,7 +29,7 @@ export interface IGroupElementConfig {
     elementsOnLine: IElementConfig[];
 }
 
-export interface IElementConfig extends IElementBase, IMatInputElement, IMatRadioElement, IMatSelectElement {
+export interface IElementConfig extends IElementBase, IMatInputElement, IMatRadioElement, IMatSelectElement, IMatDatePicker {
     isDefaultConfig?: boolean;
 }
 
@@ -78,11 +78,17 @@ export interface IMatRadioElement {
 }
 
 export interface IMatSelectElement {
-    config: {
+    selectConfig: {
         valueField: string;
         visibleProps: string[];
         optionClassMap?: Dictionary<string>;
         updateProperties?: Dictionary<string>;
+    };
+}
+
+export interface IMatDatePicker {
+    dateConfig: {
+        startView: 'month' | 'year';
     };
 }
 

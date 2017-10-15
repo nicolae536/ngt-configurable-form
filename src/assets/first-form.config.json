@@ -57,7 +57,7 @@
                             "required": true,
                             "type": "select",
                             "placeholder": "City",
-                            "config": {
+                            "selectConfig": {
                                 "valueField": "cityId",
                                 "visibleProps": [
                                     "cityName"
@@ -78,7 +78,11 @@
                             "type": "number",
                             "placeholder": "Number",
                             "size": 1
-                        },
+                        }
+                    ]
+                },
+                {
+                    "elementsOnLine": [
                         {
                             "name": "postCode",
                             "required": true,
@@ -86,14 +90,16 @@
                             "placeholder": "Post code",
                             "configurationChangeMap": {
                                 "defaultConfig": {
-                                    "hidden": true
+                                    "hidden": true,
+                                    "size": 0
                                 },
                                 "configurationChange": [
                                     {
                                         "linkedElement": "selectCity",
                                         "expectedValue": 0,
                                         "configurationChange": {
-                                            "hidden": true
+                                            "hidden": true,
+                                            "size": 0
                                         }
                                     },
                                     {
@@ -101,12 +107,12 @@
                                         "expectedValue": 1,
                                         "configurationChange": {
                                             "type": "textarea",
-                                            "hidden": false
+                                            "hidden": false,
+                                            "size": 1
                                         }
                                     }
                                 ]
-                            },
-                            "size": 1
+                            }
                         }
                     ]
                 }

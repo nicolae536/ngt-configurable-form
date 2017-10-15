@@ -1,5 +1,5 @@
 <div *ngFor="let field of elements"
-     class="ngt-form-element ngt-element-size-{{field.size || 1}}"
+     class="ngt-form-element ngt-element-size-{{field.size !== null && field.size !== undefined ? field.size : 1}}"
      [formGroup]="parentFormGroup">
     <ngt-element-wrapper [formName]="formName"
                          [currentElement]="field"
