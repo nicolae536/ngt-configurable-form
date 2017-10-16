@@ -212,6 +212,64 @@
                     ]
                 }
             ]
+        },
+        {
+            "wrapInExpansionPane": false,
+            "addCardClass": true,
+            "title": "Decisions",
+            "elements": [
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "termsAgreed",
+                            "required": true,
+                            "type": "checkbox",
+                            "placeholder": "Are you agree with terms of ussage",
+                            "size": 1
+                        },
+                        {
+                            "name": "slideToggle",
+                            "required": true,
+                            "type": "slidetoggle",
+                            "placeholder": "Are you agree with terms of ussage",
+                            "size": 1
+                        },
+                        {
+                            "name": "deliveryPostCode1",
+                            "required": true,
+                            "type": "number",
+                            "placeholder": "Post code",
+                            "size": 1
+                        }
+                    ]
+                },
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "radiogroup",
+                            "required": true,
+                            "type": "radiogroup",
+                            "placeholder": "Are you agree with terms of ussage",
+                            "radioElements": [
+                                {
+                                    "label": "Test 1",
+                                    "value": "Test_1",
+                                    "checked": true
+                                },
+                                {
+                                    "label": "Test 2",
+                                    "value": "Test_2"
+                                },
+                                {
+                                    "label": "Test 3",
+                                    "value": "Test_3"
+                                }
+                            ],
+                            "size": 1
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
