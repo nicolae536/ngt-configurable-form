@@ -1,5 +1,5 @@
-import { Component, HostBinding, Input, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { Component, HostBinding, Input, ViewEncapsulation, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { FormGroup, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { IElementConfig, Dictionary, IMatSelectElement, IElementChangePayload } from '../configuratble-form/configurable-form.interfaces';
 import { MAT_INPUT_ELEMENTS } from '../form-elements/form-elements.consts';
@@ -27,9 +27,8 @@ export class ElementWrapperComponent {
     constructor() {
     }
 
-    getErrorMessage(errorField: FormControl) {
-        console.info(errorField);
-        return '';
+    getErrorMessage(errorField: AbstractControl) {
+        return errorField && errorField.errors ? JSON.stringify(errorField.errors) : '';
     }
 
     isSelectConfigurationValid(selectElement: IMatSelectElement) {

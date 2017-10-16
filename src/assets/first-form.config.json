@@ -15,6 +15,13 @@
                             "required": true,
                             "type": "text",
                             "placeholder": "First Name",
+                            "validation": [
+                                {
+                                    "type": "minLength",
+                                    "staticMetadata": 4,
+                                    "ranking": 1
+                                }
+                            ],
                             "size": 1
                         },
                         {
@@ -39,17 +46,33 @@
                             "name": "startDt",
                             "type": "datepicker",
                             "placeholder": "Start date",
+                            "required": true,
                             "dateConfig": {
                                 "useToggleSuffix": true
                             },
+                            "validation": [
+                                {
+                                    "type": "maxDate",
+                                    "staticMetadata": "endDate",
+                                    "ranking": 1
+                                }
+                            ],
                             "size": 1
                         },
                         {
                             "name": "endDate",
                             "type": "datepicker",
+                            "required": true,
                             "dateConfig": {
                                 "useToggleSuffix": true
                             },
+                            "validation": [
+                                {
+                                    "type": "minDate",
+                                    "staticMetadata": "startDt",
+                                    "ranking": 1
+                                }
+                            ],
                             "placeholder": "End date",
                             "size": 1
                         }
@@ -147,6 +170,7 @@
                                         "configurationChange": {
                                             "type": "textarea",
                                             "hidden": false,
+                                            "value": "hue hue",
                                             "size": 1
                                         }
                                     }

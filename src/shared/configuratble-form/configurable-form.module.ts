@@ -9,7 +9,7 @@ import { ConfigurableFormService } from './configurable-form.service';
 import { IValidationFactory } from './validation-factory.interface';
 import { ValidationFactoryService } from './validation-factory.service';
 
-export const VALIDATION_FACTORY = new InjectionToken('Token ngt-configurable-form/validation-factory');
+export const VALIDATION_FACTORY = new InjectionToken<IValidationFactory>('Token ngt-configurable-form/validation-factory');
 
 export function _getValidationFactory(): IValidationFactory {
     return null;

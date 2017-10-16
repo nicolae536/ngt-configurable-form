@@ -28,7 +28,7 @@
                       [align]="currentElement.alignHint">
                 {{currentElement.hint}}
             </mat-hint>
-            <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
+            <mat-error *ngIf="(parentFormGroup?.get(currentElement.name).statusChanges | async) && parentFormGroup?.get(currentElement.name)?.touched">
                 {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
         </mat-form-field>
@@ -48,8 +48,8 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
-            {{getErrorMessage()}}
+        <mat-error *ngIf="(parentFormGroup?.get(currentElement.name).statusChanges | async) && parentFormGroup?.get(currentElement.name)?.touched">
+            {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
         </mat-error>
     </ng-template>
 
@@ -58,8 +58,8 @@
                       [formControlName]="currentElement.name">
             {{currentElement.placeholder}}
         </mat-checkbox>
-        <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
-            {{getErrorMessage()}}
+        <mat-error *ngIf="(parentFormGroup?.get(currentElement.name).statusChanges | async) && parentFormGroup?.get(currentElement.name)?.touched">
+            {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
         </mat-error>
     </ng-template>
 
@@ -72,7 +72,7 @@
                 {{radio.label}}
             </mat-radio-button>
         </mat-radio-group>
-        <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
+        <mat-error *ngIf="(parentFormGroup?.get(currentElement.name).statusChanges | async) && parentFormGroup?.get(currentElement.name)?.touched">
             {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
         </mat-error>
     </ng-template>
@@ -82,8 +82,8 @@
                           [formControlName]="currentElement.name">
             {{currentElement.placeholder}}
         </mat-slide-toggle>
-        <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
-            {{getErrorMessage()}}
+        <mat-error *ngIf="(parentFormGroup?.get(currentElement.name).statusChanges | async) && parentFormGroup?.get(currentElement.name)?.touched">
+            {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
         </mat-error>
     </ng-template>
 
@@ -113,7 +113,7 @@
                       [align]="currentElement.alignHint">
                 {{currentElement.hint}}
             </mat-hint>
-            <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
+            <mat-error *ngIf="(parentFormGroup?.get(currentElement.name).statusChanges | async) && parentFormGroup?.get(currentElement.name)?.touched">
                 {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
             <mat-datepicker-toggle *ngIf="currentElement?.dateConfig?.useTogglePrefix"
@@ -159,7 +159,7 @@
                       [align]="currentElement.alignHint">
                 {{currentElement.hint}}
             </mat-hint>
-            <mat-error *ngIf="parentFormGroup?.get(currentElement.name)?.invalid && parentFormGroup?.get(currentElement.name)?.touched">
+            <mat-error *ngIf="(parentFormGroup?.get(currentElement.name).statusChanges | async) && parentFormGroup?.get(currentElement.name)?.touched">
                 {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
             <mat-autocomplete #auto="matAutocomplete">

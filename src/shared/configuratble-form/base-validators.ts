@@ -1,12 +1,16 @@
 import { FormGroup, ValidatorFn, AbstractControl, Validators } from '@angular/forms';
-import { FormGroupValidatorMetadata } from './configurable-form.interfaces';
+import { FormGroupValidatorMetadata, IElementConfig } from './configurable-form.interfaces';
 
 /* Interface for error map */
 export interface IValidationResult {
     [key: string]: any;
 }
 
-const DATE_VALIDATION_REGEXP = /^[1-9]\d{3}((\-\d{1,2})|(\d{1,2}))((\-\d{1,2})|(\d{0,1,2}))/;
+type IValidationFunction = (ngFormGroup: FormGroup,
+                            element: IElementConfig,
+                            controlValue: any,
+                            validator: FormGroupValidatorMetadata) => { [key: string]: any };
+
 const EMAIL_VALIDATION_REGEXP =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 const REQUIRED_ERROR = {'required': true};
@@ -15,22 +19,31 @@ export const INVALID_DATE_ERROR: string = 'Invalid Date';
 export class BaseValidators {
 
     static getAngularValidator(ngFormControl: FormGroup,
-                               elementConfig,
+                               elementConfig: IElementConfig,
                                fn: (ngFormControl: FormGroup, elementConfig, value, metadata?) => IValidationResult,
                                validator: FormGroupValidatorMetadata,
                                isAngularValidator: boolean = false): ValidatorFn {
         return (control: AbstractControl): { [key: string]: any } => {
             if (isAngularValidator) {
                 let ngFn: ValidatorFn = fn as ValidatorFn;
-                ngFn = validator ? (ngFn(validator.staticMetadata)) as ValidatorFn : ngFn;
-                return ngFn(control);
+                ngFn = validator && validator.staticMetadata ? (ngFn(validator.staticMetadata)) as ValidatorFn : ngFn;
+                const functionResult = ngFn(control);
+                if (functionResult && validator.ranking) {
+                    functionResult['ranking'] = validator.ranking;
+                }
+
+                return functionResult;
             }
 
-            return fn(ngFormControl, elementConfig, control.value, validator.staticMetadata);
+            const functionResult = fn(ngFormControl, elementConfig, control.value, validator);
+            if (functionResult && validator.ranking) {
+                functionResult['ranking'] = validator.ranking;
+            }
+            return functionResult;
         };
     }
 
-    static required(ngFormGroup: FormGroup, element, controlValue) {
+    static required(ngFormGroup: FormGroup, element: IElementConfig, controlValue: any, validator: FormGroupValidatorMetadata) {
         const isString = typeof(controlValue) === 'string';
 
         if (isString) {
@@ -60,9 +73,12 @@ export class BaseValidators {
      * @return {string} Error map.
      * @return {null} Validation has passed.
      */
-    static email(ngFormGroup: FormGroup, elementConfig, currentValue: any): IValidationResult {
-        currentValue = '' + currentValue;
-        if (currentValue !== '' && !currentValue.match(EMAIL_VALIDATION_REGEXP)) {
+    static email(ngFormGroup: FormGroup,
+                 element: IElementConfig,
+                 controlValue: any,
+                 validator: FormGroupValidatorMetadata): IValidationResult {
+        controlValue = '' + controlValue;
+        if (controlValue !== '' && !controlValue.match(EMAIL_VALIDATION_REGEXP)) {
             return {'invalidEmailAddress': true};
         }
 
@@ -73,15 +89,18 @@ export class BaseValidators {
      * Integer validation
      * @return {(control: AbstractControl): { [key: string]: any }} Validation function;
      */
-    static integer(ngFormGroup: FormGroup, elementConfig, controlValue: any): IValidationResult {
-        if (BaseValidators.number(ngFormGroup, elementConfig, controlValue) !== null) {
+    static integer(ngFormGroup: FormGroup,
+                   element: IElementConfig,
+                   controlValue: any,
+                   validator: FormGroupValidatorMetadata): IValidationResult {
+        if (BaseValidators.number(ngFormGroup, element, controlValue, validator) !== null) {
             return {
                 'integer': true
             };
         }
 
-        const zeroDecimalCount = BaseValidators.maxDecimalLength(0);
-        if (zeroDecimalCount(ngFormGroup, elementConfig, controlValue) !== null) {
+        const zeroDecimalCount = BaseValidators.maxDecimalLength(ngFormGroup, element, controlValue, {type: '', staticMetadata: 0});
+        if (zeroDecimalCount(ngFormGroup, element, controlValue, validator) !== null) {
             return {
                 'integer': true
             };
@@ -96,17 +115,20 @@ export class BaseValidators {
      * @return {string} Error map.
      * @return {null} Validation has passed.
      */
-    static number(ngFormGroup: FormGroup, elementConfig, currentValue: any): IValidationResult {
-        const valueAsString = '' + (currentValue);
-        if (currentValue && valueAsString !== '' &&
-            (isNaN(currentValue) ||
+    static number(ngFormGroup: FormGroup,
+                  element: IElementConfig,
+                  controlValue: any,
+                  validator: FormGroupValidatorMetadata): IValidationResult {
+        const valueAsString = '' + (controlValue);
+        if (controlValue && valueAsString !== '' &&
+            (isNaN(controlValue) ||
                 valueAsString[0] === '.' ||
                 valueAsString[valueAsString.length - 1] === '.'
             )) {
             return {'invalidNumber': true};
         }
 
-        if (currentValue && valueAsString !== '') {
+        if (controlValue && valueAsString !== '') {
             const indexOfDash = valueAsString.indexOf('-');
             const numberOfDashes = (valueAsString.match(/-/g) || []).length;
             const numberOfZerosAfterDash = (valueAsString.match(/-0[0]*/g) || []).length;
@@ -127,13 +149,20 @@ export class BaseValidators {
      * Decimal Validator
      * @return {(control: AbstractControl): { [key: string]: any }} Validation function;
      */
-    static maxDecimalLength(decimalCount: number) {
-        return (ngFormGroup: FormGroup, elementConfig, controlValue: any): { [key: string]: any } => {
-            const valueAsString = '' + (controlValue);
-            if (!controlValue || valueAsString === '') {
+    static maxDecimalLength(ngFormGroup: FormGroup,
+                            element: IElementConfig,
+                            controlValue: any,
+                            validator: FormGroupValidatorMetadata): IValidationFunction {
+        return (formGroup: FormGroup,
+                elementRef: IElementConfig,
+                value: any,
+                validatorMeta: FormGroupValidatorMetadata): IValidationResult => {
+            const valueAsString = '' + (value);
+            if (!value || valueAsString === '') {
                 return null;
             }
 
+            const decimalCount = validator.staticMetadata;
             if (+decimalCount === 0 && valueAsString.indexOf('.') !== -1) {
                 return {'maxDecimalLength': decimalCount};
             }
@@ -149,7 +178,10 @@ export class BaseValidators {
      * @return {string} Error map.
      * @return {null} Validation has passed.
      */
-    static password(ngFormGroup: FormGroup, elementConfig, controlValue): IValidationResult {
+    static password(ngFormGroup: FormGroup,
+                    element: IElementConfig,
+                    controlValue: any,
+                    validator: FormGroupValidatorMetadata): IValidationResult {
         // {6,100}           - Assert password is between 6 and 100 characters
         // (?=.*[0-9])       - Assert a string has at least one number
         if (!controlValue.match(/^(?=.*[0-9])[a-zA-Z0-9!@#$%^&*]{6,100}$/)) {
@@ -159,17 +191,23 @@ export class BaseValidators {
         return null;
     }
 
-    static date(ngFormGroup: FormGroup, element, controlValue, metadata: string): IValidationResult {
+    static date(ngFormGroup: FormGroup,
+                element: IElementConfig,
+                controlValue: any,
+                validator: FormGroupValidatorMetadata): IValidationResult {
         return BaseValidators.isMdDateInvalid(controlValue);
     }
 
-    static minDate(ngFormGroup: FormGroup, element, controlValue, minControlName: string): IValidationResult {
+    static minDate(ngFormGroup: FormGroup,
+                   element: IElementConfig,
+                   controlValue: any,
+                   validator: FormGroupValidatorMetadata): IValidationResult {
         let minDateValue = null;
         let minDateControl: AbstractControl = null;
 
-        if (ngFormGroup && ngFormGroup.get(minControlName)) {
-            minDateControl = ngFormGroup.get(minControlName);
-            minDateValue = ngFormGroup.get(minControlName).value;
+        if (ngFormGroup && ngFormGroup.get(validator.staticMetadata)) {
+            minDateControl = ngFormGroup.get(validator.staticMetadata);
+            minDateValue = ngFormGroup.get(validator.staticMetadata).value;
         }
 
         const isNotValid = BaseValidators.isMdDateInvalid(controlValue);
@@ -190,13 +228,16 @@ export class BaseValidators {
         }
     }
 
-    static maxDate(ngFormGroup: FormGroup, element, controlValue: any, maxControlName: string): IValidationResult {
+    static maxDate(ngFormGroup: FormGroup,
+                   element: IElementConfig,
+                   controlValue: any,
+                   validator: FormGroupValidatorMetadata): IValidationResult {
         let maxDateValue = null;
         let maxDateControl: AbstractControl = null;
 
-        if (ngFormGroup && ngFormGroup.get(maxControlName)) {
-            maxDateControl = ngFormGroup.get(maxControlName);
-            maxDateValue = ngFormGroup.get(maxControlName).value;
+        if (ngFormGroup && ngFormGroup.get(validator.staticMetadata)) {
+            maxDateControl = ngFormGroup.get(validator.staticMetadata);
+            maxDateValue = ngFormGroup.get(validator.staticMetadata).value;
         }
 
         const isNotValid = BaseValidators.isMdDateInvalid(controlValue);
@@ -217,20 +258,31 @@ export class BaseValidators {
         }
     }
 
-    static minValue(ngFormGroup: FormGroup, element, controlValue: any, value: number): IValidationResult {
+    static minValue(ngFormGroup: FormGroup,
+                    element: IElementConfig,
+                    controlValue: any,
+                    validator: FormGroupValidatorMetadata): IValidationResult {
         if (controlValue === '') {
             return null;
         }
+        const value = validator.staticMetadata;
 
         return +controlValue < +value ? {'minValue': {'minValue': value, 'actualvalue': controlValue}} : null;
     }
 
-    static maxValue(ngFormGroup: FormGroup, element, controlValue: any, value: number): IValidationResult {
+    static maxValue(ngFormGroup: FormGroup,
+                    element: IElementConfig,
+                    controlValue: any,
+                    validator: FormGroupValidatorMetadata): IValidationResult {
+        const value = validator.staticMetadata;
         return +controlValue > +value ? {'maxValue': {'maxValue': value, 'actualvalue': controlValue}} : null;
     }
 
-    static maxTime(ngFormGroup: FormGroup, element, controlValue: any, value: any): IValidationResult {
-        let splittedTime = value ? value.split(':') : [23, 59];
+    static maxTime(ngFormGroup: FormGroup,
+                   element: IElementConfig,
+                   controlValue: any,
+                   validator: FormGroupValidatorMetadata): IValidationResult {
+        let splittedTime = validator.staticMetadata ? validator.staticMetadata.split(':') : [23, 59];
         let hours = +splittedTime[0] * 3600;
         let minutes = +splittedTime[1] * 60;
 
@@ -245,7 +297,7 @@ export class BaseValidators {
         minutes = splittedTime[1] ? +splittedTime[1] * 60 : 0;
 
         return +(hours + minutes) > +maxTimeValue
-            ? {'maxTime': {'maxTime': value, 'actualvalue': controlValue}}
+            ? {'maxTime': {'maxTime': validator.staticMetadata, 'actualvalue': controlValue}}
             : null;
 
     }
@@ -272,16 +324,6 @@ export class BaseValidators {
 
     static isMdDateInvalid(value: Date): IValidationResult {
         if (value === null || (value && value.toString() === INVALID_DATE_ERROR)) {
-            return {'dateValidator': true};
-        }
-    }
-
-    static isDateInvalid(value: string): IValidationResult {
-        if (value === null || value === undefined) {
-            return null;
-        }
-
-        if (!DATE_VALIDATION_REGEXP.test(value)) {
             return {'dateValidator': true};
         }
     }

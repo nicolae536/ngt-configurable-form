@@ -56,11 +56,13 @@ export interface IElementBase {
     hidden: boolean;
     validation: FormGroupValidatorMetadata[];
     updateFields: Dictionary<string>;
+    value: any;
 }
 
 export interface FormGroupValidatorMetadata {
     type: string;
     staticMetadata?: any;
+    ranking?: number;
     fieldsMap?: any;
     errorField?: string;
 }

@@ -56,10 +56,17 @@ export class ConfigurableFormService {
         // TODO ngFormControls compile validation
         const elementConfig: IElementConfig = flattenConfigRef.get(payload.element.name) || {} as IElementConfig;
         const newElConfig = {...elementConfig, ...payload.element};
+        const valueChangedInConfig = newElConfig.value;
+        delete newElConfig.value;
+
         flattenConfigRef.set(payload.element.name, newElConfig);
         ngFormControls.removeControl(payload.element.name);
         ngFormControls.addControl(payload.element.name, new FormControl());
         this.updateElementValidation(ngFormControls, newElConfig);
+
+        if (valueChangedInConfig !== undefined) {
+            ngFormControls.get(payload.element.name).setValue(valueChangedInConfig, {onlySelf: true, emitEvent: false});
+        }
 
         this.findInConfig(currentConfig, null, newElConfig.name,
             (params: IFoundElementParams) => {
