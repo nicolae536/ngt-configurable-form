@@ -2,7 +2,7 @@ import { FormGroup, ValidatorFn, AbstractControl, Validators } from '@angular/fo
 import { FormGroupValidatorMetadata } from './configurable-form.interfaces';
 
 /* Interface for error map */
-interface IValidationResult {
+export interface IValidationResult {
     [key: string]: any;
 }
 

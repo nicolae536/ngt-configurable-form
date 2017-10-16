@@ -118,10 +118,10 @@ export class ConfigurableFormService {
                 }
 
                 if (changeConfig.expectedValue === currentControl.value) {
-                    const changeAction = this.getConfigChangeAction(elementDesc, changeConfig.configurationChange);
-                    if (this.areElementsEquals(changeAction.element, elementDesc)) {
-                        elementDesc.isDefaultConfig = false;
-                        configurationChangeChain.push(this.getConfigChangeAction(elementDesc, changeConfig.configurationChange));
+                    const changedElementConfig = this.getConfigChangeAction(elementDesc, changeConfig.configurationChange);
+                    if (!this.areElementsEquals(changedElementConfig.element, elementDesc)) {
+                        changedElementConfig.element.isDefaultConfig = false;
+                        configurationChangeChain.push(changedElementConfig);
                     }
                     return;
                 }
@@ -255,7 +255,7 @@ export class ConfigurableFormService {
                 continue;
             }
 
-            if (!element[key] || newElement[key] !== element[key]) {
+            if (!element.hasOwnProperty(key) || newElement[key] !== element[key]) {
                 return false;
             }
         }

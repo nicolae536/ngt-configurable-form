@@ -60,9 +60,9 @@ export interface IElementBase {
 
 export interface FormGroupValidatorMetadata {
     type: string;
-    staticMetadata: any;
-    fieldsMap: any;
-    errorField: string;
+    staticMetadata?: any;
+    fieldsMap?: any;
+    errorField?: string;
 }
 
 interface IPrefixSuffixConfig {

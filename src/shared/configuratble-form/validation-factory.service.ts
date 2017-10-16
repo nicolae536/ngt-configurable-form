@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { ValidatorFn, FormGroup, Validators } from '@angular/forms';
 import { BaseValidators } from './base-validators';
 import { Dictionary, IElementConfig, FormGroupValidatorMetadata } from './configurable-form.interfaces';
+import { IValidationFactory } from './validation-factory.interface';
 
 
 @Injectable()
 export class ValidationFactoryService {
 
-    constructor() {
+    constructor(private _validationFactory: IValidationFactory) {
     }
 
     /**
@@ -19,7 +20,7 @@ export class ValidationFactoryService {
         const validators = [];
 
         if (elementConfig.required) {
-            validators.push(BaseValidators.getAngularValidator(ngFormGroup, elementConfig, BaseValidators.required, null));
+            validators.push(this.getValidatorByType(ngFormGroup, elementConfig, {type: 'required'}));
         }
 
         if (elementConfig.validation === undefined ||
@@ -43,6 +44,16 @@ export class ValidationFactoryService {
     }
 
     private getValidatorByType(ngFormGroup: FormGroup, elementConfig: IElementConfig, validator: FormGroupValidatorMetadata) {
+        if (this._validationFactory &&
+            this._validationFactory.hasValidator(validator)) {
+            return BaseValidators.getAngularValidator(
+                ngFormGroup,
+                elementConfig,
+                this._validationFactory.getValidator(validator),
+                validator
+            );
+        }
+
         const isBaseValidator = this.isFunction(BaseValidators[validator.type]);
         const isAngularValidator = this.isFunction(Validators[validator.type]);
 

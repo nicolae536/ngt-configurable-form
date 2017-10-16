@@ -5,7 +5,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfigurableFormComponentModule } from '../shared/configuratble-form/configurable-form.module';
 
 import { AppComponent } from './app.component';
-import { MAT_PLACEHOLDER_GLOBAL_OPTIONS } from '@angular/material';
 
 @NgModule({
     declarations: [
@@ -15,7 +14,7 @@ import { MAT_PLACEHOLDER_GLOBAL_OPTIONS } from '@angular/material';
         BrowserModule,
         BrowserAnimationsModule,
         HttpModule,
-        ConfigurableFormComponentModule
+        ConfigurableFormComponentModule.provideForm()
     ],
     providers: [],
     bootstrap: [AppComponent]
