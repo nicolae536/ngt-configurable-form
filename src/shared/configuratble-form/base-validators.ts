@@ -179,6 +179,8 @@ export class BaseValidators {
 
         if (minDateValue &&
             controlValue &&
+            minDateValue.getTime() &&
+            controlValue.getTime() &&
             minDateValue.getTime() > controlValue.getTime()) {
             return {'minDate': minDateValue};
         }
@@ -204,6 +206,8 @@ export class BaseValidators {
 
         if (maxDateValue &&
             controlValue &&
+            maxDateValue.getTime() &&
+            controlValue.getTime() &&
             maxDateValue.getTime() < controlValue.getTime()) {
             return {'maxDate': maxDateValue};
         }
