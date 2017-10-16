@@ -29,9 +29,8 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## TODO list
 1. Build extensible validation factory
-2. Build selection which can propagate values to multiple fields
-3. Build dividers and headers for small groups
-4. Build dividers/header values in or separate form values
-5. Do static field listeners which help you clear/change values
-6. Find a api to build demos for the module
-7. Build demos on how I can integrate this component in redux 
+4. Do static field listeners which help you clear/change/values
+2. Build dividers and headers for small groups -> nice to have
+3. Build dividers/header values in or separate form values -> nice to have
+5. Find a api to build demos for the module
+6. Build demos on how I can integrate this component in redux

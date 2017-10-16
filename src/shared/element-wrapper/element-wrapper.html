@@ -119,16 +119,19 @@
             <mat-datepicker-toggle *ngIf="currentElement?.dateConfig?.useTogglePrefix"
                                    matPrefix
                                    [for]="picker">
+                <div *ngIf="currentElement?.prefix?.renderAs === 'html'" [innerHtml]="currentElement.prefix.text"></div>
+                <div *ngIf="currentElement?.prefix?.renderAs === 'string'">{{currentElement.prefix.text}}</div>
+                <mat-icon *ngIf="currentElement?.prefix?.renderAs === 'icon'">{{currentElement.prefix.text}}</mat-icon>
             </mat-datepicker-toggle>
             <mat-datepicker-toggle *ngIf="currentElement?.dateConfig?.useToggleSuffix"
                                    matSuffix
                                    [for]="picker">
+                <div *ngIf="currentElement?.suffix?.renderAs === 'html'" [innerHtml]="currentElement.suffix.text"></div>
+                <div *ngIf="currentElement?.suffix?.renderAs === 'string'">{{currentElement.suffix.text}}</div>
+                <mat-icon *ngIf="currentElement?.suffix?.renderAs === 'icon'">{{currentElement.suffix.text}}</mat-icon>
             </mat-datepicker-toggle>
             <mat-datepicker #picker
                             [startView]="currentElement?.dateConfig?.startView || 'month'">
-                <div *ngIf="currentElement?.suffix?.renderAs === 'html'" [innerHtml]="currentElement.prefix.text"></div>
-                <div *ngIf="currentElement?.suffix?.renderAs === 'string'">{{currentElement.prefix.text}}</div>
-                <mat-icon *ngIf="currentElement?.suffix?.renderAs === 'icon'">{{currentElement.prefix.text}}</mat-icon>
             </mat-datepicker>
         </mat-form-field>
     </ng-template>
