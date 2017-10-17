@@ -23,7 +23,11 @@ export class ConfigurableFormService {
 
             group.elements.forEach(elem => {
                 elem.elementsOnLine.forEach(lineElem => {
-                    ngFormControls[lineElem.name] = new FormControl();
+                    if (lineElem.type === 'divider') {
+                        return;
+                    }
+
+                    ngFormControls[lineElem.name] = new FormControl(lineElem.value);
                     flattenConfigRef.set(lineElem.name, lineElem);
                 });
             });

@@ -221,6 +221,15 @@
                 {
                     "elementsOnLine": [
                         {
+                            "name": "headerTemplate",
+                            "type": "header",
+                            "value": "Decisions header"
+                        }
+                    ]
+                },
+                {
+                    "elementsOnLine": [
+                        {
                             "name": "termsAgreed",
                             "required": true,
                             "type": "checkbox",
@@ -240,6 +249,13 @@
                             "type": "number",
                             "placeholder": "Post code",
                             "size": 1
+                        }
+                    ]
+                },
+                {
+                    "elementsOnLine": [
+                        {
+                            "type": "divider"
                         }
                     ]
                 },

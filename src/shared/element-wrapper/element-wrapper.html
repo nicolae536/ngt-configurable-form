@@ -161,6 +161,7 @@
             </mat-datepicker>
         </mat-form-field>
     </ng-template>
+
     <ng-template [ngIf]="currentElement.type === 'autocomplete' && !currentElement.hidden">
         <mat-form-field [attr.e2e-name]="formName + currentElement.name">
             <input matInput
@@ -201,5 +202,15 @@
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>
+    </ng-template>
+
+    <ng-template [ngIf]="currentElement.type === 'header' && !currentElement.hidden">
+        <div class="ngt-form-header-element">
+            {{parentFormGroup?.get(currentElement.name)?.value}}
+        </div>
+    </ng-template>
+
+    <ng-template [ngIf]="currentElement.type === 'divider' && !currentElement.hidden">
+        <div class="ngt-form-divider-element"></div>
     </ng-template>
 </div>
