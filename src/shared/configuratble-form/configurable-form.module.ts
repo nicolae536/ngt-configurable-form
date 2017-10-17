@@ -6,6 +6,7 @@ import { FormElementsComponentModule } from '../form-elements/form-elements.modu
 
 import { ConfigurableFormComponent } from './configurable-form.component';
 import { ConfigurableFormService } from './configurable-form.service';
+import { ConfigurationChangeFactoryService } from './configuration-change-factory.service';
 import { IValidationFactory } from './validation-factory.interface';
 import { ValidationFactoryService } from './validation-factory.service';
 
@@ -22,6 +23,7 @@ export function getValidationFactory(validationFactory: IValidationFactory) {
 export function provideForm(validationFactory: () => IValidationFactory): any[] {
     return [
         ConfigurableFormService,
+        ConfigurationChangeFactoryService,
         {provide: ValidationFactoryService, useFactory: getValidationFactory, deps: [VALIDATION_FACTORY]},
         {provide: VALIDATION_FACTORY, useFactory: validationFactory || _getValidationFactory}
     ];

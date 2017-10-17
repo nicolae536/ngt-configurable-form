@@ -8,8 +8,7 @@ import { FormFieldComponent } from './form-field.component';
     exports: [
         FormFieldComponent
     ],
-    declarations: [FormFieldComponent],
-    providers: [],
+    declarations: [FormFieldComponent]
 })
 export class FormFieldComponentModule {
 }

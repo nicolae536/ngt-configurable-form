@@ -28,8 +28,7 @@ import { ElementWrapperComponent } from './element-wrapper.component';
         MatAutocompleteModule
     ],
     exports: [ElementWrapperComponent],
-    declarations: [ElementWrapperComponent],
-    providers: [],
+    declarations: [ElementWrapperComponent]
 })
 export class ElementWrapperComponentModule {
 }

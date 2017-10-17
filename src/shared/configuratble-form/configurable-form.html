@@ -3,8 +3,7 @@
       autocomplete="off"
       [class.ngt-card]="formStaticConfig.addCardClass"
       [name]="formStaticConfig.name"
-      [formGroup]="ngFormGroup"
-      (ngSubmit)="handleSubmit()">
+      [formGroup]="ngFormGroup">
     <div style="height: 0px; overflow: hidden;">
         {{formStaticConfig | json}}
     </div>

@@ -13,8 +13,7 @@ import { FormElementsComponent } from './form-elements.component';
         ElementWrapperComponentModule
     ],
     exports: [FormElementsComponent],
-    declarations: [FormElementsComponent],
-    providers: [],
+    declarations: [FormElementsComponent]
 })
 export class FormElementsComponentModule {
 }

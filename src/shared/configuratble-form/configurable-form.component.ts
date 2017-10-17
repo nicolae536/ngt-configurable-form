@@ -12,6 +12,7 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { IFormConfig, IElementConfig, IMappedFormConfig, Dictionary, IElementChangePayload } from './configurable-form.interfaces';
 import { ConfigurableFormService } from './configurable-form.service';
+import { ConfigurationChangeFactoryService } from './configuration-change-factory.service';
 
 @Component({
     selector: 'ngt-configurable-form',
@@ -60,25 +61,15 @@ export class ConfigurableFormComponent implements OnDestroy {
     outsideDataProviders: Dictionary<Observable<any>>;
     outsideDataListener: Dictionary<Subject<any>>;
 
-    private _configSubscription$: Subscription;
     private _subscriptions$: Subscription[] = [];
     private _lastValueFromParent: Object;
 
-    constructor(private _configurableForm: ConfigurableFormService) {
+    constructor(private _configurableForm: ConfigurableFormService,
+                private _configurationChangeFactory: ConfigurationChangeFactoryService) {
     }
 
     ngOnDestroy(): void {
-        throw new Error('Method not implemented.');
-    }
-
-    handleSubmit() {
-
-    }
-
-    handleConfigurationChange(change: IElementChangePayload) {
-        const newConfiguration = this._configurableForm
-            .doConfigurationChange(change, this.renderedFormStaticConfig.value, this.flattenConfigRef, this.ngFormGroup);
-        this.renderedFormStaticConfig.next(newConfiguration);
+        this._subscriptions$.forEach(sub => sub.unsubscribe());
     }
 
     private subscribeToConfig(config$: Observable<IFormConfig>) {
@@ -131,21 +122,21 @@ export class ConfigurableFormComponent implements OnDestroy {
             this.ngFormGroup
                 .valueChanges
                 .debounceTime(0)
-                .map(v => this._configurableForm.changeConfigurationIfNeeded(
+                .map(v => this._configurationChangeFactory.stabilizeConfigurationStructure(
                     this.renderedFormStaticConfig.value,
                     this.flattenConfigRef,
                     this.ngFormGroup
                 ))
                 .do((configChanged) => {
                     if (configChanged) {
-                        console.info("Configuration change", JSON.parse(JSON.stringify(configChanged)));
+                        // console.info("Configuration change", JSON.parse(JSON.stringify(configChanged)));
                         this.renderedFormStaticConfig.next(configChanged);
                         this.onConfigurationChange.emit(configChanged);
                     }
                 })
                 .map(v => this._configurableForm.unWrapFormValue(this.ngFormGroup))
                 .subscribe(value => {
-                    console.info("Values change", JSON.parse(JSON.stringify(value.formValue)));
+                    // console.info("Values change", JSON.parse(JSON.stringify(value.formValue)));
                     this.onValueChange.emit(value.formValue);
                     this.onValidityChange.emit(value.formValidity);
                 })
