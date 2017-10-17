@@ -4,6 +4,10 @@ ngt-form-elements {
     display: flex;
     flex-direction: row;
 
+    .mat-radio-button {
+        margin-right: 30px;
+    }
+
     .ngt-form-element {
         &:not(:last-of-type) {
             margin-right: 30px;

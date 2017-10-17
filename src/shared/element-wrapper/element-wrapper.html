@@ -59,44 +59,56 @@
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'checkbox' && !currentElement.hidden">
-        <mat-checkbox [attr.e2e-name]="formName + currentElement.name"
-                      [formControlName]="currentElement.name">
-            {{currentElement.placeholder}}
-        </mat-checkbox>
-        <mat-error
-                *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
+        <ngt-form-field [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
+            parentFormGroup?.get(currentElement.name)?.invalid)">
+            <mat-checkbox [required]="currentElement.required"
+                          [attr.e2e-name]="formName + currentElement.name"
+                          [formControlName]="currentElement.name">
+                {{currentElement.placeholder}}
+            </mat-checkbox>
+            <mat-error
+                    *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-            {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
-        </mat-error>
+                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+            </mat-error>
+        </ngt-form-field>
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'radiogroup' && !currentElement.hidden">
-        <mat-radio-group [formControlName]="currentElement.name">
-            <mat-radio-button [attr.e2e-name]="formName + currentElement.name + i"
-                              *ngFor="let radio of currentElement.radioElements; let i = index"
-                              [value]="radio.value"
-                              [checked]="radio.checked">
-                {{radio.label}}
-            </mat-radio-button>
-        </mat-radio-group>
-        <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
+        <ngt-form-field [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
+            parentFormGroup?.get(currentElement.name)?.invalid)">
+            <mat-radio-group [required]="currentElement.required"
+                             [formControlName]="currentElement.name">
+                <mat-radio-button [attr.e2e-name]="formName + currentElement.name + i"
+                                  *ngFor="let radio of currentElement.radioElements; let i = index"
+                                  [value]="radio.value"
+                                  [checked]="radio.checked">
+                    {{radio.label}}
+                </mat-radio-button>
+            </mat-radio-group>
+            <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-            {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
-        </mat-error>
+                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+            </mat-error>
+        </ngt-form-field>
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'slidetoggle' && !currentElement.hidden">
-        <mat-slide-toggle [attr.e2e-name]="formName + currentElement.name"
-                          [formControlName]="currentElement.name">
-            {{currentElement.placeholder}}
-        </mat-slide-toggle>
-        <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
+        <ngt-form-field [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
+            parentFormGroup?.get(currentElement.name)?.invalid)">
+            <mat-slide-toggle [required]="currentElement.required"
+                              [attr.e2e-name]="formName + currentElement.name"
+                              [formControlName]="currentElement.name">
+                {{currentElement.placeholder}}
+            </mat-slide-toggle>
+            <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-            {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
-        </mat-error>
+                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+            </mat-error>
+        </ngt-form-field>
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'datepicker' && !currentElement.hidden">

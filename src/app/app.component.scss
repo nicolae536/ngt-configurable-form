@@ -1,13 +1,4 @@
-@import '~@angular/material/theming';
 @import "../shared/form-elements/form-elements.theme";
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
-
-@include mat-core();
-//$element-settings: (
-//    elementMarginLeft : 50px
-//);
-//
-//@include ngt-element-settings($element-settings)
 
 app-root {
     ngt-configurable-form {

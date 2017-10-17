@@ -1,0 +1,31 @@
+<div class="mat-input-wrapper mat-form-field-wrapper">
+    <div class="mat-input-flex mat-form-field-flex">
+        <div class="mat-input-prefix mat-form-field-prefix" *ngIf="prefixChildren.length">
+            <ng-content select="[matPrefix]"></ng-content>
+        </div>
+
+        <div class="mat-input-infix mat-form-field-infix">
+            <ng-content></ng-content>
+        </div>
+
+        <div class="mat-input-suffix mat-form-field-suffix" *ngIf="suffixChildren.length">
+            <ng-content select="[matSuffix]"></ng-content>
+        </div>
+    </div>
+
+    <div class="mat-input-subscript-wrapper mat-form-field-subscript-wrapper"
+         [ngSwitch]="messageDisplay">
+        <div *ngSwitchCase="'error'"
+             [@transitionMessages]="subscriptAnimationState">
+            <ng-content select="mat-error"></ng-content>
+        </div>
+
+        <div class="mat-input-hint-wrapper mat-form-field-hint-wrapper"
+             *ngSwitchCase="'hint'"
+             [@transitionMessages]="subscriptAnimationState">
+            <ng-content select="mat-hint:not([align='end'])"></ng-content>
+            <div class="mat-input-hint-spacer mat-form-field-hint-spacer"></div>
+            <ng-content select="mat-hint[align='end']"></ng-content>
+        </div>
+    </div>
+</div>
