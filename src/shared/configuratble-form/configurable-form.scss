@@ -1,4 +1,4 @@
-@import "../style/mixins";
+@import "../style/placeholders";
 
 ngt-configurable-form {
     display: block;
@@ -10,7 +10,7 @@ ngt-configurable-form {
     }
 
     .ngt-card {
-        @include ngt-card-style;
+        @extend %ngt-card-style;
     }
 
     .ngt-group-title,

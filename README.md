@@ -28,7 +28,6 @@ Before running the tests make sure you are serving the app via `ng serve`.
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 ## TODO list
-1. Do static field listeners which help you clear/change/values
-2. Check that the component works -> in demo cases
-3. Find a api to build demos for the module
-4. Build demos on how I can integrate this component in redux
+1. Check that the component works -> in demo cases
+2. Find a api to build demos for the module
+3. Build demos on how I can integrate this component in redux

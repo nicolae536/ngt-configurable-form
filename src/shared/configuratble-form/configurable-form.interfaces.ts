@@ -16,7 +16,7 @@ export interface Dictionary<T> {
 }
 
 export interface IRowElementsConfig {
-    class: string;
+    classMap: Dictionary<boolean>;
     elements: IGroupElementConfig[];
     name: string;
     wrapInExpansionPane?: boolean;

@@ -255,7 +255,10 @@
                 {
                     "elementsOnLine": [
                         {
-                            "type": "divider"
+                            "type": "divider",
+                            "class": {
+                                "ngt-divide-bottom": true
+                            }
                         }
                     ]
                 },

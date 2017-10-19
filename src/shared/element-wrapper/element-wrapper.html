@@ -1,7 +1,8 @@
 <div [formGroup]="parentFormGroup"
      class="ngt-element-wrapper">
     <ng-template [ngIf]="matInputContainerElements[currentElement.type] && !currentElement.hidden">
-        <mat-form-field [attr.e2e-name]="formName + currentElement.name">
+        <mat-form-field [ngClass]="currentElement?.class"
+                        [attr.e2e-name]="formName + currentElement.name">
             <input *ngIf="currentElement.type !== 'textarea'"
                    matInput
                    [type]="currentElement.type === 'text' || currentElement.type === 'email' ? 'text': currentElement.type"
@@ -38,7 +39,8 @@
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'select' && !currentElement.hidden">
-        <mat-form-field [attr.e2e-name]="formName + currentElement.name">
+        <mat-form-field [ngClass]="currentElement?.class"
+                        [attr.e2e-name]="formName + currentElement.name">
             <mat-select *ngIf="isSelectConfigurationValid(currentElement)"
                         [placeholder]="currentElement.placeholder"
                         [formControlName]="currentElement.name">
@@ -59,7 +61,8 @@
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'checkbox' && !currentElement.hidden">
-        <ngt-form-field [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
+        <ngt-form-field [ngClass]="currentElement?.class"
+                        [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid)">
             <mat-checkbox [required]="currentElement.required"
                           [attr.e2e-name]="formName + currentElement.name"
@@ -76,7 +79,8 @@
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'radiogroup' && !currentElement.hidden">
-        <ngt-form-field [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
+        <ngt-form-field [ngClass]="currentElement?.class"
+                        [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid)">
             <mat-radio-group [required]="currentElement.required"
                              [formControlName]="currentElement.name">
@@ -96,7 +100,8 @@
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'slidetoggle' && !currentElement.hidden">
-        <ngt-form-field [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
+        <ngt-form-field [ngClass]="currentElement?.class"
+                        [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid)">
             <mat-slide-toggle [required]="currentElement.required"
                               [attr.e2e-name]="formName + currentElement.name"
@@ -112,7 +117,8 @@
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'datepicker' && !currentElement.hidden">
-        <mat-form-field [attr.e2e-name]="formName + currentElement.name">
+        <mat-form-field [attr.e2e-name]="formName + currentElement.name"
+                        [ngClass]="currentElement?.class">
             <input matInput
                    type="text"
                    [required]="currentElement.required"
@@ -163,7 +169,8 @@
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'autocomplete' && !currentElement.hidden">
-        <mat-form-field [attr.e2e-name]="formName + currentElement.name">
+        <mat-form-field [attr.e2e-name]="formName + currentElement.name"
+                        [ngClass]="currentElement?.class">
             <input matInput
                    type="text"
                    [required]="currentElement.required"
@@ -205,12 +212,15 @@
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'header' && !currentElement.hidden">
-        <div class="ngt-form-header-element">
+        <div class="ngt-form-header-element"
+             [ngClass]="currentElement?.class">
             {{parentFormGroup?.get(currentElement.name)?.value}}
         </div>
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'divider' && !currentElement.hidden">
-        <div class="ngt-form-divider-element"></div>
+        <div class="ngt-form-divider-element"
+             [ngClass]="currentElement?.class">
+        </div>
     </ng-template>
 </div>

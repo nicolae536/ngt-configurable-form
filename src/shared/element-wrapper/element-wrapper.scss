@@ -1,20 +1,27 @@
-@import "../style/mixins";
+@import "../style/placeholders";
 
 ngt-element-wrapper {
-    @include default-element;
-    @include cover-full-width;
+    @extend %default-element;
+    @extend %cover-full-width;
 
     .ngt-element-wrapper {
-        @include default-element;
-        @include cover-full-width;
+        @extend %default-element;
+        @extend %cover-full-width;
 
         > * {
-            @include cover-full-width;
+            @extend %cover-full-width;
         }
     }
 
     .ngt-form-divider-element,
     .ngt-form-header-element {
-        
+        @extend %font-definition;
+    }
+
+    .ngt-form-divider-element {
+        &.ngt-divide-bottom {
+            background-color: rgba(0,0,0,.42);
+            height: 1px;
+        }
     }
 }
