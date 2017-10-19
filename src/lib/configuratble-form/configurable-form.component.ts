@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/debounceTime';
@@ -121,6 +121,14 @@ export class ConfigurableFormComponent implements OnDestroy {
             onlySelf: true,
             emitEvent: false
         });
+        let configChanged = this._configurationChangeFactory.stabilizeConfigurationStructure(
+            this.renderedFormStaticConfig.value,
+            this.flattenConfigRef,
+            this.ngFormGroup
+        );
+        if (configChanged) {
+            this.renderedFormStaticConfig.next(configChanged);
+        }
     }
 
     private setValueChangeSubscription() {

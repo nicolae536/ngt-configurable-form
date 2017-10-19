@@ -31,24 +31,24 @@ export function simpleFormReducer(state: any, action: IAction) {
 
 export function storeConfiguration(state: any, payload: ISimplePayload) {
     state[payload.formName] = {
+        ...state[payload.formName],
         configuration: JSON.parse(JSON.stringify(payload.configuration)),
-        ...state[payload.formName]
     };
     return {...state};
 }
 
 export function storeValueChange(state: any, payload: ISimplePayload) {
     state[payload.formName] = {
-        value: JSON.parse(JSON.stringify(payload.value)),
-        ...state[payload.formName]
+        ...state[payload.formName],
+        value: {...payload.value}
     };
     return {...state};
 }
 
 export function storeValidityChange(state: any, payload: ISimplePayload) {
     state[payload.formName] = {
-        validity: JSON.parse(JSON.stringify(payload.validity)),
-        ...state[payload.formName]
+        ...state[payload.formName],
+        validity: JSON.parse(JSON.stringify(payload.validity))
     };
     return {...state};
 }
