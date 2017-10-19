@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-import { IFormConfig, IElementConfig, IMappedFormConfig, Dictionary, IElementChangePayload } from './configurable-form.interfaces';
+import { IFormConfig, IElementConfig, IMappedFormConfig, Dictionary } from './configurable-form.interfaces';
 import { ConfigurableFormService } from './configurable-form.service';
 import { ConfigurationChangeFactoryService } from './configuration-change-factory.service';
 
@@ -19,15 +19,10 @@ import { ConfigurationChangeFactoryService } from './configuration-change-factor
     templateUrl: 'configurable-form.html',
     styleUrls: ['./configurable-form.scss'],
     encapsulation: ViewEncapsulation.None,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfigurableFormComponent implements OnDestroy {
     @HostBinding('class.ngt-component') isNgtComponent = true;
-
-    @Input()
-    set formConfig(config$: Observable<IFormConfig>) {
-        this.subscribeToConfig(config$);
-    }
 
     @Input()
     set sharedData(data: Dictionary<any>) {
@@ -46,7 +41,14 @@ export class ConfigurableFormComponent implements OnDestroy {
 
     @Input()
     set updateValues(values: Object) {
+        console.log(values);
         this.updateFormValues(values);
+    }
+
+    @Input()
+    set formConfig(config$: Observable<IFormConfig>) {
+        console.log(config$);
+        this.subscribeToConfig(config$);
     }
 
     @Output() onValueChange: EventEmitter<any> = new EventEmitter<any>();
@@ -75,6 +77,10 @@ export class ConfigurableFormComponent implements OnDestroy {
     private subscribeToConfig(config$: Observable<IFormConfig>) {
         if (this._subscriptions$) {
             this._subscriptions$.forEach(v => v.unsubscribe());
+        }
+
+        if (!config$) {
+            return;
         }
 
         if (!(config$ instanceof Observable)) {

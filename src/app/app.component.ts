@@ -1,5 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { Http, Headers } from '@angular/http';
+import { Store } from '@ngrx/store';
+import 'rxjs/add/operator/filter';
 import { Observable } from 'rxjs/Observable';
 import { IFormConfig } from '../lib/configuratble-form/configurable-form.interfaces';
 
@@ -16,12 +18,24 @@ export class AppComponent {
         selectCity: Observable<{ cityId: number; cityName: string }[]>,
         country: Observable<{ name: string; population: string, flag: string }[]>
     };
+    formSlot: string = "formSlot";
+    currentValue$: Observable<any>;
 
-    constructor(private _http: Http) {
-        this.config = this._http.get(
+    constructor(private _http: Http, private _store: Store<any>) {
+
+        this._http.get(
             '/assets/first-form.config.json',
             {headers: new Headers({'Content-Type': 'application/json'})}
-        ).map(r => r.json());
+        ).map(r => r.json())
+            .subscribe(value => {
+                this._store.dispatch({
+                    type: "CONFIGURATION_CHANGE",
+                    payload: {
+                        "formName": this.formSlot,
+                        "configuration": value
+                    }
+                });
+            });
         this.dataProviders = {
             'selectCity': Observable.of([
                 {
@@ -64,5 +78,44 @@ export class AppComponent {
                 }
             ])
         };
+
+        this._store.select((state) => {
+            if (state && state.simpleFormReducer && state.simpleFormReducer[this.formSlot] && state.simpleFormReducer[this.formSlot]["configuration"]) {
+                return state.simpleFormReducer[this.formSlot]["configuration"];
+            }
+            return null;
+        }).filter(v => !!v)
+            .subscribe(v => {
+                this.config = v;
+            });
+        this._store.select((state) => {
+            if (state && state.simpleFormReducer && state.simpleFormReducer[this.formSlot] && state.simpleFormReducer[this.formSlot]["value"]) {
+                return state.simpleFormReducer[this.formSlot]["value"];
+            }
+            return null;
+        }).filter(v => !!v)
+            .subscribe(v => {
+                this.currentValue$ = v;
+            });
+    }
+
+    handleConfigChange(event) {
+        this._store.dispatch({
+            type: "CONFIGURATION_CHANGE",
+            payload: {
+                "formName": this.formSlot,
+                "configuration": event
+            }
+        });
+    }
+
+    handleValueChange(event) {
+        this._store.dispatch({
+            type: "VALUE_CHANGE",
+            payload: {
+                "formName": this.formSlot,
+                "value": event
+            }
+        });
     }
 }
