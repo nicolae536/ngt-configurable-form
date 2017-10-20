@@ -22,7 +22,7 @@ export const elementWrapperError = {
             throw new Error(elementErrorMessages.invalidConfig + ', ' + JSON.stringify(elment));
         }
 
-        if (!elementDataProvider) {
+        if (!elementDataProvider && !Array.isArray(elment.selectConfig.optionsList)) {
             throw new Error(elementErrorMessages.invalidDataProvider + ', ' + JSON.stringify(elment));
         }
 

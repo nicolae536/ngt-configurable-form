@@ -41,7 +41,7 @@ export class ConfigurableFormService {
         ));
     }
 
-    unWrapFormValue(ngFormGroup: FormGroup): { formValue: any, formValidity: Dictionary<boolean> } {
+    unWrapFormValue(ngFormGroup: FormGroup): { formValue: Dictionary<any>, formValidity: Dictionary<boolean> } {
         const formValue = ngFormGroup.getRawValue();
         const formValidity = {};
 

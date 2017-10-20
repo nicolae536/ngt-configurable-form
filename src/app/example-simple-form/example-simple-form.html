@@ -4,6 +4,10 @@
                            [fieldsDataProviders]="dataProviders"
                            [updateValues]="currentValue$"
                            (onConfigurationChange)="handleConfigChange($event)"
-                           (onValueChange)="handleValueChange($event)">
+                           (onValueChange)="handleValueChange($event)"
+                           (onValidityChange)="handleValidityChange($event)">
     </ngt-configurable-form>
+    <div class="middle-button">
+    <button mat-raised-button [disabled]="!isValid">Submit</button>
+    </div>
 </div>

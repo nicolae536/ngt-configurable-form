@@ -19,11 +19,15 @@ export class ExampleSimpleFormComponent {
     };
     formSlot: string = "formSlot";
     currentValue$: Observable<any>;
+    isValid: boolean;
 
     constructor(private _http: Http, private _store: Store<any>) {
 
+        let testData = '/assets/first-form.config.json';
+        let testDataReq = '/assets/layout-examples/registration-1.json';
+
         this._http.get(
-            '/assets/first-form.config.json',
+            testDataReq,
             {headers: new Headers({'Content-Type': 'application/json'})}
         ).map(r => r.json())
             .subscribe(value => {
@@ -62,6 +66,10 @@ export class ExampleSimpleFormComponent {
                 "value": event
             }
         });
+    }
+
+    handleValidityChange(event) {
+        this.isValid = event;
     }
 
     private setValuesSubscription() {

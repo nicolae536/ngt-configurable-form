@@ -9,6 +9,7 @@
     </div>
     <div *ngFor="let rowConfig of formStaticConfig.groupElements"
          class="ngt-group-wrapper"
+         [ngClass]="rowConfig?.classMap"
          [class.ngt-card]="!rowConfig.wrapInExpansionPane && rowConfig.addCardClass">
         <ng-template [ngIf]="rowConfig.wrapInExpansionPane">
             <mat-expansion-panel>

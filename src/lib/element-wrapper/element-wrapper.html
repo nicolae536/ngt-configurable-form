@@ -2,7 +2,7 @@
      class="ngt-element-wrapper">
     <ng-template [ngIf]="matInputContainerElements[currentElement.type] && !currentElement.hidden">
         <mat-form-field [ngClass]="currentElement?.class"
-                        [attr.e2e-name]="formSlot + currentElement.name">
+                        [attr.e2e-name]="formName + currentElement.name">
             <input *ngIf="currentElement.type !== 'textarea'"
                    matInput
                    [type]="currentElement.type === 'text' || currentElement.type === 'email' ? 'text': currentElement.type"
@@ -40,13 +40,14 @@
 
     <ng-template [ngIf]="currentElement.type === 'select' && !currentElement.hidden">
         <mat-form-field [ngClass]="currentElement?.class"
-                        [attr.e2e-name]="formSlot + currentElement.name">
+                        [attr.e2e-name]="formName + currentElement.name">
             <mat-select *ngIf="isSelectConfigurationValid(currentElement)"
                         [placeholder]="currentElement.placeholder"
                         [formControlName]="currentElement.name">
-                <mat-option *ngFor="let option of elementDataProvider | async"
-                            [ngClass]="currentElement?.selectConfig?.optionClassMap"
-                            [value]="option[currentElement?.selectConfig?.valueField]">
+                <mat-option
+                        *ngFor="let option of (elementDataProvider ? (elementDataProvider | async) : currentElement?.selectConfig?.optionsList)"
+                        [ngClass]="currentElement?.selectConfig?.optionClassMap"
+                        [value]="option[currentElement?.selectConfig?.valueField]">
                     <span *ngFor="let visibleKey of currentElement?.selectConfig?.visibleProps">
                         {{option[visibleKey]}}
                     </span>
@@ -65,7 +66,7 @@
                         [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid)">
             <mat-checkbox [required]="currentElement.required"
-                          [attr.e2e-name]="formSlot + currentElement.name"
+                          [attr.e2e-name]="formName + currentElement.name"
                           [formControlName]="currentElement.name">
                 {{currentElement.placeholder}}
             </mat-checkbox>
@@ -84,7 +85,7 @@
             parentFormGroup?.get(currentElement.name)?.invalid)">
             <mat-radio-group [required]="currentElement.required"
                              [formControlName]="currentElement.name">
-                <mat-radio-button [attr.e2e-name]="formSlot + currentElement.name + i"
+                <mat-radio-button [attr.e2e-name]="formName + currentElement.name + i"
                                   *ngFor="let radio of currentElement.radioElements; let i = index"
                                   [value]="radio.value"
                                   [checked]="radio.checked">
@@ -104,7 +105,7 @@
                         [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid)">
             <mat-slide-toggle [required]="currentElement.required"
-                              [attr.e2e-name]="formSlot + currentElement.name"
+                              [attr.e2e-name]="formName + currentElement.name"
                               [formControlName]="currentElement.name">
                 {{currentElement.placeholder}}
             </mat-slide-toggle>
@@ -117,7 +118,7 @@
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'datepicker' && !currentElement.hidden">
-        <mat-form-field [attr.e2e-name]="formSlot + currentElement.name"
+        <mat-form-field [attr.e2e-name]="formName + currentElement.name"
                         [ngClass]="currentElement?.class">
             <input matInput
                    type="text"
@@ -169,7 +170,7 @@
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'autocomplete' && !currentElement.hidden">
-        <mat-form-field [attr.e2e-name]="formSlot + currentElement.name"
+        <mat-form-field [attr.e2e-name]="formName + currentElement.name"
                         [ngClass]="currentElement?.class">
             <input matInput
                    type="text"

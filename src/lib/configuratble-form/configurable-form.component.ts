@@ -49,10 +49,10 @@ export class ConfigurableFormComponent implements OnDestroy {
         this.subscribeToConfig(config$);
     }
 
-    @Output() onValueChange: EventEmitter<any> = new EventEmitter<any>();
-    @Output() onConfigurationChange: EventEmitter<any> = new EventEmitter<any>();
-    @Output() onValidityChange: EventEmitter<any> = new EventEmitter<any>();
-
+    @Output() onValueChange: EventEmitter<Dictionary<any>> = new EventEmitter<Dictionary<any>>();
+    @Output() onConfigurationChange: EventEmitter<IFormConfig> = new EventEmitter<IFormConfig>();
+    @Output() onValidityMapChange: EventEmitter<Dictionary<boolean>> = new EventEmitter<Dictionary<boolean>>();
+    @Output() onValidityChange: EventEmitter<boolean> = new EventEmitter<boolean>();
     renderedFormStaticConfig: BehaviorSubject<IFormConfig> = new BehaviorSubject(null);
 
     ngFormGroup: FormGroup = null;
@@ -164,7 +164,8 @@ export class ConfigurableFormComponent implements OnDestroy {
                 .subscribe(value => {
                     // console.info("Values change", JSON.parse(JSON.stringify(value.formValue)));
                     this.onValueChange.emit(value.formValue);
-                    this.onValidityChange.emit(value.formValidity);
+                    this.onValidityMapChange.emit(value.formValidity);
+                    this.onValidityChange.emit(this.ngFormGroup.valid);
                 })
         )
         ;

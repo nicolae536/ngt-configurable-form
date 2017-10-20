@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { simpleFormReducer } from './simpleForm.reducer';
 import { ExampleSimpleFormComponent } from './example-simple-form/example-simple-form.component';
 import { AppRoutingModule } from './app-routing.module';
+import { MatButtonModule } from '@angular/material';
 
 @NgModule({
     declarations: [
@@ -21,6 +22,7 @@ import { AppRoutingModule } from './app-routing.module';
         BrowserAnimationsModule,
         HttpModule,
         AppRoutingModule,
+        MatButtonModule,
         ConfigurableFormComponentModule.provideForm(),
         StoreModule.forRoot({
             simpleFormReducer: simpleFormReducer

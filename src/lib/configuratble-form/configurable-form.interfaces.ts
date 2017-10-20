@@ -48,7 +48,7 @@ export interface IElementCustomConfig {
 export interface IElementBase {
     name: string; // unique name
     required: boolean;
-    class: string;
+    class: Dictionary<boolean>;
     type: string;
     placeholder: string;
     showTooltip?: boolean;
@@ -95,6 +95,7 @@ export interface IMatSelectElement {
         valueField: string;
         visibleProps: string[];
         optionClassMap?: Dictionary<string>;
+        optionsList: any[];
         updateProperties?: Dictionary<string>;
     };
 }
