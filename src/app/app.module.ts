@@ -8,15 +8,19 @@ import { ConfigurableFormComponentModule } from '../lib/configuratble-form/confi
 
 import { AppComponent } from './app.component';
 import { simpleFormReducer } from './simpleForm.reducer';
+import { ExampleSimpleFormComponent } from './example-simple-form/example-simple-form.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        ExampleSimpleFormComponent
     ],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
         HttpModule,
+        AppRoutingModule,
         ConfigurableFormComponentModule.provideForm(),
         StoreModule.forRoot({
             simpleFormReducer: simpleFormReducer

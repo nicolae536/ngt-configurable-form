@@ -1,0 +1,9 @@
+<h2>Form example: </h2>
+<div class="mat-dialog-container">
+    <ngt-configurable-form [formConfig]="config"
+                           [fieldsDataProviders]="dataProviders"
+                           [updateValues]="currentValue$"
+                           (onConfigurationChange)="handleConfigChange($event)"
+                           (onValueChange)="handleValueChange($event)">
+    </ngt-configurable-form>
+</div>

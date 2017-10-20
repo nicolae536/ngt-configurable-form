@@ -160,8 +160,9 @@
                                         "linkedElement": "selectCity",
                                         "expectedValue": 0,
                                         "configurationChange": {
-                                            "hidden": true,
-                                            "size": 0
+                                            "hidden": false,
+                                            "disabled": false,
+                                            "size": 1
                                         }
                                     },
                                     {
@@ -170,6 +171,7 @@
                                         "configurationChange": {
                                             "type": "textarea",
                                             "hidden": false,
+                                            "disabled": true,
                                             "value": "hue hue",
                                             "size": 1
                                         }

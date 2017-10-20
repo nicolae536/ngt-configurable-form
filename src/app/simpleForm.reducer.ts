@@ -11,7 +11,6 @@ export interface ISimplePayload {
     validity: any;
 }
 
-
 export function simpleFormReducer(state: any, action: IAction) {
     if (!state) {
         state = {};
@@ -19,17 +18,17 @@ export function simpleFormReducer(state: any, action: IAction) {
 
     switch (action.type) {
         case "CONFIGURATION_CHANGE":
-            return storeConfiguration(state, action.payload);
+            return updateStoreConfiguration(state, action.payload);
         case "VALUE_CHANGE":
-            return storeValueChange(state, action.payload);
+            return updateStoreValueChange(state, action.payload);
         case "VALIDITY_CHANGE":
-            return storeValidityChange(state, action.payload);
+            return updateStoreValidityChange(state, action.payload);
     }
 
     return state;
 }
 
-export function storeConfiguration(state: any, payload: ISimplePayload) {
+export function updateStoreConfiguration(state: any, payload: ISimplePayload) {
     state[payload.formName] = {
         ...state[payload.formName],
         configuration: JSON.parse(JSON.stringify(payload.configuration)),
@@ -37,7 +36,7 @@ export function storeConfiguration(state: any, payload: ISimplePayload) {
     return {...state};
 }
 
-export function storeValueChange(state: any, payload: ISimplePayload) {
+export function updateStoreValueChange(state: any, payload: ISimplePayload) {
     state[payload.formName] = {
         ...state[payload.formName],
         value: {...payload.value}
@@ -45,7 +44,7 @@ export function storeValueChange(state: any, payload: ISimplePayload) {
     return {...state};
 }
 
-export function storeValidityChange(state: any, payload: ISimplePayload) {
+export function updateStoreValidityChange(state: any, payload: ISimplePayload) {
     state[payload.formName] = {
         ...state[payload.formName],
         validity: JSON.parse(JSON.stringify(payload.validity))

@@ -18,7 +18,7 @@ export class ConfigurableFormService {
         }
         this.flattenControlsAndBuildGroup(initialFormConfig, ngFormControls, flattenConfigRef);
         const formGroup = new FormGroup(ngFormControls);
-        if(latestFormValue) {
+        if (latestFormValue) {
             formGroup.patchValue(latestFormValue, {
                 onlySelf: true,
                 emitEvent: false
@@ -70,6 +70,9 @@ export class ConfigurableFormService {
                     }
 
                     ngFormControls[lineElem.name] = new FormControl(lineElem.value);
+                    lineElem.disabled
+                        ? ngFormControls[lineElem.name].disable({emitEvent: false, onlySelf: true})
+                        : ngFormControls[lineElem.name].enable({emitEvent: false, onlySelf: true});
                     flattenConfigRef.set(lineElem.name, lineElem);
                 });
             });

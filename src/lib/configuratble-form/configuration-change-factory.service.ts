@@ -56,7 +56,7 @@ export class ConfigurationChangeFactoryService {
      * @param {IElementConfig} newElConfig
      */
     updateElementValidation(ngFormControls: FormGroup, newElConfig: IElementConfig) {
-        if (newElConfig.hidden) {
+        if (newElConfig.hidden || newElConfig.disabled) {
             const control = ngFormControls.get(newElConfig.name);
             control.validator = () => null;
             control.updateValueAndValidity({onlySelf: false, emitEvent: false});
@@ -218,6 +218,10 @@ export class ConfigurationChangeFactoryService {
         if (elementValue !== undefined) {
             ngFormControls.get(payload.element.name).setValue(elementValue, {onlySelf: true, emitEvent: false});
         }
+
+        newElConfig.disabled
+            ? ngFormControls.get(newElConfig.name).disable({onlySelf: true, emitEvent: false})
+            : ngFormControls.get(newElConfig.name).enable({onlySelf: true, emitEvent: false});
     }
 
     private findInConfig(currentConfig: IFormConfig,
