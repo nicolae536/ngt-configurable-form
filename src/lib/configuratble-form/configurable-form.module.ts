@@ -9,6 +9,7 @@ import { ConfigurableFormService } from './configurable-form.service';
 import { ConfigurationChangeFactoryService } from './configuration-change-factory.service';
 import { IValidationFactory } from './validation-factory.interface';
 import { ValidationFactoryService } from './validation-factory.service';
+import { ExpansionPanelToggleDirective } from '../expansion-panel-toggle/expansion-panel-toggle.directive';
 
 export const VALIDATION_FACTORY = new InjectionToken<IValidationFactory>('Token ngt-configurable-form/validation-factory');
 
@@ -39,7 +40,7 @@ export function provideForm(validationFactory: () => IValidationFactory): any[] 
         FormElementsComponentModule
     ],
     exports: [ConfigurableFormComponent],
-    declarations: [ConfigurableFormComponent],
+    declarations: [ConfigurableFormComponent, ExpansionPanelToggleDirective],
     providers: [],
 })
 export class ConfigurableFormComponentModule {

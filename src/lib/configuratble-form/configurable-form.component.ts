@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter, HostListener } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/debounceTime';
@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-import { IFormConfig, IElementConfig, IMappedFormConfig, Dictionary } from './configurable-form.interfaces';
+import { IFormConfig, IElementConfig, IMappedFormConfig, Dictionary, IGroupElementsConfig } from './configurable-form.interfaces';
 import { ConfigurableFormService } from './configurable-form.service';
 import { ConfigurationChangeFactoryService } from './configuration-change-factory.service';
 
@@ -63,6 +63,7 @@ export class ConfigurableFormComponent implements OnDestroy {
 
     private _subscriptions$: Subscription[] = [];
     private _lastValueFromParent: Object;
+    private _isBrowserEvent: boolean;
 
     constructor(private _configurableForm: ConfigurableFormService,
                 private _configurationChangeFactory: ConfigurationChangeFactoryService) {
@@ -72,13 +73,28 @@ export class ConfigurableFormComponent implements OnDestroy {
         this._subscriptions$.forEach(sub => sub.unsubscribe());
     }
 
+    handleTogglePanel(rowConfig: IGroupElementsConfig, event) {
+        this._isBrowserEvent = true;
+        rowConfig.isPanelOpened = event;
+        this.onConfigurationChange.emit(this.renderedFormStaticConfig.value);
+    }
+
+    @HostListener('click', ['$event'])
+    @HostListener('keydown', ['$event'])
+    @HostListener('keyup', ['$event'])
+    @HostListener('keypress', ['$event'])
+    @HostListener('paste', ['$event'])
+    handleEvent(event) {
+        this._isBrowserEvent = true;
+    }
+
     private subscribeToConfig(config$: Observable<IFormConfig> | IFormConfig) {
-        if (this._subscriptions$) {
-            this._subscriptions$.forEach(v => v.unsubscribe());
+        if (!config$ || this.checkBrowserEvent()) {
+            return;
         }
 
-        if (!config$) {
-            return;
+        if (this._subscriptions$) {
+            this._subscriptions$.forEach(v => v.unsubscribe());
         }
 
         if (!(config$ instanceof Observable)) {
@@ -106,6 +122,10 @@ export class ConfigurableFormComponent implements OnDestroy {
         }
 
         this._lastValueFromParent = values;
+
+        if (this.checkBrowserEvent()) {
+            return;
+        }
         this.patchFormValue(values);
     }
 
@@ -133,33 +153,38 @@ export class ConfigurableFormComponent implements OnDestroy {
             this.ngFormGroup
                 .valueChanges
                 .debounceTime(0)
+                .do(() => this._isBrowserEvent = true)
                 .map(v => this._configurationChangeFactory.stabilizeConfigurationStructure(
                     this.renderedFormStaticConfig.value,
                     this.flattenConfigRef,
                     this.ngFormGroup
                 ))
-                .do((configChanged) => {
-                    if (configChanged) {
-                        // console.info("Configuration change", JSON.parse(JSON.stringify(configChanged)));
-                        this.renderedFormStaticConfig.next(configChanged);
-                        this.onConfigurationChange.emit(configChanged);
-                    }
-                })
+                .do((newConfig) => this.emitNewConfigIfValid(newConfig))
                 .map(v => this._configurableForm.unWrapFormValue(this.ngFormGroup))
                 .subscribe(value => {
                     // console.info("Values change", JSON.parse(JSON.stringify(value.formValue)));
                     this.onValueChange.emit(value.formValue);
                     this.onValidityChange.emit(value.formValidity);
                 })
-        );
+        )
+        ;
     }
 
-    stopEvent(event: MouseEvent | KeyboardEvent) {
-        if (!event) {
+    private emitNewConfigIfValid(newConfig) {
+        if (!newConfig) {
             return;
         }
 
-        event.preventDefault();
-        event.stopPropagation();
+        this.renderedFormStaticConfig.next(newConfig);
+        this.onConfigurationChange.emit(newConfig);
+    }
+
+    private checkBrowserEvent(): boolean {
+        if (this._isBrowserEvent) {
+            setTimeout(() => this._isBrowserEvent = false);
+            return true;
+        }
+
+        return false;
     }
 }

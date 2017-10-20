@@ -21,9 +21,7 @@ import { simpleFormReducer } from './simpleForm.reducer';
         StoreModule.forRoot({
             simpleFormReducer: simpleFormReducer
         }),
-        StoreDevtoolsModule.instrument({
-            maxAge: 25 //  Retains last 25 states
-        })
+        StoreDevtoolsModule.instrument()
     ],
     providers: [],
     bootstrap: [AppComponent]
