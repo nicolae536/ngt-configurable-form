@@ -11,7 +11,7 @@
          class="ngt-group-wrapper"
          [class.ngt-card]="!rowConfig.wrapInExpansionPane && rowConfig.addCardClass">
         <ng-template [ngIf]="rowConfig.wrapInExpansionPane">
-            <mat-expansion-panel>
+            <mat-expansion-panel [expanded]="rowConfig?.isPanelOpened">
                 <mat-expansion-panel-header>
                     <mat-panel-title class="ngt-group-title">
                         {{rowConfig.title}}

@@ -19,4 +19,12 @@ ngt-configurable-form {
         font-size: 15px;
         font-weight: 400;
     }
+
+    .ngt-overlay {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
 }

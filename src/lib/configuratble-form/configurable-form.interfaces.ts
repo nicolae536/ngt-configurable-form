@@ -7,7 +7,7 @@ import { FormGroup } from '@angular/forms';
 
 export interface IFormConfig {
     name: string; // unique identifier
-    groupElements: IRowElementsConfig[];
+    groupElements: IGroupElementsConfig[];
     addCardClass: boolean;
 }
 
@@ -15,7 +15,7 @@ export interface Dictionary<T> {
     [index: string]: T;
 }
 
-export interface IRowElementsConfig {
+export interface IGroupElementsConfig {
     classMap: Dictionary<boolean>;
     elements: IGroupElementConfig[];
     name: string;
@@ -23,6 +23,7 @@ export interface IRowElementsConfig {
     addCardClass?: boolean;
     title?: string;
     description: string;
+    isPanelOpened: boolean;
 }
 
 export interface IGroupElementConfig {
@@ -119,9 +120,9 @@ export interface IMappedFormConfig {
 export interface IFoundElementParams {
     index: number;
     element: IElementConfig;
-    group: IRowElementsConfig;
+    group: IGroupElementsConfig;
     lineIndex: number;
-    parentElementArray: IElementConfig[] | IRowElementsConfig[];
+    parentElementArray: IElementConfig[] | IGroupElementsConfig[];
 }
 
 export interface IElementChangePayload {

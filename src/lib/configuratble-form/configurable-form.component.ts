@@ -41,13 +41,11 @@ export class ConfigurableFormComponent implements OnDestroy {
 
     @Input()
     set updateValues(values: Object) {
-        console.log(values);
         this.updateFormValues(values);
     }
 
     @Input()
-    set formConfig(config$: Observable<IFormConfig>) {
-        console.log(config$);
+    set formConfig(config$: Observable<IFormConfig> | IFormConfig) {
         this.subscribeToConfig(config$);
     }
 
@@ -74,7 +72,7 @@ export class ConfigurableFormComponent implements OnDestroy {
         this._subscriptions$.forEach(sub => sub.unsubscribe());
     }
 
-    private subscribeToConfig(config$: Observable<IFormConfig>) {
+    private subscribeToConfig(config$: Observable<IFormConfig> | IFormConfig) {
         if (this._subscriptions$) {
             this._subscriptions$.forEach(v => v.unsubscribe());
         }
@@ -84,12 +82,12 @@ export class ConfigurableFormComponent implements OnDestroy {
         }
 
         if (!(config$ instanceof Observable)) {
-            this.setFormConfig(this._configurableForm.parseConfiguration(config$));
+            this.setFormConfig(this._configurableForm.parseConfiguration(config$, this._lastValueFromParent));
             return;
         }
 
         this._subscriptions$.push(config$
-            .map((config: IFormConfig) => this._configurableForm.parseConfiguration(config))
+            .map((config: IFormConfig) => this._configurableForm.parseConfiguration(config, this._lastValueFromParent))
             .subscribe(transformed => {
                 this.setFormConfig(transformed);
             }));
@@ -98,7 +96,6 @@ export class ConfigurableFormComponent implements OnDestroy {
     private setFormConfig(transformed: IMappedFormConfig) {
         this.flattenConfigRef = transformed.flattenConfigRef;
         this.ngFormGroup = transformed.ngFormControls;
-        this.patchFormValue(this._lastValueFromParent);
         this.renderedFormStaticConfig.next(transformed.formConfig);
         this.setValueChangeSubscription();
     }
@@ -155,5 +152,14 @@ export class ConfigurableFormComponent implements OnDestroy {
                     this.onValidityChange.emit(value.formValidity);
                 })
         );
+    }
+
+    stopEvent(event: MouseEvent | KeyboardEvent) {
+        if (!event) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
     }
 }

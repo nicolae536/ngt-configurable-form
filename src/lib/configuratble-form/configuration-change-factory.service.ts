@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import {
-    IElementConfig, IFormConfig, IRowElementsConfig, IElementChangePayload, IFoundElementParams
+    IElementConfig, IFormConfig, IGroupElementsConfig, IElementChangePayload, IFoundElementParams
 } from './configurable-form.interfaces';
 import { ValidationFactoryService } from './validation-factory.service';
 
@@ -254,7 +254,7 @@ export class ConfigurationChangeFactoryService {
         }
     }
 
-    private findElement(group: IRowElementsConfig,
+    private findElement(group: IGroupElementsConfig,
                         elementId: string = null,
                         elementCallback: (foundElementParams: IFoundElementParams) => any) {
         if (!elementId) {

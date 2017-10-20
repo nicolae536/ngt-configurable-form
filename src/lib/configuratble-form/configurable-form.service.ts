@@ -9,46 +9,36 @@ export class ConfigurableFormService {
     constructor(private _configurationChangeFactory: ConfigurationChangeFactoryService) {
     }
 
-    parseConfiguration(initialFormConfig: IFormConfig): IMappedFormConfig {
+    parseConfiguration(initialFormConfig: IFormConfig, latestFormValue: Dictionary<any>): IMappedFormConfig {
         const flattenConfigRef = new Map<string, IElementConfig>();
         const ngFormControls: Dictionary<FormControl> = {};
 
         if (!initialFormConfig || !Array.isArray(initialFormConfig.groupElements)) {
             return;
         }
-        initialFormConfig.groupElements.forEach(group => {
-            if (!group || !Array.isArray(group.elements)) {
-                return;
-            }
-
-            group.elements.forEach(elem => {
-                elem.elementsOnLine.forEach(lineElem => {
-                    if (lineElem.type === 'divider') {
-                        return;
-                    }
-
-                    ngFormControls[lineElem.name] = new FormControl(lineElem.value);
-                    flattenConfigRef.set(lineElem.name, lineElem);
-                });
-            });
-        });
-
+        this.flattenControlsAndBuildGroup(initialFormConfig, ngFormControls, flattenConfigRef);
         const formGroup = new FormGroup(ngFormControls);
-        initialFormConfig = this._configurationChangeFactory.stabilizeConfigurationStructure(
-            initialFormConfig,
-            flattenConfigRef,
-            formGroup
-        );
-        flattenConfigRef.forEach(element => this._configurationChangeFactory.updateElementValidation(
-            formGroup,
-            element
-        ));
+        if(latestFormValue) {
+            formGroup.patchValue(latestFormValue, {
+                onlySelf: true,
+                emitEvent: false
+            });
+        }
+        initialFormConfig = this.fetchConfigurationChanges(initialFormConfig, flattenConfigRef, formGroup);
+        this.applyValidationOnControls(flattenConfigRef, formGroup);
 
         return {
             formConfig: initialFormConfig,
             ngFormControls: formGroup,
             flattenConfigRef: flattenConfigRef
         };
+    }
+
+    private applyValidationOnControls(flattenConfigRef: Map<string, IElementConfig>, formGroup: FormGroup) {
+        flattenConfigRef.forEach(element => this._configurationChangeFactory.updateElementValidation(
+            formGroup,
+            element
+        ));
     }
 
     unWrapFormValue(ngFormGroup: FormGroup): { formValue: any, formValidity: Dictionary<boolean> } {
@@ -65,5 +55,36 @@ export class ConfigurableFormService {
             formValidity,
             formValue
         };
+    }
+
+    private flattenControlsAndBuildGroup(initialFormConfig: IFormConfig, ngFormControls: Dictionary<FormControl>, flattenConfigRef: Map<string, IElementConfig>) {
+        initialFormConfig.groupElements.forEach(group => {
+            if (!group || !Array.isArray(group.elements)) {
+                return;
+            }
+
+            group.elements.forEach(elem => {
+                elem.elementsOnLine.forEach(lineElem => {
+                    if (lineElem.type === 'divider') {
+                        return;
+                    }
+
+                    ngFormControls[lineElem.name] = new FormControl(lineElem.value);
+                    flattenConfigRef.set(lineElem.name, lineElem);
+                });
+            });
+        });
+    }
+
+    private fetchConfigurationChanges(initialFormConfig: IFormConfig, flattenConfigRef: Map<string, IElementConfig>, formGroup: FormGroup) {
+        let newConfig = this._configurationChangeFactory.stabilizeConfigurationStructure(
+            initialFormConfig,
+            flattenConfigRef,
+            formGroup
+        );
+        if (newConfig) {
+            initialFormConfig = newConfig;
+        }
+        return initialFormConfig;
     }
 }
