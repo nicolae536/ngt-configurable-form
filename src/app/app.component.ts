@@ -1,9 +1,5 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { Http, Headers } from '@angular/http';
-import { Store } from '@ngrx/store';
 import 'rxjs/add/operator/filter';
-import { Observable } from 'rxjs/Observable';
-import { IFormConfig } from '../lib/configuratble-form/configurable-form.interfaces';
 
 @Component({
     selector: 'app-root',
@@ -13,5 +9,4 @@ import { IFormConfig } from '../lib/configuratble-form/configurable-form.interfa
 })
 export class AppComponent {
     title = 'app';
-
 }

@@ -1,14 +1,25 @@
 import { NgModule } from '@angular/core';
 
 import { RouterModule } from '@angular/router';
-import { ExampleSimpleFormComponent } from './example-simple-form/example-simple-form.component';
+import { ExampleSimpleFormComponent } from './layout-example/layout-example';
+import { ReduxFormComponent } from './redux-integration/redux.component';
 
 @NgModule({
     imports: [
-        RouterModule.forRoot([{
-            path: "simple-example",
-            component: ExampleSimpleFormComponent
-        }])
+        RouterModule.forRoot([
+            {
+                path: 'layout-example',
+                component: ExampleSimpleFormComponent
+            },
+            {
+                path: 'redux-example',
+                component: ReduxFormComponent
+            },
+            {
+                path: 'redu1x-example',
+                component: ExampleSimpleFormComponent
+            }
+        ])
     ],
     exports: [RouterModule],
 })

@@ -28,6 +28,7 @@
                                    [formName]="formStaticConfig.name"
                                    [parentFormGroup]="ngFormGroup"
                                    [outsideDataProviders]="outsideDataProviders"
+                                   [outsideSharedData]="outsideSharedData"
                                    [elements]="rowElements.elementsOnLine">
                 </ngt-form-elements>
             </mat-expansion-panel>
@@ -43,6 +44,7 @@
             <ngt-form-elements *ngFor="let rowElements of rowConfig.elements"
                                [formName]="formStaticConfig.name"
                                [parentFormGroup]="ngFormGroup"
+                               [outsideSharedData]="outsideSharedData"
                                [outsideDataProviders]="outsideDataProviders"
                                [elements]="rowElements.elementsOnLine">
             </ngt-form-elements>

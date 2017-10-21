@@ -1,4 +1,6 @@
-import { Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter, HostListener } from '@angular/core';
+import {
+    Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter, HostListener, ChangeDetectionStrategy
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/debounceTime';
@@ -19,11 +21,12 @@ import { ConfigurationChangeFactoryService } from './configuration-change-factor
     templateUrl: 'configurable-form.html',
     styleUrls: ['./configurable-form.scss'],
     encapsulation: ViewEncapsulation.None,
-    // changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfigurableFormComponent implements OnDestroy {
     @HostBinding('class.ngt-component') isNgtComponent = true;
 
+    // Not used planned for connecting data from outside
     @Input()
     set sharedData(data: Dictionary<any>) {
         this.outsideSharedData = data;
@@ -36,7 +39,7 @@ export class ConfigurableFormComponent implements OnDestroy {
 
     @Input()
     set fieldsListenersMap(listeners: Dictionary<Subject<any>>) {
-        this.outsideDataListener = listeners;
+        this.outsideDataListeners = listeners;
     }
 
     @Input()
@@ -59,9 +62,10 @@ export class ConfigurableFormComponent implements OnDestroy {
     flattenConfigRef: Map<string, IElementConfig> = new Map<string, IElementConfig>();
     outsideSharedData: Dictionary<any>;
     outsideDataProviders: Dictionary<Observable<any>>;
-    outsideDataListener: Dictionary<Subject<any>>;
+    outsideDataListeners: Dictionary<Subject<any>>;
 
     private _subscriptions$: Subscription[] = [];
+    private _lastEmittedValue: any;
     private _lastValueFromParent: Object;
     private _isBrowserEvent: boolean;
 
@@ -138,7 +142,7 @@ export class ConfigurableFormComponent implements OnDestroy {
             onlySelf: true,
             emitEvent: false
         });
-        let configChanged = this._configurationChangeFactory.stabilizeConfigurationStructure(
+        const configChanged = this._configurationChangeFactory.stabilizeConfigurationStructure(
             this.renderedFormStaticConfig.value,
             this.flattenConfigRef,
             this.ngFormGroup
@@ -166,9 +170,9 @@ export class ConfigurableFormComponent implements OnDestroy {
                     this.onValueChange.emit(value.formValue);
                     this.onValidityMapChange.emit(value.formValidity);
                     this.onValidityChange.emit(this.ngFormGroup.valid);
+                    this.emitValueToListenersMap(value.formValue);
                 })
-        )
-        ;
+        );
     }
 
     private emitNewConfigIfValid(newConfig) {
@@ -187,5 +191,19 @@ export class ConfigurableFormComponent implements OnDestroy {
         }
 
         return false;
+    }
+
+    private emitValueToListenersMap(formValue: Dictionary<any>) {
+        if (!this.outsideDataListeners) {
+            return;
+        }
+
+        for (const key in this.outsideDataListeners) {
+            if (formValue[key] !== this._lastValueFromParent[key]) {
+                this.outsideDataListeners[key].next(formValue[key]);
+            }
+        }
+
+        this._lastValueFromParent = formValue;
     }
 }

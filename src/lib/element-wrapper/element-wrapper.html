@@ -86,7 +86,8 @@
             <mat-radio-group [required]="currentElement.required"
                              [formControlName]="currentElement.name">
                 <mat-radio-button [attr.e2e-name]="formName + currentElement.name + i"
-                                  *ngFor="let radio of currentElement.radioElements; let i = index"
+                                  *ngFor="let radio of (elementDataProvider ? (elementDataProvider | async)
+                                                                            : currentElement.radioElements); let i = index"
                                   [value]="radio.value"
                                   [checked]="radio.checked">
                     {{radio.label}}
@@ -200,10 +201,10 @@
                 {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
             <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let option of elementDataProvider | async"
-                            [ngClass]="currentElement?.selectConfig?.optionClassMap"
-                            [value]="option[currentElement?.selectConfig?.valueField]"
-                            (click)="patchElementsValues(option, currentElement.updateFields)">
+                <mat-option
+                        *ngFor="let option of (elementDataProvider ? (elementDataProvider | async) : currentElement?.selectConfig?.optionsList)"
+                        [ngClass]="currentElement?.selectConfig?.optionClassMap"
+                        [value]="option[currentElement?.selectConfig?.valueField]">
                     <span *ngFor="let visibleKey of currentElement?.selectConfig?.visibleProps">
                         {{option[visibleKey]}}
                     </span>
@@ -223,5 +224,9 @@
         <div class="ngt-form-divider-element"
              [ngClass]="currentElement?.class">
         </div>
+    </ng-template>
+
+    <ng-template [ngIf]="currentElement.type === 'custom-element' && !currentElement.hidden">
+        <!--<ng-template [ngTemplateOutlet]=""></ng-template>-->
     </ng-template>
 </div>

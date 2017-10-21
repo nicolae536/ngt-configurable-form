@@ -1,4 +1,4 @@
-//ngt-form-reducer
+// ngt-form-reducer
 
 import { Action } from '@ngrx/store';
 
@@ -19,11 +19,11 @@ export function simpleFormReducer(state: any, action: IAction) {
     }
 
     switch (action.type) {
-        case "CONFIGURATION_CHANGE":
+        case 'CONFIGURATION_CHANGE':
             return updateStoreConfiguration(state, action.payload);
-        case "VALUE_CHANGE":
+        case 'VALUE_CHANGE':
             return updateStoreValueChange(state, action.payload);
-        case "VALIDITY_CHANGE":
+        case 'VALIDITY_CHANGE':
             return updateStoreValidityChange(state, action.payload);
     }
 

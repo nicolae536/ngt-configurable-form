@@ -7,15 +7,17 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { ConfigurableFormComponentModule } from '../lib/configuratble-form/configurable-form.module';
 
 import { AppComponent } from './app.component';
-import { simpleFormReducer } from './simpleForm.reducer';
-import { ExampleSimpleFormComponent } from './example-simple-form/example-simple-form.component';
+import { simpleFormReducer } from './redux-integration/simpleForm.reducer';
+import { ExampleSimpleFormComponent } from './layout-example/layout-example';
 import { AppRoutingModule } from './app-routing.module';
 import { MatButtonModule } from '@angular/material';
+import { ReduxFormComponent } from './redux-integration/redux.component';
 
 @NgModule({
     declarations: [
         AppComponent,
-        ExampleSimpleFormComponent
+        ExampleSimpleFormComponent,
+        ReduxFormComponent
     ],
     imports: [
         BrowserModule,

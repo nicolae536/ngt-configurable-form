@@ -18,7 +18,6 @@ export class ElementWrapperComponent {
     @Input() parentFormGroup: FormGroup;
     @Input() elementDataProvider: Observable<any>;
     @Input() currentElement: IElementConfig;
-    @Input() currentFormValue: Dictionary<any>;
     @Input() outsideSharedData: Dictionary<any>;
     @Input() outsideDataProviders: Dictionary<Observable<any>>;
 

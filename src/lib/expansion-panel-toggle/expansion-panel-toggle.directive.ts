@@ -23,8 +23,8 @@ export class ExpansionPanelToggleDirective {
             return;
         }
 
-        let panelState = this._matExpansionPanel._getExpandedState();
-        let newState = this.toPanelState(state);
+        const panelState = this._matExpansionPanel._getExpandedState();
+        const newState = this.toPanelState(state);
 
         if (newState === panelState) {
             return;
@@ -40,7 +40,7 @@ export class ExpansionPanelToggleDirective {
     }
 
     private getExpandedState(): boolean {
-        let panelState = this._matExpansionPanel._getExpandedState()
+        const panelState = this._matExpansionPanel._getExpandedState()
 
         if (panelState === 'expanded') {
             return true;
