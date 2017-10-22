@@ -31,6 +31,12 @@
                             "type": "email",
                             "required": true,
                             "placeholder": "Email Address",
+                            "validation": [
+                                {
+                                    "type": "email",
+                                    "ranking": 1
+                                }
+                            ],
                             "size": 1
                         }
                     ]
@@ -42,6 +48,13 @@
                             "type": "text",
                             "placeholder": "Address",
                             "required": true,
+                            "validation": [
+                                {
+                                    "type": "minLength",
+                                    "staticMetadata": 4,
+                                    "ranking": 1
+                                }
+                            ],
                             "size": 1
                         },
                         {
@@ -82,9 +95,15 @@
                     "elementsOnLine": [
                         {
                             "name": "phone",
-                            "type": "text",
+                            "type": "tel",
                             "placeholder": "Phone",
                             "required": true,
+                            "validation": [
+                                {
+                                    "type": "phone",
+                                    "ranking": 1
+                                }
+                            ],
                             "size": 1
                         },
                         {
@@ -95,6 +114,12 @@
                             "dateConfig": {
                                 "useToggleSuffix": true
                             },
+                            "validation": [
+                                {
+                                    "type": "date",
+                                    "ranking": 1
+                                }
+                            ],
                             "size": 1
                         }
                     ]

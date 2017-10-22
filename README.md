@@ -29,9 +29,8 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## TODO list
 1. Demo case  for simple layout
-2. Demo case for providing data
-3. Demo case for autocomplete with data filtering
-4. Validators demo
+2. Demo case for providing data autocomplete with data filtering
+4. Demo case for validators
 5. Demo case for changing form configuration
 6. Integrate in redux
 2. Find a api to build demos for the module

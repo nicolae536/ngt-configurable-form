@@ -70,8 +70,7 @@
                           [formControlName]="currentElement.name">
                 {{currentElement.placeholder}}
             </mat-checkbox>
-            <mat-error
-                    *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
+            <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
                 {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}

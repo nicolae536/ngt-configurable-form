@@ -9,5 +9,7 @@ export const MAT_INPUT_ELEMENTS = {
     'tel': true,
     'time': true,
     'url': true,
+    'date': true,
+    'datetime-local': true,
     'week': true
 };

@@ -44,7 +44,7 @@ export function provideForm(validationFactory: () => IValidationFactory): any[] 
     providers: [],
 })
 export class ConfigurableFormComponentModule {
-    static provideForm(validationFactory?: () => IValidationFactory): ModuleWithProviders {
+    static forRoot(validationFactory?: () => IValidationFactory): ModuleWithProviders {
         return {
             ngModule: ConfigurableFormComponentModule,
             providers: provideForm(validationFactory)

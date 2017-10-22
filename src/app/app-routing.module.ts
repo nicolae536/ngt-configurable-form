@@ -3,7 +3,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ExampleSimpleFormComponent } from './layout-example/layout-example';
 import { ReduxFormComponent } from './redux-integration/redux.component';
-import { ProvidingDataComponent } from './providing-data/providing-data';
+import { ProvidingDataExampleComponent } from './providing-data-example/providing-data-example';
+import { ValidatorsExampleComponent } from './validators-example/validators-example';
 
 @NgModule({
     imports: [
@@ -13,8 +14,12 @@ import { ProvidingDataComponent } from './providing-data/providing-data';
                 component: ExampleSimpleFormComponent
             },
             {
-                path: 'providing-data',
-                component: ProvidingDataComponent
+                path: 'providing-data-example',
+                component: ProvidingDataExampleComponent
+            },
+            {
+                path: 'validators-example',
+                component: ValidatorsExampleComponent
             },
             {
                 path: 'redux-example',
