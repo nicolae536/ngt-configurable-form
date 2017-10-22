@@ -18,4 +18,16 @@ app-root {
         justify-content: center;
         padding: 15px;
     }
+
+    .inline-element {
+        display: inline-block;
+    }
+
+    .element-spacing {
+        margin: 10px;
+    }
+
+    .left-text {
+        text-align: left;
+    }
 }

@@ -1,0 +1,329 @@
+{
+    "name": "first-form",
+    "groupElements": [
+        {
+            "wrapInExpansionPane": false,
+            "addCardClass": true,
+            "title": "Runner Information",
+            "elements": [
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "name",
+                            "required": true,
+                            "type": "text",
+                            "placeholder": "First Name",
+                            "validation": [
+                                {
+                                    "type": "minLength",
+                                    "staticMetadata": 3,
+                                    "ranking": 1
+                                }
+                            ],
+                            "size": 1
+                        },
+                        {
+                            "name": "lastName",
+                            "required": true,
+                            "type": "text",
+                            "placeholder": "Last name",
+                            "size": 1
+                        },
+                        {
+                            "name": "email",
+                            "type": "email",
+                            "required": true,
+                            "placeholder": "Email Address",
+                            "validation": [
+                                {
+                                    "type": "email",
+                                    "ranking": 1
+                                }
+                            ],
+                            "size": 1
+                        }
+                    ]
+                },
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "phone",
+                            "type": "tel",
+                            "placeholder": "Phone",
+                            "required": true,
+                            "validation": [
+                                {
+                                    "type": "phone",
+                                    "ranking": 1
+                                }
+                            ],
+                            "size": 1
+                        },
+                        {
+                            "name": "dateOfBirth",
+                            "type": "datepicker",
+                            "placeholder": "Date of birth",
+                            "required": true,
+                            "dateConfig": {
+                                "useToggleSuffix": true
+                            },
+                            "validation": [
+                                {
+                                    "type": "date",
+                                    "ranking": 1
+                                }
+                            ],
+                            "size": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "wrapInExpansionPane": true,
+            "title": "Address",
+            "description": "Current address",
+            "elements": [
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "address",
+                            "type": "text",
+                            "placeholder": "Address",
+                            "required": true,
+                            "validation": [
+                                {
+                                    "type": "minLength",
+                                    "staticMetadata": 4,
+                                    "ranking": 1
+                                }
+                            ],
+                            "size": 1
+                        }
+                    ]
+                },
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "city",
+                            "type": "autocomplete",
+                            "placeholder": "City",
+                            "selectConfig": {
+                                "valueField": "city",
+                                "visibleProps": [
+                                    "city",
+                                    "population"
+                                ]
+                            },
+                            "required": true,
+                            "size": 1
+                        },
+                        {
+                            "name": "state",
+                            "type": "text",
+                            "placeholder": "State",
+                            "required": true,
+                            "size": 1
+                        }
+                    ]
+                },
+                {
+                    "elementsOnLine":[
+                        {
+                            "name": "detailiatedAddress",
+                            "type": "slidetoggle",
+                            "placeholder": "Detaliated address",
+                            "size": 1
+                        }
+                    ]
+                },
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "street",
+                            "required": true,
+                            "type": "text",
+                            "placeholder": "Street",
+                            "configurationChangeMap": {
+                                "defaultConfig": {
+                                    "hidden": true,
+                                    "size": 0
+                                },
+                                "configurationChange": [
+                                    {
+                                        "linkedElement": "detailiatedAddress",
+                                        "expectedValue": true,
+                                        "configurationChange": {
+                                            "hidden": false,
+                                            "size": 1
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "streetNumber",
+                            "required": true,
+                            "type": "number",
+                            "placeholder": "Street number",
+                            "configurationChangeMap": {
+                                "defaultConfig": {
+                                    "hidden": true,
+                                    "size": 0
+                                },
+                                "configurationChange": [
+                                    {
+                                        "linkedElement": "detailiatedAddress",
+                                        "expectedValue": true,
+                                        "configurationChange": {
+                                            "hidden": false,
+                                            "size": 1
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "zip",
+                            "type": "text",
+                            "placeholder": "Zip",
+                            "required": true,
+                            "size": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "wrapInExpansionPane": true,
+            "title": "Running experience",
+            "description": "The number of years which you perform running",
+            "elements": [
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "startDt",
+                            "type": "datepicker",
+                            "placeholder": "Start date",
+                            "required": true,
+                            "dateConfig": {
+                                "useToggleSuffix": true
+                            },
+                            "validation": [
+                                {
+                                    "type": "maxDate",
+                                    "staticMetadata": "endDate",
+                                    "ranking": 1
+                                }
+                            ],
+                            "size": 1
+                        },
+                        {
+                            "name": "endDate",
+                            "type": "datepicker",
+                            "required": true,
+                            "dateConfig": {
+                                "useToggleSuffix": true
+                            },
+                            "validation": [
+                                {
+                                    "type": "minDate",
+                                    "staticMetadata": "startDt",
+                                    "ranking": 1
+                                }
+                            ],
+                            "placeholder": "End date",
+                            "size": 1
+                        }
+                    ]
+                },
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "expDescription",
+                            "type": "textarea",
+                            "placeholder": "Short experience description"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "wrapInExpansionPane": false,
+            "title": "Contest registration",
+            "addCardClass": true,
+            "description": "Current contest details",
+            "elements": [
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "gender",
+                            "required": true,
+                            "type": "radiogroup",
+                            "placeholder": "Gender",
+                            "radioElements": [
+                                {
+                                    "label": "Male",
+                                    "value": "m"
+                                },
+                                {
+                                    "label": "Female",
+                                    "value": "f"
+                                }
+                            ],
+                            "size": 1
+                        },
+                        {
+                            "name": "tShirtSize",
+                            "type": "select",
+                            "placeholder": "T-Shirt Size",
+                            "required": true,
+                            "selectConfig": {
+                                "valueField": "id",
+                                "visibleProps": [
+                                    "title"
+                                ],
+                                "optionsList": [
+                                    {
+                                        "title": "Small",
+                                        "id": "s"
+                                    },
+                                    {
+                                        "title": "Medium",
+                                        "id": "m"
+                                    },
+                                    {
+                                        "title": "Large",
+                                        "id": "l"
+                                    },
+                                    {
+                                        "title": "Extra large",
+                                        "id": "xl"
+                                    }
+                                ]
+                            },
+                            "size": 1
+                        },
+                        {
+                            "name": "race",
+                            "required": true,
+                            "type": "radiogroup",
+                            "placeholder": "Chose Race",
+                            "radioElements": [
+                                {
+                                    "label": "5k - $25",
+                                    "value": "smallCache"
+                                },
+                                {
+                                    "label": "10K - $25",
+                                    "value": "aLotOfCache"
+                                }
+                            ],
+                            "size": 1
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -14,7 +14,12 @@ import { ProvidingDataExampleComponent } from './providing-data-example/providin
 import { ReduxFormComponent } from './redux-integration/redux.component';
 import { simpleFormReducer } from './redux-integration/simpleForm.reducer';
 import { CustomValidationFactory } from './validators-example/custom-validation-factory';
-import { ValidatorsExampleComponent } from './validators-example/validators-example';
+import { ValidatorsExampleComponent } from './validators-example/validators-example.component';
+import { ConfigurationChangeComponent } from './configuration-change/configuration-change';
+
+export function createValidationFactory() {
+    return new CustomValidationFactory();
+}
 
 @NgModule({
     declarations: [
@@ -22,7 +27,8 @@ import { ValidatorsExampleComponent } from './validators-example/validators-exam
         ExampleSimpleFormComponent,
         ReduxFormComponent,
         ProvidingDataExampleComponent,
-        ValidatorsExampleComponent
+        ValidatorsExampleComponent,
+        ConfigurationChangeComponent
     ],
     imports: [
         BrowserModule,
@@ -30,7 +36,7 @@ import { ValidatorsExampleComponent } from './validators-example/validators-exam
         HttpModule,
         AppRoutingModule,
         MatButtonModule,
-        ConfigurableFormComponentModule.forRoot(() => new CustomValidationFactory()),
+        ConfigurableFormComponentModule.forRoot(createValidationFactory),
         StoreModule.forRoot({
             simpleFormReducer: simpleFormReducer
         }),

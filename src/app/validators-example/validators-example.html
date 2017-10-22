@@ -6,6 +6,8 @@
                            (onValidityChange)="isValid = $event">
     </ngt-configurable-form>
     <div class="middle-button">
-        <button mat-raised-button [disabled]="!isValid">Submit</button>
+        <button mat-raised-button
+                *ngIf="config"
+                [disabled]="!isValid">Submit</button>
     </div>
 </div>

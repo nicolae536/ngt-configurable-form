@@ -4,7 +4,8 @@ import { RouterModule } from '@angular/router';
 import { ExampleSimpleFormComponent } from './layout-example/layout-example';
 import { ReduxFormComponent } from './redux-integration/redux.component';
 import { ProvidingDataExampleComponent } from './providing-data-example/providing-data-example';
-import { ValidatorsExampleComponent } from './validators-example/validators-example';
+import { ValidatorsExampleComponent } from './validators-example/validators-example.component';
+import { ConfigurationChangeComponent } from './configuration-change/configuration-change';
 
 @NgModule({
     imports: [
@@ -20,6 +21,10 @@ import { ValidatorsExampleComponent } from './validators-example/validators-exam
             {
                 path: 'validators-example',
                 component: ValidatorsExampleComponent
+            },
+            {
+                path: 'configuration-change',
+                component: ConfigurationChangeComponent
             },
             {
                 path: 'redux-example',

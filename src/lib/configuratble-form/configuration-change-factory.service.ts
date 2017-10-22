@@ -303,7 +303,7 @@ export class ConfigurationChangeFactoryService {
 
         params.parentElementArray[params.index] = newElConfig;
 
-        if (params.parentElementArray && params.parentElementArray.length === 1) {
+        if (Array.isArray(params.parentElementArray)) {
             params.group.elements[params.lineIndex] = {
                 ...params.group.elements[params.lineIndex],
                 elementsOnLine: [...params.group.elements[params.lineIndex].elementsOnLine]
