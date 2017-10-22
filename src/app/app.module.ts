@@ -12,12 +12,14 @@ import { ExampleSimpleFormComponent } from './layout-example/layout-example';
 import { AppRoutingModule } from './app-routing.module';
 import { MatButtonModule } from '@angular/material';
 import { ReduxFormComponent } from './redux-integration/redux.component';
+import { ProvidingDataComponent } from './providing-data/providing-data';
 
 @NgModule({
     declarations: [
         AppComponent,
         ExampleSimpleFormComponent,
-        ReduxFormComponent
+        ReduxFormComponent,
+        ProvidingDataComponent
     ],
     imports: [
         BrowserModule,

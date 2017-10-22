@@ -16,7 +16,7 @@ export class ReduxFormComponent {
     isValid: any;
     dataProviders: Dictionary<Observable<any>>;
     private formSlot: string = 'ngtReduxForm';
-    private urlToFormConfig = '/assets/layout-examples/registration-1.json';
+    private urlToFormConfig = '/assets/first-form.config.json';
 
     constructor(private _http: Http, private _store: Store<any>) {
         this._http.get(

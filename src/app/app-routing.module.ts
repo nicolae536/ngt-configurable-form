@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ExampleSimpleFormComponent } from './layout-example/layout-example';
 import { ReduxFormComponent } from './redux-integration/redux.component';
+import { ProvidingDataComponent } from './providing-data/providing-data';
 
 @NgModule({
     imports: [
@@ -12,12 +13,12 @@ import { ReduxFormComponent } from './redux-integration/redux.component';
                 component: ExampleSimpleFormComponent
             },
             {
-                path: 'redux-example',
-                component: ReduxFormComponent
+                path: 'providing-data',
+                component: ProvidingDataComponent
             },
             {
-                path: 'redu1x-example',
-                component: ExampleSimpleFormComponent
+                path: 'redux-example',
+                component: ReduxFormComponent
             }
         ])
     ],
