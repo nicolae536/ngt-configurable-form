@@ -4,13 +4,14 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { Dictionary } from '../../lib/configuratble-form/configurable-form.interfaces';
 import { CITYES, STATES } from '../mock-data.providers';
+import { ConfigurationChangeComponent } from '../configuration-change/configuration-change';
 
 @Component({
     selector: 'ngt-redux-form',
     templateUrl: './redux-form.html',
     encapsulation: ViewEncapsulation.None
 })
-export class ReduxFormComponent {
+export class ReduxFormComponent extends ConfigurationChangeComponent {
     config: any;
     currentValue$: any;
     isValid: any;
@@ -18,9 +19,15 @@ export class ReduxFormComponent {
     private formSlot: string = 'ngtReduxForm';
     private urlToFormConfig = '/assets/first-form.config.json';
 
-    constructor(private _http: Http, private _store: Store<any>) {
-        this._http.get(
-            this.urlToFormConfig,
+    constructor(http: Http, private _store: Store<any>) {
+        super(http);
+        this.setConfigurationSubscription();
+        this.setValuesSubscription();
+    }
+
+    setupConfig() {
+        this.http.get(
+            '/assets/layout-examples/configuration-change.json',
             {headers: new Headers({'Content-Type': 'application/json'})}
         ).map(r => r.json())
             .subscribe(value => {
@@ -31,14 +38,7 @@ export class ReduxFormComponent {
                         'configuration': value
                     }
                 });
-            });
-        this.dataProviders = {
-            'selectCity': Observable.of(CITYES),
-            'country': Observable.of(STATES)
-        };
-
-        this.setConfigurationSubscription();
-        this.setValuesSubscription();
+            });;
     }
 
     handleConfigChange(event) {
