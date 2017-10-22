@@ -199,7 +199,8 @@ export class ConfigurableFormComponent implements OnDestroy {
         }
 
         for (const key in this.outsideDataListeners) {
-            if (formValue[key] !== this._lastValueFromParent[key]) {
+            if (!this._lastValueFromParent ||
+                formValue[key] !== this._lastValueFromParent[key]) {
                 this.outsideDataListeners[key].next(formValue[key]);
             }
         }
