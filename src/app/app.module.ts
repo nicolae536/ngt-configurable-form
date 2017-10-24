@@ -16,6 +16,8 @@ import { simpleFormReducer } from './redux-integration/simpleForm.reducer';
 import { CustomValidationFactory } from './validators-example/custom-validation-factory';
 import { ValidatorsExampleComponent } from './validators-example/validators-example.component';
 import { ConfigurationChangeComponent } from './configuration-change/configuration-change';
+import { PresentationComponent } from './presentation/presentation.component';
+import { CommonModule } from '@angular/common';
 
 export function createValidationFactory() {
     return new CustomValidationFactory();
@@ -28,12 +30,14 @@ export function createValidationFactory() {
         ReduxFormComponent,
         ProvidingDataExampleComponent,
         ValidatorsExampleComponent,
-        ConfigurationChangeComponent
+        ConfigurationChangeComponent,
+        PresentationComponent
     ],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
         HttpModule,
+        CommonModule,
         AppRoutingModule,
         MatButtonModule,
         MatToolbarModule,

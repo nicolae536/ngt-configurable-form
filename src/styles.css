@@ -1,3 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 @import "assets/fonts/roboto.css";
 @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+@import "~reveal.js/css/reveal.css";
+/*@import "~reveal.js/css/theme/white.css";*/
+@import "~reveal.js/css/theme/black.css";
+@import "~reveal.js/lib/css/zenburn.css";
+/*link rel="stylesheet" href="css/reveal.css">*/
+                                           /*<link rel="stylesheet" href="css/theme/black.css" id="theme">*/
+/**/
+/*<!-- Theme used for syntax highlighting of code -->*/
+/*<link rel="stylesheet" href="lib/css/zenburn.css">*/

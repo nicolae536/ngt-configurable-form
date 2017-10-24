@@ -1,6 +1,6 @@
-import { Component, ViewEncapsulation } from '@angular/core';
-import 'rxjs/add/operator/filter';
+import { Component, ViewEncapsulation, HostListener } from '@angular/core';
 import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/filter';
 
 @Component({
     selector: 'app-root',
@@ -10,4 +10,10 @@ import 'rxjs/add/operator/do';
 })
 export class AppComponent {
     title = 'app';
+    hideToolbar: boolean = true;
+
+    @HostListener('mousemove', ['$event'])
+    handleMouseMove(event: MouseEvent) {
+        this.hideToolbar = event && event.y > 64;
+    }
 }

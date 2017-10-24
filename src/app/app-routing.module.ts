@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 
 import { RouterModule } from '@angular/router';
-import { ExampleSimpleFormComponent } from './layout-example/layout-example';
-import { ReduxFormComponent } from './redux-integration/redux.component';
-import { ProvidingDataExampleComponent } from './providing-data-example/providing-data-example';
-import { ValidatorsExampleComponent } from './validators-example/validators-example.component';
 import { ConfigurationChangeComponent } from './configuration-change/configuration-change';
+import { ExampleSimpleFormComponent } from './layout-example/layout-example';
+import { PresentationComponent } from './presentation/presentation.component';
+import { ProvidingDataExampleComponent } from './providing-data-example/providing-data-example';
+import { ReduxFormComponent } from './redux-integration/redux.component';
+import { ValidatorsExampleComponent } from './validators-example/validators-example.component';
 
 @NgModule({
     imports: [
@@ -29,6 +30,10 @@ import { ConfigurationChangeComponent } from './configuration-change/configurati
             {
                 path: 'redux-example',
                 component: ReduxFormComponent
+            },
+            {
+                path: 'presentation',
+                component: PresentationComponent
             }
         ])
     ],
