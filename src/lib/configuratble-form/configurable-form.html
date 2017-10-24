@@ -34,13 +34,14 @@
             </mat-expansion-panel>
         </ng-template>
         <ng-template [ngIf]="!rowConfig.wrapInExpansionPane">
-            <div class="ngt-group-title">
-                {{rowConfig.title}}
+            <div class="ngt-header-wrapper">
+                <div class="ngt-group-title">
+                    {{rowConfig.title}}
+                </div>
+                <div class="ngt-group-description">
+                    {{rowConfig.description}}
+                </div>
             </div>
-            <div class="ngt-group-description">
-                {{rowConfig.description}}
-            </div>
-
             <ngt-form-elements *ngFor="let rowElements of rowConfig.elements"
                                [formName]="formStaticConfig.name"
                                [parentFormGroup]="ngFormGroup"

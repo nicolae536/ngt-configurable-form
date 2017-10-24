@@ -13,6 +13,7 @@ import { CITYES } from '../mock-data.providers';
 })
 export class ProvidingDataExampleComponent {
     isValid: boolean;
+    isRendered: boolean;
     formUrl: string = '/assets/layout-examples/registration-providing-data.json';
     config: Observable<any | Promise<any>>;
     firstFifty = CITYES.slice(0, 50);
@@ -32,7 +33,8 @@ export class ProvidingDataExampleComponent {
         this.config = this.http.get(
             this.formUrl,
             {headers: new Headers({'Content-Type': 'application/json'})}
-        ).map(r => r.json());
+        ).map(r => r.json())
+            .do(() => this.isRendered = true);
     }
 
     private sendDataToAutocomplete(value) {

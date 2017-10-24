@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
-import { MatButtonModule } from '@angular/material';
+import { MatButtonModule, MatToolbarModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
@@ -36,6 +36,7 @@ export function createValidationFactory() {
         HttpModule,
         AppRoutingModule,
         MatButtonModule,
+        MatToolbarModule,
         ConfigurableFormComponentModule.forRoot(createValidationFactory),
         StoreModule.forRoot({
             simpleFormReducer: simpleFormReducer

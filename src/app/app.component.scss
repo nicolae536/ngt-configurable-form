@@ -1,14 +1,28 @@
 @import "../lib/form-elements/form-elements.theme";
 
+body {
+    margin: 0;
+}
+
 app-root {
     ngt-configurable-form {
-        //max-width: 800px;
         min-width: 320px;
 
         .heading-1 {
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 20px;
+        }
+    }
+
+    .app-layout-container {
+        display: flex;
+        justify-content: center;
+        height: calc(100vh - 64px);
+
+        .middle-content {
+            padding-top: 100px;
+            width: 800px;
         }
     }
 
@@ -29,5 +43,14 @@ app-root {
 
     .left-text {
         text-align: left;
+    }
+
+    .image-container {
+        width: 60px;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
     }
 }

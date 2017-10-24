@@ -13,11 +13,6 @@ ngt-element-wrapper {
         }
     }
 
-    .ngt-form-divider-element,
-    .ngt-form-header-element {
-        @extend %font-definition;
-    }
-
     .ngt-form-divider-element {
         &.ngt-divide-bottom {
             background-color: rgba(0,0,0,.42);

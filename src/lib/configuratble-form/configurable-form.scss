@@ -4,6 +4,7 @@ ngt-configurable-form {
     display: block;
 
     .ngt-group-wrapper {
+        background: #fff;
         &:not(:last-of-type) {
             margin-bottom: 20px;
         }
@@ -26,5 +27,25 @@ ngt-configurable-form {
         bottom: 0;
         left: 0;
         right: 0;
+    }
+
+    .ngt-header-wrapper {
+        display: flex;
+        flex-direction: row;
+        height: 48px;
+        align-items: center;
+
+        .ngt-group-title {
+            flex: 1;
+        }
+
+        .ngt-group-description {
+            color: rgba(0,0,0,.54);
+            flex: 2;
+        }
+    }
+
+    * {
+        @extend %font-definition;
     }
 }

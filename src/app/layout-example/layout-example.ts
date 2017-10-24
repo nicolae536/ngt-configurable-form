@@ -11,11 +11,13 @@ import { Observable } from 'rxjs/Observable';
 export class ExampleSimpleFormComponent {
     isValid: boolean;
     config: Observable<any | Promise<any>>;
+    isRendered: boolean;
 
     constructor(private _http: Http) {
         this.config = this._http.get(
             '/assets/layout-examples/registration-layout.json',
             {headers: new Headers({'Content-Type': 'application/json'})}
-        ).map(r => r.json());
+        ).map(r => r.json())
+            .do(() => this.isRendered = true);
     }
 }

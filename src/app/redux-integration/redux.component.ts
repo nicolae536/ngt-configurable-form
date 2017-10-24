@@ -30,6 +30,7 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
             '/assets/layout-examples/configuration-change.json',
             {headers: new Headers({'Content-Type': 'application/json'})}
         ).map(r => r.json())
+            .do(() => this.isRendered = true)
             .subscribe(value => {
                 this._store.dispatch({
                     type: 'CONFIGURATION_CHANGE',
@@ -38,7 +39,7 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
                         'configuration': value
                     }
                 });
-            });;
+            });
     }
 
     handleConfigChange(event) {

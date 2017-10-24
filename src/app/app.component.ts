@@ -1,5 +1,6 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/do';
 
 @Component({
     selector: 'app-root',

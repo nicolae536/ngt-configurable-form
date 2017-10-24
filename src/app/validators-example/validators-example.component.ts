@@ -9,14 +9,17 @@ import { ProvidingDataExampleComponent } from '../providing-data-example/providi
     encapsulation: ViewEncapsulation.None
 })
 export class ValidatorsExampleComponent extends ProvidingDataExampleComponent {
+
     constructor(http: Http) {
         super(http);
     }
 
     setupConfig() {
-        this.config = this.http.get(
-            '/assets/layout-examples/registration-validators.json',
-            {headers: new Headers({'Content-Type': 'application/json'})}
-        ).map(r => r.json());
+        this.config = this.http
+            .get(
+                '/assets/layout-examples/registration-validators.json',
+                {headers: new Headers({'Content-Type': 'application/json'})}
+            ).map(r => r.json())
+            .do(() => this.isRendered = true);
     }
 }

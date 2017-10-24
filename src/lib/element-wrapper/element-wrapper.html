@@ -225,6 +225,15 @@
         </div>
     </ng-template>
 
+    <ng-template [ngIf]="currentElement.type === 'label' && !currentElement.hidden">
+        <ngt-form-field>
+            <div class="ngt-form-label-element"
+                 [ngClass]="currentElement?.class">
+                {{parentFormGroup?.get(currentElement.name)?.value}}
+            </div>
+        </ngt-form-field>
+    </ng-template>
+
     <ng-template [ngIf]="currentElement.type === 'custom-element' && !currentElement.hidden">
         <!--<ng-template [ngTemplateOutlet]=""></ng-template>-->
     </ng-template>

@@ -1,11 +1,10 @@
-<h2>Simple layout: </h2>
 <div class="mat-dialog-container">
     <ngt-configurable-form [formConfig]="config"
                            (onValidityChange)="isValid = $event">
     </ngt-configurable-form>
     <div class="middle-button">
         <button mat-raised-button
-                *ngIf="config"
+                *ngIf="isRendered"
                 [disabled]="!isValid">Submit</button>
     </div>
 </div>

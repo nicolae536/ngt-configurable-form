@@ -101,23 +101,6 @@
                 {
                     "elementsOnLine": [
                         {
-                            "name": "gender",
-                            "required": true,
-                            "type": "radiogroup",
-                            "placeholder": "Gender",
-                            "radioElements": [
-                                {
-                                    "label": "Male",
-                                    "value": "m"
-                                },
-                                {
-                                    "label": "Female",
-                                    "value": "f"
-                                }
-                            ],
-                            "size": 1
-                        },
-                        {
                             "name": "tShirtSize",
                             "type": "select",
                             "placeholder": "T-Shirt Size",
@@ -146,13 +129,45 @@
                                     }
                                 ]
                             },
+                            "size": 5
+                        },
+                        {
+                            "name": "genderLabel",
+                            "type": "label",
+                            "value": "Gender",
+                            "size": 1
+                        },
+                        {
+                            "name": "gender",
+                            "required": true,
+                            "type": "radiogroup",
+                            "placeholder": "Gender",
+                            "radioElements": [
+                                {
+                                    "label": "Male",
+                                    "value": "m"
+                                },
+                                {
+                                    "label": "Female",
+                                    "value": "f"
+                                }
+                            ],
+                            "size": 4
+                        }
+                    ]
+                },
+                {
+                    "elementsOnLine": [
+                        {
+                            "name": "RaceLabel",
+                            "type": "label",
+                            "value": "Chose Race",
                             "size": 1
                         },
                         {
                             "name": "race",
                             "required": true,
                             "type": "radiogroup",
-                            "placeholder": "Chose Race",
                             "radioElements": [
                                 {
                                     "label": "5k - $25",
@@ -163,7 +178,7 @@
                                     "value": "aLotOfCache"
                                 }
                             ],
-                            "size": 1
+                            "size": 7
                         }
                     ]
                 }
