@@ -28,9 +28,6 @@ Before running the tests make sure you are serving the app via `ng serve`.
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 ## TODO list
-1. Demo case  for simple layout
-2. Demo case for providing data autocomplete with data filtering
-4. Demo case for validators
-5. Demo case for changing form configuration
-6. Integrate in redux
-2. Find a api to build demos for the module
+
+1. Demo case for changing form configuration
+2. Integrate in redux
