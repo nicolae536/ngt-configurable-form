@@ -1,0 +1,17 @@
+<ngt-configurable-form [formConfig]="config"
+                           [fieldsDataProviders]="dataProviders">
+    </ngt-configurable-form> 
+So as examples for you I have implemented this using material design components. As the base for now I have the form configuration which can handle basic field linking, basic validations and data change events.
+As the redux part what I noticed in the last time is that [(value)] and cycles in components like 
+set value(myVal: any) {
+	this.onMyValChanges.emit(myVal);
+}
+(onMyValChanges)=”emitActionValChanges($event)”
+
+Are not really friendly with redux pattern in angular because will tringger at least two change detection cycles 
+set value(myVal: any) {
+	this.onMyValChanges.emit(new MyValue(myVal));
+}
+
+(onMyValChanges)=”emitActionValChanges($event)”
+Will get you a nice infinite cycle. So what I wold like to do is create a basic integration with ngrx to prove the this component is fully compatible with redux pattern.

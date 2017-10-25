@@ -1,4 +1,5 @@
 import { Component, ChangeDetectorRef, ViewEncapsulation, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { EXAMPLES } from './presentation.consts';
 
 @Component({
     moduleId: module.id,
@@ -7,56 +8,29 @@ import { Component, ChangeDetectorRef, ViewEncapsulation, ElementRef, AfterViewI
     encapsulation: ViewEncapsulation.None
 })
 export class PresentationComponent implements AfterViewInit, OnDestroy {
-
-    reavealTransitionConfigure = `Reveal.configure({ backgroundTransition: 'zoom' })`;
-    reavealCodeHighlite = `
-    function linkify(selector) {
-        if (supports3DTransforms) {
-
-            var nodes = document.querySelectorAll(selector);
-
-            for (var i = 0, len = nodes.length; i &lt; len; i++) {
-                var node = nodes[i];
-
-                if (!node.className) {
-                    node.className += ' roll';
-                }
-            }
-        }
-    }
-    `;
-    reavealEventListener = `
-        Reveal.addEventListener('customevent', function () {
-            console.log('"customevent" has fired');
-        });
-    `
-
+    codeExamples = EXAMPLES;
     private scriptTag: any;
 
     constructor(private _cd: ChangeDetectorRef,
                 private _elementRef: ElementRef) {
-        this._cd.detach();
     }
 
     ngAfterViewInit() {
+        this._cd.detach();
         this.scriptTag = document.createElement('script');
         this.scriptTag.type = 'text/javascript';
         this.scriptTag.onload = () => {
             window['Reveal']['initialize']({
                 controls: true,
-                progress: true,
+                width: 960,
+                height: 700,
                 history: true,
                 center: true,
+                keyboard: true,
                 transition: 'slide', // none/fade/slide/convex/concave/zoom
-                // More info https://github.com/hakimel/reveal.js#dependencies
+                transitionSpeed: 'slow', // default/fast/slow
                 dependencies: [
                     // not working right now
-                    // { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-                    // { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-                    // { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-                    // { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-                    // { src: 'plugin/zoom-js/zoom.js', async: true },
-                    // { src: 'plugin/notes/notes.js', async: true }
                 ]
             });
         };

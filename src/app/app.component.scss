@@ -2,12 +2,45 @@
 
 body {
     margin: 0;
+
+    .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+        text-transform: none;
+    }
+
+    .middle-content {
+        position: relative;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+
     &.no-reveal {
         background: transparent !important;
+
+        app-root {
+            .app-layout-container {
+                .middle-content {
+                    position: relative;
+                    padding-top: 100px;
+                    width: 800px;
+                    padding-left: 50px;
+                    padding-right: 50px;
+                }
+            }
+        }
+    }
+
+    .no-overflow {
+        overflow: hidden !important;
     }
 }
 
 app-root {
+    .mat-raised-button {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     .mat-fab.mat-warn,
     .mat-mini-fab.mat-warn,
     .mat-raised-button.mat-warn {
@@ -52,12 +85,6 @@ app-root {
         right: 0;
         bottom: 0;
         overflow: auto;
-
-        .middle-content {
-            position: relative;
-            padding-top: 100px;
-            width: 800px;
-        }
     }
 
     .middle-button {

@@ -7,6 +7,8 @@ ngt-element-wrapper {
     .ngt-element-wrapper {
         @extend %default-element;
         @extend %cover-full-width;
+        padding-top: 5px;
+        padding-bottom: 5px;
 
         > * {
             @extend %cover-full-width;

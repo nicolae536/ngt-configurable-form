@@ -18,6 +18,7 @@ import { ValidatorsExampleComponent } from './validators-example/validators-exam
 import { ConfigurationChangeComponent } from './configuration-change/configuration-change';
 import { PresentationComponent } from './presentation/presentation.component';
 import { CommonModule } from '@angular/common';
+import { PresentationModule } from './presentation/presentation.module';
 
 export function createValidationFactory() {
     return new CustomValidationFactory();
@@ -30,8 +31,7 @@ export function createValidationFactory() {
         ReduxFormComponent,
         ProvidingDataExampleComponent,
         ValidatorsExampleComponent,
-        ConfigurationChangeComponent,
-        PresentationComponent
+        ConfigurationChangeComponent
     ],
     imports: [
         BrowserModule,
@@ -39,6 +39,7 @@ export function createValidationFactory() {
         HttpModule,
         CommonModule,
         AppRoutingModule,
+        PresentationModule,
         MatButtonModule,
         MatToolbarModule,
         ConfigurableFormComponentModule.forRoot(createValidationFactory),

@@ -65,7 +65,6 @@ export class ConfigurableFormComponent implements OnDestroy {
     outsideDataListeners: Dictionary<Subject<any>>;
 
     private _subscriptions$: Subscription[] = [];
-    private _lastEmittedValue: any;
     private _lastValueFromParent: Object;
     private _isBrowserEvent: boolean;
 
