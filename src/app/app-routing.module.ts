@@ -34,6 +34,10 @@ import { ValidatorsExampleComponent } from './validators-example/validators-exam
             {
                 path: 'presentation',
                 component: PresentationComponent
+            },
+            {
+                path: '**',
+                redirectTo: 'presentation'
             }
         ])
     ],
