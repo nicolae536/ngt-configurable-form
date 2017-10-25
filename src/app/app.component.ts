@@ -1,4 +1,5 @@
 import { Component, ViewEncapsulation, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 
@@ -10,10 +11,25 @@ import 'rxjs/add/operator/filter';
 })
 export class AppComponent {
     title = 'app';
-    hideToolbar: boolean = true;
+    hideToolbar: boolean = false;
+    isPresentationView: boolean = false;
+
+    constructor(private _route: Router) {
+        this._route.events.subscribe(valu => {
+            this.isPresentationView = valu.toString().indexOf('presentation') !== -1;
+        });
+    }
 
     @HostListener('mousemove', ['$event'])
     handleMouseMove(event: MouseEvent) {
-        this.hideToolbar = event && event.y > 64;
+        if (!this.isPresentationView) {
+            return;
+        }
+
+        const newValue = event && event.y > 64;
+        if (newValue === this.hideToolbar) {
+            return;
+        }
+        this.hideToolbar = newValue;
     }
 }
