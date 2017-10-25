@@ -8,6 +8,11 @@ body {
 }
 
 app-root {
+    .mat-fab.mat-warn,
+    .mat-mini-fab.mat-warn,
+    .mat-raised-button.mat-warn {
+        background-color: #DC0232;
+    }
 
     .mat-toolbar {
         overflow: hidden;
