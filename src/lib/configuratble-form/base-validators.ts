@@ -1,5 +1,6 @@
 import { FormGroup, ValidatorFn, AbstractControl, Validators } from '@angular/forms';
-import { FormGroupValidatorMetadata, IElementConfig } from './configurable-form.interfaces';
+import { FormGroupValidatorMetadata } from '../models/shared.interfaces';
+import { IElementConfig } from '../models/element.config.interfaces';
 
 /* Interface for error map */
 export interface IValidationResult {

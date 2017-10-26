@@ -5,6 +5,7 @@
             "wrapInExpansionPane": false,
             "addCardClass": true,
             "title": "Runner Information",
+            "name": "runnerInformation",
             "elements": [
                 {
                     "elementsOnLine": [
@@ -83,6 +84,7 @@
             "wrapInExpansionPane": true,
             "title": "Address",
             "description": "Current address",
+            "name": "address",
             "elements": [
                 {
                     "elementsOnLine": [
@@ -143,45 +145,13 @@
                             "name": "street",
                             "required": true,
                             "type": "text",
-                            "placeholder": "Street",
-                            "configurationChangeMap": {
-                                "defaultConfig": {
-                                    "hidden": true,
-                                    "size": 0
-                                },
-                                "configurationChange": [
-                                    {
-                                        "linkedElement": "detailiatedAddress",
-                                        "expectedValue": true,
-                                        "configurationChange": {
-                                            "hidden": false,
-                                            "size": 1
-                                        }
-                                    }
-                                ]
-                            }
+                            "placeholder": "Street"
                         },
                         {
                             "name": "streetNumber",
                             "required": true,
                             "type": "number",
-                            "placeholder": "Street number",
-                            "configurationChangeMap": {
-                                "defaultConfig": {
-                                    "hidden": true,
-                                    "size": 0
-                                },
-                                "configurationChange": [
-                                    {
-                                        "linkedElement": "detailiatedAddress",
-                                        "expectedValue": true,
-                                        "configurationChange": {
-                                            "hidden": false,
-                                            "size": 1
-                                        }
-                                    }
-                                ]
-                            }
+                            "placeholder": "Street number"
                         },
                         {
                             "name": "zip",
@@ -198,6 +168,7 @@
             "wrapInExpansionPane": true,
             "title": "Running experience",
             "description": "The number of years which you perform running",
+            "name": "runningExperience",
             "elements": [
                 {
                     "elementsOnLine": [
@@ -253,6 +224,7 @@
             "title": "Contest registration",
             "addCardClass": true,
             "description": "Current contest details",
+            "name": "contestRegistration",
             "elements": [
                 {
                     "elementsOnLine": [
@@ -337,6 +309,59 @@
                             "size": 7
                         }
                     ]
+                }
+            ]
+        }
+    ],
+    "linkDefinitions": [
+        {
+            "name": "street",
+            "defaultConfig": {
+                "hidden": true,
+                "size": 0
+            },
+            "configurationChange": [
+                {
+                    "linkedElement": "detailiatedAddress",
+                    "expectedValue": true,
+                    "configurationChange": {
+                        "hidden": false,
+                        "size": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "streetNumber",
+            "defaultConfig": {
+                "hidden": true,
+                "size": 0
+            },
+            "configurationChange": [
+                {
+                    "linkedElement": "detailiatedAddress",
+                    "expectedValue": true,
+                    "configurationChange": {
+                        "hidden": false,
+                        "size": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "zip",
+            "defaultConfig": {
+                "hidden": true,
+                "size": 0
+            },
+            "configurationChange": [
+                {
+                    "linkedElement": "detailiatedAddress",
+                    "expectedValue": true,
+                    "configurationChange": {
+                        "hidden": false,
+                        "size": 1
+                    }
                 }
             ]
         }

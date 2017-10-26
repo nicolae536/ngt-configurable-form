@@ -2,8 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
-import { Dictionary } from '../../lib/configuratble-form/configurable-form.interfaces';
-import { CITYES, STATES } from '../mock-data.providers';
+import { Dictionary } from '../../lib/models/shared.interfaces';
 import { ConfigurationChangeComponent } from '../configuration-change/configuration-change';
 
 @Component({

@@ -9,7 +9,8 @@ import { ConfigurableFormService } from './configurable-form.service';
 import { ConfigurationChangeFactoryService } from './configuration-change-factory.service';
 import { IValidationFactory } from './validation-factory.interface';
 import { ValidationFactoryService } from './validation-factory.service';
-import { ExpansionPanelToggleDirective } from '../expansion-panel-toggle/expansion-panel-toggle.directive';
+import { ExpansionPanelToggleDirective } from '../layout-drawer/expansion-panel-toggle/expansion-panel-toggle.directive';
+import { LayoutDrawerModule } from '../layout-drawer/layout-drawer.module';
 
 export const VALIDATION_FACTORY = new InjectionToken<IValidationFactory>('Token ngt-configurable-form/validation-factory');
 
@@ -36,11 +37,10 @@ export function provideForm(validationFactory: () => IValidationFactory): any[] 
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        MatExpansionModule,
-        FormElementsComponentModule
+        LayoutDrawerModule
     ],
     exports: [ConfigurableFormComponent],
-    declarations: [ConfigurableFormComponent, ExpansionPanelToggleDirective],
+    declarations: [ConfigurableFormComponent],
     providers: [],
 })
 export class ConfigurableFormComponentModule {

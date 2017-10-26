@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ValidatorFn, FormGroup, Validators } from '@angular/forms';
 import { BaseValidators } from './base-validators';
-import { Dictionary, IElementConfig, FormGroupValidatorMetadata } from './configurable-form.interfaces';
 import { IValidationFactory } from './validation-factory.interface';
+import { IElementConfig } from '../models/element.config.interfaces';
+import { Dictionary, FormGroupValidatorMetadata } from '../models/shared.interfaces';
 
 
 @Injectable()

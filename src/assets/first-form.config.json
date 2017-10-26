@@ -2,7 +2,7 @@
     "name": "first-form",
     "groupElements": [
         {
-            "class": "first-row",
+            "classMap": {"first-row": true},
             "wrapInExpansionPane": false,
             "addCardClass": true,
             "title": "Personal information",
@@ -258,7 +258,7 @@
                     "elementsOnLine": [
                         {
                             "type": "divider",
-                            "class": {
+                            "classMap": {
                                 "ngt-divide-bottom": true
                             }
                         }

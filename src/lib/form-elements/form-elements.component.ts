@@ -1,7 +1,9 @@
 import { Component, Input, ViewEncapsulation, HostBinding, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
-import { IElementConfig, Dictionary, IElementChangePayload } from '../configuratble-form/configurable-form.interfaces';
+import { IElementChangePayload } from '../configuratble-form/configurable-form.interfaces';
+import { IElementConfig } from '../models/element.config.interfaces';
+import { Dictionary } from '../models/shared.interfaces';
 
 @Component({
     selector: 'ngt-form-elements',

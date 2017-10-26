@@ -12,7 +12,10 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-import { IFormConfig, IElementConfig, IMappedFormConfig, Dictionary, IGroupElementsConfig } from './configurable-form.interfaces';
+import { IElementConfig } from '../models/element.config.interfaces';
+import { IFormConfig, IGroupElementConfig } from '../models/groups.config.interfaces';
+import { Dictionary } from '../models/shared.interfaces';
+import { IMappedFormConfig } from './configurable-form.interfaces';
 import { ConfigurableFormService } from './configurable-form.service';
 import { ConfigurationChangeFactoryService } from './configuration-change-factory.service';
 
@@ -59,7 +62,7 @@ export class ConfigurableFormComponent implements OnDestroy {
     renderedFormStaticConfig: BehaviorSubject<IFormConfig> = new BehaviorSubject(null);
 
     ngFormGroup: FormGroup = null;
-    flattenConfigRef: Map<string, IElementConfig> = new Map<string, IElementConfig>();
+    flattenConfigRef: Map<string, IElementConfig | IGroupElementConfig> = new Map<string, IElementConfig | IGroupElementConfig>();
     outsideSharedData: Dictionary<any>;
     outsideDataProviders: Dictionary<Observable<any>>;
     outsideDataListeners: Dictionary<Subject<any>>;
@@ -76,9 +79,9 @@ export class ConfigurableFormComponent implements OnDestroy {
         this._subscriptions$.forEach(sub => sub.unsubscribe());
     }
 
-    handleTogglePanel(rowConfig: IGroupElementsConfig, event) {
+    handleTogglePanel(event: { rowConfig: IGroupElementConfig, isExpanded: boolean }) {
         this._isBrowserEvent = true;
-        rowConfig.isPanelOpened = event;
+        event.rowConfig.isPanelOpened = event.isExpanded;
         this.onConfigurationChange.emit(this.renderedFormStaticConfig.value);
     }
 

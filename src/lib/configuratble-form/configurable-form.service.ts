@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { IElementConfig, Dictionary, IFormConfig, IMappedFormConfig } from './configurable-form.interfaces';
+import { IMappedFormConfig } from './configurable-form.interfaces';
 import { ConfigurationChangeFactoryService } from './configuration-change-factory.service';
+import { IFormConfig, IGroupElementConfig } from '../models/groups.config.interfaces';
+import { IElementConfig } from '../models/element.config.interfaces';
+import { Dictionary } from '../models/shared.interfaces';
 
 @Injectable()
 export class ConfigurableFormService {
@@ -10,7 +13,7 @@ export class ConfigurableFormService {
     }
 
     parseConfiguration(initialFormConfig: IFormConfig, latestFormValue: Dictionary<any>): IMappedFormConfig {
-        const flattenConfigRef = new Map<string, IElementConfig>();
+        const flattenConfigRef = new Map<string, IElementConfig | IGroupElementConfig>();
         const ngFormControls: Dictionary<FormControl> = {};
 
         if (!initialFormConfig || !Array.isArray(initialFormConfig.groupElements)) {
@@ -34,7 +37,7 @@ export class ConfigurableFormService {
         };
     }
 
-    private applyValidationOnControls(flattenConfigRef: Map<string, IElementConfig>, formGroup: FormGroup) {
+    private applyValidationOnControls(flattenConfigRef: Map<string, IElementConfig | IGroupElementConfig>, formGroup: FormGroup) {
         flattenConfigRef.forEach(element => this._configurationChangeFactory.updateElementValidation(
             formGroup,
             element
@@ -57,13 +60,16 @@ export class ConfigurableFormService {
         };
     }
 
-    private flattenControlsAndBuildGroup(initialFormConfig: IFormConfig, ngFormControls: Dictionary<FormControl>, flattenConfigRef: Map<string, IElementConfig>) {
+    private flattenControlsAndBuildGroup(initialFormConfig: IFormConfig,
+                                         ngFormControls: Dictionary<FormControl>,
+                                         flattenConfigRef: Map<string, IElementConfig | IGroupElementConfig>) {
         initialFormConfig.groupElements.forEach(group => {
             if (!group || !Array.isArray(group.elements)) {
                 return;
             }
-
+            flattenConfigRef.set(group.name, group);
             group.elements.forEach(elem => {
+
                 elem.elementsOnLine.forEach(lineElem => {
                     if (lineElem.type === 'divider') {
                         return;
@@ -79,8 +85,10 @@ export class ConfigurableFormService {
         });
     }
 
-    private fetchConfigurationChanges(initialFormConfig: IFormConfig, flattenConfigRef: Map<string, IElementConfig>, formGroup: FormGroup) {
-        let newConfig = this._configurationChangeFactory.stabilizeConfigurationStructure(
+    private fetchConfigurationChanges(initialFormConfig: IFormConfig,
+                                      flattenConfigRef: Map<string, IElementConfig | IGroupElementConfig>,
+                                      formGroup: FormGroup) {
+        const newConfig = this._configurationChangeFactory.stabilizeConfigurationStructure(
             initialFormConfig,
             flattenConfigRef,
             formGroup
