@@ -5,7 +5,6 @@ import { ISharedProps, Dictionary } from './shared.interfaces';
  * ======================================================
  */
 export interface IElementConfig extends IElementBase, IMatInputElement, IMatRadioElement, IMatSelectElement, IMatDatePicker {
-    isDefaultConfig?: boolean;
 }
 
 export interface IElementBase extends ISharedProps {

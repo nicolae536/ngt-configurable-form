@@ -1,15 +1,16 @@
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
+import { BaseModel } from './base-model';
 import { IPrefixSuffixConfig, IMatRadioButtonElement, ISelectConfig, IDatepickerConfig } from './element.config.interfaces';
 import { Dictionary } from './shared.interfaces';
 
-export abstract class UiElement {
-    type: string; // html|component type of the element
+export abstract class UiElement extends BaseModel {
+    type: string; // html | component type of the element
     name: string;
-    readonly: boolean;
+    disabled: boolean;
     placeholder: string;
     size: number;
-    classMap: Dictionary<any>;
-    value: any;
+    required: boolean;
+    classMap?: Dictionary<any>;
 
     // Mat input props
     hint?: string;
@@ -27,6 +28,8 @@ export abstract class UiElement {
     dateConfig: IDatepickerConfig;
 
     constructor(element: Dictionary<any>) {
+        super();
+        this._original = element;
         if (!element) {
             this.throwError(elementErrorMessages.notDefined);
         }
@@ -41,6 +44,10 @@ export abstract class UiElement {
     private validateElement() {
         if (!this.type) {
             this.throwError(elementErrorMessages.noType);
+        }
+
+        if (!this.name) {
+            this.throwError(elementErrorMessages.noName);
         }
 
         switch (this.type) {
@@ -82,9 +89,5 @@ export abstract class UiElement {
                 this.throwError(elementErrorMessages.invalidRadioElement);
             }
         }
-    }
-
-    private throwError(errorMsg: string) {
-        throw new Error(errorMsg + ' , context: ' + JSON.stringify(this));
     }
 }
