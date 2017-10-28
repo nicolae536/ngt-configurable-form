@@ -333,9 +333,8 @@
             ]
         }
     ],
-    "linkDefinitions": [
-        {
-            "name": "street",
+    "linkDefinitions": {
+        "street": {
             "defaultConfig": {
                 "hidden": true,
                 "size": 0
@@ -351,8 +350,7 @@
                 }
             ]
         },
-        {
-            "name": "streetNumber",
+        "streetNumber": {
             "defaultConfig": {
                 "hidden": true,
                 "size": 0
@@ -368,8 +366,7 @@
                 }
             ]
         },
-        {
-            "name": "zip",
+        "zip": {
             "defaultConfig": {
                 "hidden": true,
                 "size": 0
@@ -385,5 +382,5 @@
                 }
             ]
         }
-    ]
+    }
 }

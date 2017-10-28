@@ -1,15 +1,16 @@
+import { FormControl } from '@angular/forms';
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
 import { BaseModel } from './base-model';
 import { IPrefixSuffixConfig, IMatRadioButtonElement, ISelectConfig, IDatepickerConfig } from './element.config.interfaces';
-import { Dictionary } from './shared.interfaces';
+import { Dictionary, FormGroupValidatorMetadata } from './shared.interfaces';
+import { utils } from './utils';
 
-export abstract class UiElement extends BaseModel {
+export class UiElement extends BaseModel<FormControl> {
     type: string; // html | component type of the element
     name: string;
     disabled: boolean;
     placeholder: string;
     size: number;
-    required: boolean;
     classMap?: Dictionary<any>;
 
     // Mat input props
@@ -28,16 +29,7 @@ export abstract class UiElement extends BaseModel {
     dateConfig: IDatepickerConfig;
 
     constructor(element: Dictionary<any>) {
-        super();
-        this._original = element;
-        if (!element) {
-            this.throwError(elementErrorMessages.notDefined);
-        }
-
-        for (const prop in element) {
-            this[prop] = element[prop];
-        }
-
+        super(element);
         this.validateElement();
     }
 

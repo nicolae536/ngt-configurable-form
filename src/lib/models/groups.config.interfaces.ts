@@ -1,20 +1,22 @@
 import { IElementConfig } from './element.config.interfaces';
-import { ISharedProps, IConfigurationChangeDescription } from './shared.interfaces';
+import { ISharedProps, IConfigurationChangeDescription, Dictionary } from './shared.interfaces';
 
 /**
  * ======================================================
  * 1. JSON Form and group types
  * ======================================================
  */
+export type ILayoutModel = {
+    group?: string;
+    lines: string[][];
+}[];
+
 export interface IFormConfig {
     name: string; // unique identifier
     elements: IElementConfig[];
     groupElements: IGroupElementConfig[];
-    layout: {
-        group?: string;
-        lines: string[][];
-    };
-    linkDefinitions?: IConfigurationChangeDescription[];
+    layout: ILayoutModel;
+    linkDefinitions?: Dictionary<IConfigurationChangeDescription>;
 }
 
 export interface IGroupElementConfig extends ISharedProps {

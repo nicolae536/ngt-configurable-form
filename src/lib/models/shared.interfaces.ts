@@ -13,18 +13,19 @@ export interface ISharedProps {
 }
 
 export interface IConfigurationChangeDescription {
-    name: string;
+    // name is stored as key -> this will be a dictionary;
     // If this is present the element must be added in form
     defaultConfig?: Dictionary<any>;
     // link to other element values
     configChangesMap: IChangeConfig[];
+    // TODO the layout should define the props bellow
     // mandatory field for elements which do not have a default config
     // elements without default config are removed from the form configuration
     // and pushed back when a link element decides that we should move this to the form again
-    location?: {
-        groupName?: string;
-        afterElement: string; // element of group name
-    };
+    // location?: {
+    //     groupName?: string;
+    //     afterElement: string; // element of group name
+    // };
 }
 
 export interface IChangeConfig {

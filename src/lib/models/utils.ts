@@ -1,6 +1,29 @@
 import { Dictionary } from './shared.interfaces';
 
 export class UtilsService {
+    cloneDeep<T>(obj: any | any[]): T {
+        const isArray = this.isArray(obj);
+        const result = {};
+        const arrayResult: any = [];
+
+        if (isArray) {
+            for (const prop in obj as any[]) {
+                const newVal = this.cloneDeep(obj[prop]);
+                arrayResult.push(newVal);
+            }
+            return arrayResult as T;
+        }
+
+        if (this.isObject(obj)) {
+            for (const prop in obj) {
+                result[prop] = this.cloneDeep(prop);
+            }
+            return result as T;
+        }
+
+        return obj as T;
+    }
+
     areEqual(obj: any, obj1: any, ignoredProps: string[] = []) {
         if (!obj && !obj1) {
             return true;
@@ -40,6 +63,10 @@ export class UtilsService {
             !this.isFunction(value) &&
             value instanceof Object &&
             (typeof value !== 'string');
+    }
+
+    throwError(errorMsg: string, context: any) {
+        throw new Error(errorMsg + ' , context: ' + JSON.stringify(context));
     }
 
     private areArraysEquals(obj: any[], obj1: any[], ignoredProps: string[]): boolean {

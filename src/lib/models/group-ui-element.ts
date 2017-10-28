@@ -1,6 +1,7 @@
+import { FormGroup } from '@angular/forms';
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
 import { BaseModel } from './base-model';
-import { Dictionary } from './shared.interfaces';
+import { Dictionary, FormGroupValidatorMetadata } from './shared.interfaces';
 
 export const GROUP_TYPES = {
     ngtCard: 'ngt-card',
@@ -9,7 +10,7 @@ export const GROUP_TYPES = {
     simpleElement: 'simple-element'
 };
 
-export abstract class GroupUiElement extends BaseModel {
+export class GroupUiElement extends BaseModel<FormGroup> {
     name: string;
     type: string; // 'ngt-card' | 'mat-card' | 'mat-expansion-pane' | 'simple-element';
     required: boolean;
@@ -19,17 +20,8 @@ export abstract class GroupUiElement extends BaseModel {
     // lines: string[][];
     classMap?: Dictionary<any>;
 
-    constructor(groupElement: Dictionary<string>) {
-        super();
-        this._original = groupElement;
-        if (!groupElement) {
-            this.throwError(elementErrorMessages.notDefined);
-        }
-
-        for (const prop in groupElement) {
-            this[prop] = groupElement[prop];
-        }
-
+    constructor(groupElement: Dictionary<any>) {
+        super(groupElement);
         this.validateGroup();
     }
 
