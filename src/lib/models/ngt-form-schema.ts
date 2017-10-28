@@ -1,9 +1,10 @@
 import { FormGroup, FormControl } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { ValidationFactoryService } from '../configuratble-form/validation-factory.service';
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
+import { BaseModel } from './base-model';
 import { IElementConfig } from './element.config.interfaces';
 import { GroupUiElement, GROUP_TYPES } from './group-ui-element';
-import { IFormConfig, IGroupElementConfig, ILayoutModel } from './groups.config.interfaces';
+import { IFormConfig, IGroupElementConfig, ILayoutModel, ILayoutViewModel } from './groups.config.interfaces';
 import { Dictionary, IConfigurationChangeDescription } from './shared.interfaces';
 import { UiElement } from './ui-element';
 import { utils } from './utils';
@@ -14,15 +15,6 @@ interface ILayoutChange {
 }
 
 export class NgtFormSchema {
-    // name: string; // unique identifier
-    // elements: IElementConfig[];
-    // groupElements: IGroupElementConfig[];
-    // layout: {
-    //     group?: string;
-    //     lines: string[][];
-    // };
-    // linkDefinitions?: IConfigurationChangeDescription[];
-
     name: string;
     ngFormGroup: FormGroup;
     attachedLayout: any;
@@ -34,8 +26,9 @@ export class NgtFormSchema {
 
     // private _jsonModel: IFormConfig = null;
 
-    constructor(jsonModel: IFormConfig) {
-        this.validate(jsonModel);
+    constructor(jsonModel: IFormConfig,
+                private _validationFactory: ValidationFactoryService) {
+        this.validateModel(jsonModel);
         this.name = jsonModel.name;
         this.layoutModel = jsonModel.layout;
         this._linkDefinitions = jsonModel.linkDefinitions || {};
@@ -44,6 +37,8 @@ export class NgtFormSchema {
         this.compileUiElements(jsonModel.elements);
         this.compileUiGroupElements(jsonModel.groupElements);
         this.compileRemainedLinkElements();
+        this.fetchValidation();
+        this.attachedLayout = this.getNewLayout();
         // TODO Consider letting angular to draw the layout and used the main control group for changes
         /** TODO flow valueChanges$ -> check links for element recompilation (recompile only if this is needed)
          *  TODO                    -> create a new layout
@@ -63,13 +58,101 @@ export class NgtFormSchema {
         return this.ngFormGroup.getRawValue();
     }
 
-    // updateLayout(ngFormGroup: FormGroup) {
-    //     const valueToPropagate = this._layoutChanges$.value || {ngFormGroup: null};
-    //     valueToPropagate.ngFormGroup = ngFormGroup;
-    //     this._layoutChanges$.next(valueToPropagate);
-    // }
+    setValueWithLayoutChange(value: any) {
+        if (!value) {
+            return;
+        }
 
-    private validate(jsonModel: IFormConfig) {
+        this.ngFormGroup.patchValue(
+            value,
+            {onlySelf: false, emitEvent: false}
+        );
+        this.changeLayoutIfNeeded();
+    }
+
+    changeLayoutIfNeeded() {
+        if (!this.updateElementsUsingLinks()) {
+            return;
+        }
+
+        // console.log('old', JSON.parse(JSON.stringify(this.attachedLayout)));
+        this.attachedLayout = this.getNewLayout();
+        // console.log('new', JSON.parse(JSON.stringify(this.attachedLayout)));
+    }
+
+    getUiElement(elementName: string): UiElement {
+        if (this._uiElementsMap[elementName]) {
+            return this._uiElementsMap[elementName];
+        }
+
+        return null;
+    }
+
+    getGroupUiElement(elementName: string): GroupUiElement {
+        if (this._uiGroupElementsMap[elementName]) {
+            return this._uiGroupElementsMap[elementName];
+        }
+        return null;
+    }
+
+    updateElementsUsingLinks(): boolean {
+        if (!this._linkDefinitions) {
+            return false;
+        }
+
+        const formValue = this.ngFormGroup.getRawValue();
+        let elementUpdated = false;
+        for (const elName in this._linkDefinitions) {
+            const link = this._linkDefinitions[elName];
+
+            const element = this._uiGroupElementsMap[elName] || this._uiElementsMap[elName];
+            if (this.reEvaluateElement(elName, formValue, element, link)) {
+                elementUpdated = true;
+            }
+        }
+
+        return elementUpdated;
+    }
+
+    private reEvaluateElement(elName: string,
+                              formValue: any,
+                              element: BaseModel<any>,
+                              link: IConfigurationChangeDescription): boolean {
+        if (!formValue) {
+            return false;
+        }
+        const newElement = this.getNewElementProps(elName, element, link, formValue);
+
+        switch (newElement.type) {
+            case GROUP_TYPES.matCard:
+            case GROUP_TYPES.ngtCard:
+            case GROUP_TYPES.matExpansionPane:
+                return this.updateGroupUiElement(newElement, element, elName);
+            default:
+                return this.updateUiElement(newElement, element, elName);
+        }
+    }
+
+    private getNewElementProps(elName: string, element: BaseModel<any>, link: IConfigurationChangeDescription, formValue: any) {
+        let newElement: Dictionary<any> = {
+            name: elName,
+            ...utils.cloneDeep<Dictionary<any>>(element ? element.getOriginal() : {}),
+            ...link.defaultConfig
+        };
+
+        const activeLink = link.configChangesMap
+            .find(v => v.expectedValue === utils.findValueByKey(formValue, v.linkedElement));
+
+        if (activeLink) {
+            newElement = {
+                ...newElement,
+                ...activeLink.newConfig
+            };
+        }
+        return newElement;
+    }
+
+    private validateModel(jsonModel: IFormConfig) {
         if (!jsonModel) {
             utils.throwError(elementErrorMessages.noFormConfig, this);
         }
@@ -88,7 +171,10 @@ export class NgtFormSchema {
             let newElement: Dictionary<any> = {...element};
             if (this._linkDefinitions.hasOwnProperty(element.name) &&
                 this._linkDefinitions[element.name].defaultConfig) {
-                newElement = {...this._linkDefinitions[element.name].defaultConfig};
+                newElement = {
+                    ...element,
+                    ...this._linkDefinitions[element.name].defaultConfig
+                };
             }
 
             const uiElement = new UiElement(newElement);
@@ -133,7 +219,6 @@ export class NgtFormSchema {
                 case GROUP_TYPES.matCard:
                 case GROUP_TYPES.ngtCard:
                 case GROUP_TYPES.matExpansionPane:
-                case GROUP_TYPES.simpleElement:
                     const groupElement = new GroupUiElement(elementData);
                     this._uiGroupElementsMap[key] = groupElement;
                     break;
@@ -143,5 +228,124 @@ export class NgtFormSchema {
                     break;
             }
         }
+    }
+
+    private fetchValidation() {
+        for (const key in this._uiElementsMap) {
+            const uiElement = this._uiElementsMap[key];
+            uiElement.setValidation(
+                this._validationFactory.getElementValidation(this.ngFormGroup, uiElement)
+            );
+        }
+
+        for (const key in this._uiGroupElementsMap) {
+            const groupUiElement = this._uiGroupElementsMap[key];
+            groupUiElement.setValidation(
+                this._validationFactory.getElementValidation(this.ngFormGroup, groupUiElement)
+            );
+        }
+    }
+
+    private getNewLayout(): ILayoutViewModel {
+        this.cleanupFormControls(this.ngFormGroup);
+
+        const newModel: ILayoutViewModel = [];
+        this.layoutModel.forEach(value => {
+            const group = this.getGroupUiElement(value.group);
+            const layoutElement = {
+                group: group,
+                lines: this.getLineElementsMatrix(group, value.lines)
+            };
+
+            newModel.push(layoutElement);
+        });
+        this.ngFormGroup.updateValueAndValidity({onlySelf: true, emitEvent: false});
+        return newModel;
+    }
+
+    private cleanupFormControls(ngFormGroup: FormGroup) {
+        if (!ngFormGroup ||
+            !ngFormGroup.controls) {
+            return;
+        }
+
+        for (const key in ngFormGroup.controls) {
+            if (ngFormGroup[key] instanceof FormGroup) {
+                this.cleanupFormControls(ngFormGroup[key]);
+            }
+            this.ngFormGroup.removeControl(key);
+        }
+    }
+
+    private getLineElementsMatrix(group: GroupUiElement, lines: string[][]): UiElement[][] {
+        if (!utils.isArray(lines)) {
+            return [];
+        }
+
+        const formToAttach: FormGroup = group ? group.getControl() as FormGroup : this.ngFormGroup;
+
+        const elementsMatrix: UiElement[][] = [];
+        let arrayToRet: UiElement[] = [];
+        lines.forEach(line => {
+            arrayToRet = [];
+            line.forEach(uiElementName => {
+                const uiElement = this.getUiElement(uiElementName);
+                if (!uiElement ||
+                    uiElement.hidden) {
+                    return;
+                }
+
+                formToAttach.removeControl(uiElement.name);
+                formToAttach.addControl(uiElement.name, uiElement.getControl());
+                arrayToRet.push(uiElement);
+            });
+
+            if (arrayToRet.length > 0) {
+                elementsMatrix.push(arrayToRet);
+            }
+        });
+
+        if (group) {
+            this.ngFormGroup.removeControl(group.name);
+            this.ngFormGroup.addControl(group.name, formToAttach);
+        }
+
+        return elementsMatrix;
+    }
+
+    private updateGroupUiElement(newElement: Dictionary<any>, element: BaseModel<any>, elName: string): boolean {
+        const groupElement = new GroupUiElement(newElement);
+        if (groupElement.isEqual(element)) {
+            return false;
+        }
+
+        groupElement.attachControl(!element ? new FormGroup({}) : element.getControl());
+        groupElement.setValidation(
+            this._validationFactory.getElementValidation(
+                this.ngFormGroup,
+                groupElement
+            )
+        );
+        groupElement.validateIfTouched();
+        this._uiGroupElementsMap[elName] = groupElement;
+        return true;
+    }
+
+    private updateUiElement(newElement: Dictionary<any>, element: BaseModel<any>, elName: string): boolean {
+        const uiElement = new UiElement(newElement);
+        if (uiElement.isEqual(element)) {
+            return false;
+        }
+
+        uiElement.attachControl(!element ? new FormGroup({}) : element.getControl());
+        uiElement.setValidation(
+            this._validationFactory.getElementValidation(
+                this.ngFormGroup,
+                uiElement
+            )
+        );
+        uiElement.validateIfTouched();
+        this._uiElementsMap[elName] = uiElement;
+        return true;
     }
 }

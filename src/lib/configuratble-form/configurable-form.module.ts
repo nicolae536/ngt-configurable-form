@@ -1,16 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders, InjectionToken } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatExpansionModule } from '@angular/material';
-import { FormElementsComponentModule } from '../form-elements/form-elements.module';
+import { LayoutDrawerModule } from '../layout-drawer/layout-drawer.module';
 
 import { ConfigurableFormComponent } from './configurable-form.component';
 import { ConfigurableFormService } from './configurable-form.service';
-import { ConfigurationChangeFactoryService } from './configuration-change-factory.service';
 import { IValidationFactory } from './validation-factory.interface';
 import { ValidationFactoryService } from './validation-factory.service';
-import { ExpansionPanelToggleDirective } from '../layout-drawer/expansion-panel-toggle/expansion-panel-toggle.directive';
-import { LayoutDrawerModule } from '../layout-drawer/layout-drawer.module';
 
 export const VALIDATION_FACTORY = new InjectionToken<IValidationFactory>('Token ngt-configurable-form/validation-factory');
 
@@ -25,7 +21,6 @@ export function getValidationFactory(validationFactory: IValidationFactory) {
 export function provideForm(validationFactory: () => IValidationFactory): any[] {
     return [
         ConfigurableFormService,
-        ConfigurationChangeFactoryService,
         {provide: ValidationFactoryService, useFactory: getValidationFactory, deps: [VALIDATION_FACTORY]},
         {provide: VALIDATION_FACTORY, useFactory: validationFactory || _getValidationFactory}
     ];

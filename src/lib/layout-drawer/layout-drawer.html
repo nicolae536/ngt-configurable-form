@@ -1,44 +1,72 @@
-<div *ngFor="let rowConfig of formStaticConfig.groupElements"
+<div *ngFor="let rowConfig of layout"
      class="ngt-group-wrapper"
-     [ngClass]="rowConfig?.classMap"
-     [class.ngt-card]="!rowConfig.wrapInExpansionPane && rowConfig.addCardClass">
-    <ng-template [ngIf]="rowConfig.wrapInExpansionPane">
-        <mat-expansion-panel>
-            <mat-expansion-panel-header ngtExpansionPanelToggle
-                                        [isExpanded]="rowConfig?.isPanelOpened"
-                                        (onToggle)="handleTogglePanel(rowConfig, $event)">
-                <mat-panel-title class="ngt-group-title">
-                    {{rowConfig.title}}
-                </mat-panel-title>
-                <mat-panel-description class="ngt-group-description">
-                    {{rowConfig.description}}
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-
-            <ngt-form-elements *ngFor="let rowElements of rowConfig.elements"
-                               [formName]="formStaticConfig.name"
-                               [parentFormGroup]="parentFormGroup"
+     [ngClass]="rowConfig?.group?.classMap">
+    <div *ngIf="rowConfig && rowConfig.group"
+         [ngSwitch]="rowConfig.group.type">
+        <ng-template [ngSwitchCase]="groupTypes.ngtCard">
+            <div class="ngt-header-wrapper">
+                <div class="ngt-group-title">
+                    {{rowConfig.group.title}}
+                </div>
+                <div class="ngt-group-description">
+                    {{rowConfig.group.description}}
+                </div>
+            </div>
+            <ngt-form-elements *ngFor="let elementsOnLine of rowConfig.lines"
+                               [formName]="formName"
+                               [parentFormGroup]="rowConfig.group.getControl()"
                                [outsideDataProviders]="outsideDataProviders"
                                [outsideSharedData]="outsideSharedData"
-                               [elements]="rowElements.elementsOnLine">
+                               [elements]="elementsOnLine">
             </ngt-form-elements>
-        </mat-expansion-panel>
-    </ng-template>
-    <ng-template [ngIf]="!rowConfig.wrapInExpansionPane">
-        <div class="ngt-header-wrapper">
-            <div class="ngt-group-title">
-                {{rowConfig.title}}
-            </div>
-            <div class="ngt-group-description">
-                {{rowConfig.description}}
-            </div>
-        </div>
-        <ngt-form-elements *ngFor="let rowElements of rowConfig.elements"
-                           [formName]="formStaticConfig.name"
+        </ng-template>
+        <ng-template [ngSwitchCase]="groupTypes.matExpansionPane">
+            <mat-expansion-panel>
+                <mat-expansion-panel-header ngtExpansionPanelToggle
+                                            [isExpanded]="rowConfig?.group?.isExpanded"
+                                            (onToggle)="handleTogglePanel(rowConfig, $event)">
+                    <mat-panel-title class="ngt-group-title">
+                        {{rowConfig.group.title}}
+                    </mat-panel-title>
+                    <mat-panel-description class="ngt-group-description">
+                        {{rowConfig.group.description}}
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <ngt-form-elements *ngFor="let elementsOnLine of rowConfig.lines"
+                                   [formName]="formName"
+                                   [parentFormGroup]="rowConfig.group.getControl()"
+                                   [outsideDataProviders]="outsideDataProviders"
+                                   [outsideSharedData]="outsideSharedData"
+                                   [elements]="elementsOnLine">
+                </ngt-form-elements>
+            </mat-expansion-panel>
+        </ng-template>
+        <ng-template [ngSwitchCase]="groupTypes.matCard">
+            <mat-card>
+                <mat-card-header *ngIf="rowConfig.group.title || rowConfig.group.description">
+                    <mat-card-title *ngIf="rowConfig.group.title">{{rowConfig.group.title}}</mat-card-title>
+                    <md-card-subtitle *ngIf="rowConfig.group.description">{{rowConfig.group.description}}</md-card-subtitle>
+                </mat-card-header>
+                <md-card-content>
+                    <ngt-form-elements *ngFor="let elementsOnLine of rowConfig.lines"
+                                       [formName]="formName"
+                                       [parentFormGroup]="rowConfig.group.getControl()"
+                                       [outsideDataProviders]="outsideDataProviders"
+                                       [outsideSharedData]="outsideSharedData"
+                                       [elements]="elementsOnLine">
+                    </ngt-form-elements>
+                </md-card-content>
+            </mat-card>
+        </ng-template>
+    </div>
+    <div *ngIf="rowConfig && !rowConfig.group">
+        <ngt-form-elements *ngFor="let elementsOnLine of rowConfig.lines"
+                           [formName]="formName"
                            [parentFormGroup]="parentFormGroup"
-                           [outsideSharedData]="outsideSharedData"
                            [outsideDataProviders]="outsideDataProviders"
-                           [elements]="rowElements.elementsOnLine">
+                           [outsideSharedData]="outsideSharedData"
+                           [elements]="elementsOnLine">
         </ngt-form-elements>
-    </ng-template>
+    </div>
 </div>

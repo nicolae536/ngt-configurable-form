@@ -1,20 +1,39 @@
 import { Injectable } from '@angular/core';
 import { IFormConfig } from '../models/groups.config.interfaces';
 import { NgtFormSchema } from '../models/ngt-form-schema';
-import { Dictionary } from '../models/shared.interfaces';
-import { ConfigurationChangeFactoryService } from './configuration-change-factory.service';
+import { ValidationFactoryService } from './validation-factory.service';
 
 @Injectable()
 export class ConfigurableFormService {
 
-    constructor(private _configurationChangeFactory: ConfigurationChangeFactoryService
-    ) {
+    constructor(private _validationFactory: ValidationFactoryService) {
     }
 
-    parseConfiguration(initialFormConfig: IFormConfig, latestFormValue?: Dictionary<any>) {
-        const formSchema = new NgtFormSchema(initialFormConfig);
+    parseConfiguration(initialFormConfig: IFormConfig, _lastValueFromParent: any): NgtFormSchema {
+        const formSchema = new NgtFormSchema(initialFormConfig, this._validationFactory);
+        formSchema.setValueWithLayoutChange(_lastValueFromParent);
 
+        return formSchema;
     }
+
+    // fetchValidation(formSchema: NgtFormSchema) {
+    //     const uiElements = formSchema.getUiElements();
+    //     const groupUiElements = formSchema.getGroupUiElements();
+    //
+    //     for (const key in uiElements) {
+    //         const uiElement = uiElements[key];
+    //         uiElement.setValidation(
+    //             this._validationFactory.getElementValidation(formSchema.ngFormGroup, uiElement)
+    //         );
+    //     }
+    //
+    //     for (const key in groupUiElements) {
+    //         const groupUiElement = groupUiElements[key];
+    //         groupUiElement.setValidation(
+    //             this._validationFactory.getElementValidation(formSchema.ngFormGroup, groupUiElement)
+    //         );
+    //     }
+    // }
 
     // parseConfiguration(initialFormConfig: IFormConfig, latestFormValue: Dictionary<any>): IMappedFormConfig {
     //     const flattenConfigRef = new Map<string, IElementConfig | IGroupElementConfig>();

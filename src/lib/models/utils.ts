@@ -16,12 +16,34 @@ export class UtilsService {
 
         if (this.isObject(obj)) {
             for (const prop in obj) {
-                result[prop] = this.cloneDeep(prop);
+                result[prop] = this.cloneDeep(obj[prop]);
             }
             return result as T;
         }
 
         return obj as T;
+    }
+
+    findValueByKey(obj: Object, key: string): any {
+        if (!obj) {
+            return null;
+        }
+
+        if (!this.isArray(obj) &&
+            !this.isObject(obj)) {
+            return null;
+        }
+
+        for (const idx in obj) {
+            if (idx === key) {
+                return obj[idx];
+            }
+
+            const data = this.findValueByKey(obj[idx], key);
+            if (data) {
+                return data;
+            }
+        }
     }
 
     areEqual(obj: any, obj1: any, ignoredProps: string[] = []) {
@@ -113,7 +135,10 @@ export class UtilsService {
             return false;
         }
 
-        if (Object.keys(obj).length !== Object.keys(obj1).length) {
+        const objeKeys = Object.keys(obj).filter(key => ignoredProps.indexOf(key) === -1);
+        const obje1Keys = Object.keys(obj1).filter(key => ignoredProps.indexOf(key) === -1);
+
+        if (objeKeys.length !== obje1Keys.length) {
             return false;
         }
 

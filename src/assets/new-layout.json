@@ -315,6 +315,11 @@
                 ],
                 [
                     "expDescription"
+                ],
+                [
+                    "street",
+                    "streetNumber",
+                    "zip"
                 ]
             ]
         },
@@ -339,11 +344,11 @@
                 "hidden": true,
                 "size": 0
             },
-            "configurationChange": [
+            "configChangesMap": [
                 {
                     "linkedElement": "detailiatedAddress",
                     "expectedValue": true,
-                    "configurationChange": {
+                    "newConfig": {
                         "hidden": false,
                         "size": 1
                     }
@@ -355,11 +360,11 @@
                 "hidden": true,
                 "size": 0
             },
-            "configurationChange": [
+            "configChangesMap": [
                 {
                     "linkedElement": "detailiatedAddress",
                     "expectedValue": true,
-                    "configurationChange": {
+                    "newConfig": {
                         "hidden": false,
                         "size": 1
                     }
@@ -371,11 +376,11 @@
                 "hidden": true,
                 "size": 0
             },
-            "configurationChange": [
+            "configChangesMap": [
                 {
                     "linkedElement": "detailiatedAddress",
                     "expectedValue": true,
-                    "configurationChange": {
+                    "newConfig": {
                         "hidden": false,
                         "size": 1
                     }

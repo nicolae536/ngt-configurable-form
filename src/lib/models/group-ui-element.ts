@@ -6,8 +6,7 @@ import { Dictionary, FormGroupValidatorMetadata } from './shared.interfaces';
 export const GROUP_TYPES = {
     ngtCard: 'ngt-card',
     matCard: 'mat-card',
-    matExpansionPane: 'mat-expansion-pane',
-    simpleElement: 'simple-element'
+    matExpansionPane: 'mat-expansion-pane'
 };
 
 export class GroupUiElement extends BaseModel<FormGroup> {
@@ -18,6 +17,7 @@ export class GroupUiElement extends BaseModel<FormGroup> {
     title?: string;
     description?: string;
     // lines: string[][];
+    isExpanded?: boolean;
     classMap?: Dictionary<any>;
 
     constructor(groupElement: Dictionary<any>) {
@@ -31,7 +31,7 @@ export class GroupUiElement extends BaseModel<FormGroup> {
         }
 
         if (!this.type) {
-            this.type = GROUP_TYPES.simpleElement;
+            this.type = GROUP_TYPES.ngtCard;
         }
 
         // if (!this.isArray(this.lines)) {

@@ -26,7 +26,7 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
 
     setupConfig() {
         this.http.get(
-            '/assets/layout-examples/configuration-change.json',
+            '/assets/layout-examples/ngt-configuration-change.json',
             {headers: new Headers({'Content-Type': 'application/json'})}
         ).map(r => r.json())
             .do(() => this.isRendered = true)

@@ -1,5 +1,7 @@
 import { IElementConfig } from './element.config.interfaces';
+import { GroupUiElement } from './group-ui-element';
 import { ISharedProps, IConfigurationChangeDescription, Dictionary } from './shared.interfaces';
+import { UiElement } from './ui-element';
 
 /**
  * ======================================================
@@ -26,6 +28,10 @@ export interface IGroupElementConfig extends ISharedProps {
     flatValueInForm?: boolean;
 }
 
-export interface IGroupInnerElementsConfig {
-    elementsOnLine: IElementConfig[];
+
+export interface ILayoutElement {
+    group?: GroupUiElement;
+    lines: UiElement[][];
 }
+
+export type ILayoutViewModel = ILayoutElement[];

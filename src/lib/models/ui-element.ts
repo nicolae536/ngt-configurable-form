@@ -9,6 +9,7 @@ export class UiElement extends BaseModel<FormControl> {
     name: string;
     disabled: boolean;
     placeholder: string;
+    hidden: boolean;
     size: number;
     classMap?: Dictionary<any>;
 

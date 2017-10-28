@@ -2,8 +2,8 @@ import { Component, Input, ViewEncapsulation, HostBinding, ChangeDetectionStrate
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { IElementChangePayload } from '../configuratble-form/configurable-form.interfaces';
-import { IElementConfig } from '../models/element.config.interfaces';
 import { Dictionary } from '../models/shared.interfaces';
+import { UiElement } from '../models/ui-element';
 
 @Component({
     selector: 'ngt-form-elements',
@@ -16,7 +16,7 @@ export class FormElementsComponent {
     @HostBinding('class.ngt-component') isNgtComponent = true;
     @Input() formName: boolean;
     @Input() parentFormGroup: FormGroup;
-    @Input() elements: IElementConfig[];
+    @Input() elements: UiElement[];
     @Input() outsideSharedData: Dictionary<any>;
     @Input() outsideDataProviders: Dictionary<Observable<any>>;
 

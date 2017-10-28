@@ -1,6 +1,6 @@
-import { FormGroup, ValidatorFn, AbstractControl, Validators } from '@angular/forms';
-import { FormGroupValidatorMetadata } from '../models/shared.interfaces';
+import { FormGroup, ValidatorFn, AbstractControl } from '@angular/forms';
 import { IElementConfig } from '../models/element.config.interfaces';
+import { FormGroupValidatorMetadata } from '../models/shared.interfaces';
 
 /* Interface for error map */
 export interface IValidationResult {
@@ -17,10 +17,15 @@ const EMAIL_VALIDATION_REGEXP =
 const REQUIRED_ERROR = {'required': true};
 export const INVALID_DATE_ERROR: string = 'Invalid Date';
 
+export interface ValidableElement {
+    required: boolean;
+    validation: FormGroupValidatorMetadata[];
+}
+
 export class BaseValidators {
 
     static getAngularValidator(ngFormControl: FormGroup,
-                               elementConfig: IElementConfig,
+                               elementConfig: ValidableElement,
                                fn: (ngFormControl: FormGroup, elementConfig, value, metadata?) => IValidationResult,
                                validator: FormGroupValidatorMetadata,
                                isAngularValidator: boolean = false): ValidatorFn {
@@ -66,7 +71,7 @@ export class BaseValidators {
             return REQUIRED_ERROR;
         }
 
-        return Validators.required(ngFormGroup.get(element.name));
+        // return Validators.required(ngFormGroup.get(element.name));
     }
 
     /**
@@ -203,60 +208,60 @@ export class BaseValidators {
                    element: IElementConfig,
                    controlValue: any,
                    validator: FormGroupValidatorMetadata): IValidationResult {
-        let minDateValue = null;
-        let minDateControl: AbstractControl = null;
+        // let minDateValue = null;
+        // let minDateControl: AbstractControl = null;
 
-        if (ngFormGroup && ngFormGroup.get(validator.staticMetadata)) {
-            minDateControl = ngFormGroup.get(validator.staticMetadata);
-            minDateValue = ngFormGroup.get(validator.staticMetadata).value;
-        }
+        // if (ngFormGroup && ngFormGroup.get(validator.staticMetadata)) {
+        //     minDateControl = ngFormGroup.get(validator.staticMetadata);
+        //     minDateValue = ngFormGroup.get(validator.staticMetadata).value;
+        // }
 
         const isNotValid = BaseValidators.isMdDateInvalid(controlValue);
         if (isNotValid) {
             return isNotValid;
         }
 
-        if (minDateValue &&
-            controlValue &&
-            minDateValue.getTime() &&
-            controlValue.getTime() &&
-            minDateValue.getTime() > controlValue.getTime()) {
-            return {'minDate': minDateValue};
-        }
-
-        if (minDateControl && minDateControl.errors && minDateControl.errors.maxDate) {
-            minDateControl.setErrors(null);
-        }
+        // if (minDateValue &&
+        //     controlValue &&
+        //     minDateValue.getTime() &&
+        //     controlValue.getTime() &&
+        //     minDateValue.getTime() > controlValue.getTime()) {
+        //     return {'minDate': minDateValue};
+        // }
+        //
+        // if (minDateControl && minDateControl.errors && minDateControl.errors.maxDate) {
+        //     minDateControl.setErrors(null);
+        // }
     }
 
     static maxDate(ngFormGroup: FormGroup,
                    element: IElementConfig,
                    controlValue: any,
                    validator: FormGroupValidatorMetadata): IValidationResult {
-        let maxDateValue = null;
-        let maxDateControl: AbstractControl = null;
-
-        if (ngFormGroup && ngFormGroup.get(validator.staticMetadata)) {
-            maxDateControl = ngFormGroup.get(validator.staticMetadata);
-            maxDateValue = ngFormGroup.get(validator.staticMetadata).value;
-        }
+        // let maxDateValue = null;
+        // let maxDateControl: AbstractControl = null;
+        //
+        // if (ngFormGroup && ngFormGroup.get(validator.staticMetadata)) {
+        //     maxDateControl = ngFormGroup.get(validator.staticMetadata);
+        //     maxDateValue = ngFormGroup.get(validator.staticMetadata).value;
+        // }
 
         const isNotValid = BaseValidators.isMdDateInvalid(controlValue);
         if (isNotValid) {
             return isNotValid;
         }
 
-        if (maxDateValue &&
-            controlValue &&
-            maxDateValue.getTime() &&
-            controlValue.getTime() &&
-            maxDateValue.getTime() < controlValue.getTime()) {
-            return {'maxDate': maxDateValue};
-        }
-
-        if (maxDateControl && maxDateControl.errors && maxDateControl.errors.minDate) {
-            maxDateControl.setErrors(null);
-        }
+        // if (maxDateValue &&
+        //     controlValue &&
+        //     maxDateValue.getTime() &&
+        //     controlValue.getTime() &&
+        //     maxDateValue.getTime() < controlValue.getTime()) {
+        //     return {'maxDate': maxDateValue};
+        // }
+        //
+        // if (maxDateControl && maxDateControl.errors && maxDateControl.errors.minDate) {
+        //     maxDateControl.setErrors(null);
+        // }
     }
 
     static minValue(ngFormGroup: FormGroup,
