@@ -144,7 +144,7 @@ export class ConfigurableFormComponent implements OnDestroy {
             onlySelf: true,
             emitEvent: false
         });
-        const configChanged = this._configurationChangeFactory.stabilizeConfigurationStructure(
+        const configChanged = this._configurationChangeFactory.getLayout(
             this.renderedFormStaticConfig.value,
             this.flattenConfigRef,
             this.ngFormGroup
@@ -160,7 +160,7 @@ export class ConfigurableFormComponent implements OnDestroy {
                 .valueChanges
                 .debounceTime(0)
                 .do(() => this._isBrowserEvent = true)
-                .map(v => this._configurationChangeFactory.stabilizeConfigurationStructure(
+                .map(v => this._configurationChangeFactory.getLayout(
                     this.renderedFormStaticConfig.value,
                     this.flattenConfigRef,
                     this.ngFormGroup

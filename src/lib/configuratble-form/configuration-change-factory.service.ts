@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { IElementConfig } from '../models/element.config.interfaces';
-import { IFormConfig, IGroupElementConfig } from '../models/groups.config.interfaces';
+import { IFormConfig } from '../models/groups.config.interfaces';
+import { NgtFormSchema } from '../models/ngt-form-schema';
+import { Dictionary } from '../models/shared.interfaces';
 
 import { ValidationFactoryService } from './validation-factory.service';
 
@@ -17,39 +19,23 @@ export class ConfigurationChangeFactoryService {
      * @param {FormGroup} ngFormGroup
      * @returns {any}
      */
-    stabilizeConfigurationStructure(formConfiguration: IFormConfig,
-                                    flattenConfigRef: Map<string, IElementConfig | IGroupElementConfig>,
-                                    ngFormGroup: FormGroup): IFormConfig {
-        if (!formConfiguration || !formConfiguration.hasOwnProperty('linkDefinitions')) {
+    getLayout(formSchema: NgtFormSchema): any {
+        const formValue = formSchema.getValue();
+        if (!formValue) {
             return null;
         }
-        // ngFormGroup.ge
 
-        formConfiguration.linkDefinitions.forEach(link => {
-            const nodeDef = {
-                name: link.name
-            };
+        this.computeNewLayout(formSchema, formValue);
+    }
 
-            const elementName = link.name;
-            const elementGroup = link.location && link.location.groupName
-                ? link.location.groupName
-                : link.name;
-            const hasDefaultConfig = link.hasOwnProperty('defaultConfig');
+    private computeNewLayout(formSchema: NgtFormSchema, formValue: Object) {
+        const checkedElementsMap: Dictionary<boolean> = {};
 
-            const isGroup: boolean = elementName === elementGroup;
-            if (isGroup) {
-                //
+        for (const layoutIt of formSchema.layoutModel) {
+            if (layoutIt.group) {
+                // checkedElementsMap[]
             }
-
-
-        });
-
-        // const configurationChangeChain: IElementChangePayload[] = this.getConfigurationUpdates(flattenConfigRef, ngFormGroup);
-        // let newConfig = null;
-        // configurationChangeChain.forEach(changePayload => {
-        //     newConfig = this.changeConfiguration(changePayload, newConfig || formConfiguration, flattenConfigRef, ngFormGroup);
-        // });
-        // return newConfig;
+        }
     }
 
     // /**
@@ -341,4 +327,5 @@ export class ConfigurationChangeFactoryService {
     //         };
     //     }
     // }
+
 }

@@ -2,8 +2,7 @@ import { FormControl } from '@angular/forms';
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
 import { BaseModel } from './base-model';
 import { IPrefixSuffixConfig, IMatRadioButtonElement, ISelectConfig, IDatepickerConfig } from './element.config.interfaces';
-import { Dictionary, FormGroupValidatorMetadata } from './shared.interfaces';
-import { utils } from './utils';
+import { Dictionary } from './shared.interfaces';
 
 export class UiElement extends BaseModel<FormControl> {
     type: string; // html | component type of the element

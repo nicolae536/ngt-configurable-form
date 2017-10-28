@@ -50,6 +50,10 @@ export class UtilsService {
         return obj === obj1;
     }
 
+    isNullOrUndefined(value: any): boolean {
+        return value === null || value === undefined;
+    }
+
     isFunction(value): boolean {
         return value instanceof Function;
     }

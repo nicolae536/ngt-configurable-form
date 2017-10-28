@@ -1,3 +1,5 @@
+import { FormGroup, FormControl } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
 import { IElementConfig } from './element.config.interfaces';
 import { GroupUiElement, GROUP_TYPES } from './group-ui-element';
@@ -6,7 +8,12 @@ import { Dictionary, IConfigurationChangeDescription } from './shared.interfaces
 import { UiElement } from './ui-element';
 import { utils } from './utils';
 
-export abstract class LayoutElement {
+interface ILayoutChange {
+    ngFormGroup: FormGroup;
+    activeLayout?: any;
+}
+
+export class NgtFormSchema {
     // name: string; // unique identifier
     // elements: IElementConfig[];
     // groupElements: IGroupElementConfig[];
@@ -16,19 +23,23 @@ export abstract class LayoutElement {
     // };
     // linkDefinitions?: IConfigurationChangeDescription[];
 
-    visibleLayout;
+    name: string;
+    ngFormGroup: FormGroup;
+    attachedLayout: any;
+    layoutModel: ILayoutModel;
 
     private _uiGroupElementsMap: Dictionary<GroupUiElement> = {};
     private _uiElementsMap: Dictionary<UiElement> = {};
     private _linkDefinitions: Dictionary<IConfigurationChangeDescription> = {};
-    private _layoutModel: ILayoutModel;
 
     // private _jsonModel: IFormConfig = null;
 
     constructor(jsonModel: IFormConfig) {
         this.validate(jsonModel);
-        this._layoutModel = jsonModel.layout;
+        this.name = jsonModel.name;
+        this.layoutModel = jsonModel.layout;
         this._linkDefinitions = jsonModel.linkDefinitions || {};
+        this.ngFormGroup = new FormGroup({});
 
         this.compileUiElements(jsonModel.elements);
         this.compileUiGroupElements(jsonModel.groupElements);
@@ -46,8 +57,17 @@ export abstract class LayoutElement {
         // TODO find a way to keep the ngControls touched/disabled state
         // TODO The ngControls must support hot reloading of validation without triggering changes
         // TODO Create visible layout -> the layout should not reRender unless this is needed
-        this.drawLayout();
     }
+
+    getValue(): Object {
+        return this.ngFormGroup.getRawValue();
+    }
+
+    // updateLayout(ngFormGroup: FormGroup) {
+    //     const valueToPropagate = this._layoutChanges$.value || {ngFormGroup: null};
+    //     valueToPropagate.ngFormGroup = ngFormGroup;
+    //     this._layoutChanges$.next(valueToPropagate);
+    // }
 
     private validate(jsonModel: IFormConfig) {
         if (!jsonModel) {
@@ -72,6 +92,7 @@ export abstract class LayoutElement {
             }
 
             const uiElement = new UiElement(newElement);
+            uiElement.attachControl(new FormControl());
             this._uiElementsMap[uiElement.name] = uiElement;
         }
     }
@@ -85,11 +106,11 @@ export abstract class LayoutElement {
             let newGroupDef: Dictionary<any> = group;
             if (this._linkDefinitions.hasOwnProperty(group.name) &&
                 this._linkDefinitions[group.name].defaultConfig) {
-                // Combine defaults with element def
                 newGroupDef = {...this._linkDefinitions[group.name].defaultConfig as any};
             }
 
             const groupUiElement = new GroupUiElement(newGroupDef);
+            groupUiElement.attachControl(new FormGroup({}));
             this._uiGroupElementsMap[groupUiElement.name] = groupUiElement;
         }
     }
@@ -123,15 +144,4 @@ export abstract class LayoutElement {
             }
         }
     }
-
-    private drawLayout() {
-        const inMemoryLayout = [];
-        // TODO
-    }
-
-    // private validateLinkWithoutDefault(linkDefinition: IConfigurationChangeDescription) {
-    //     if (!linkDefinition.configChangesMap) {
-    //         utils.throwError(elementErrorMessages.invalidLink, this);
-    //     }
-    // }
 }
