@@ -143,6 +143,15 @@ export class NgtFormSchema {
         this.markAsTouched(this._uiGroupElementsMap, touchedMap);
     }
 
+    destroy() {
+        this.ngFormGroup.reset({}, {
+            onlySelf: true,
+            emitEvent: false
+        });
+        this.attachedLayout = null;
+        this.layoutUpdateStatus$.complete();
+    }
+
     private markAsTouched(elementsMap: Dictionary<BaseModel<AbstractControl>>, touchedMap: Dictionary<boolean>) {
         for (const key in touchedMap) {
             if (!elementsMap[key] || !elementsMap[key].getControl()) {

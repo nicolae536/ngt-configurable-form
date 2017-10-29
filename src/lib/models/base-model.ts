@@ -5,6 +5,7 @@ import { utils } from './utils';
 
 export abstract class BaseModel<T> {
     required: boolean;
+    value: any;
     validation: FormGroupValidatorMetadata[];
     private _innerModel: {
         original?: Dictionary<string>,
@@ -49,7 +50,9 @@ export abstract class BaseModel<T> {
         if (!ngControl) {
             return;
         }
-        const oldControlValue = this._innerModel.ngControl ? this._innerModel.ngControl.value : null;
+        const oldControlValue = this._innerModel.ngControl
+            ? this._innerModel.ngControl.value
+            : this.value || null;
         if (oldControlValue) {
             ngControl.patchValue(oldControlValue, {onlySelf: true, emitEvent: false});
         }

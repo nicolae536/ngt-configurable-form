@@ -88,6 +88,9 @@ export class ConfigurableFormComponent implements OnDestroy {
             return;
         }
 
+        if (this.formSchema) {
+            this.formSchema.destroy();
+        }
         this.formSchema = new NgtFormSchema(config, this._validationFactory);
         this.applyValueToSchema(this._lastValueFromParent);
         this.applyGroupsSettingsToSchema(this._expandedGroups);
