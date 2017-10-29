@@ -128,7 +128,7 @@ export class NgtFormSchema {
                 continue;
             }
 
-            this._uiGroupElementsMap[key].isExpanded = !!groups[key]
+            this._uiGroupElementsMap[key].isExpanded = !!groups[key];
             wasUpdated = true;
         }
         this.layoutUpdateStatus$.next(wasUpdated);
