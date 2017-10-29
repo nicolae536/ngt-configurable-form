@@ -1,4 +1,5 @@
 import { FormGroup, FormControl } from '@angular/forms';
+import { Subject } from 'rxjs/Subject';
 import { ValidationFactoryService } from '../configuratble-form/validation-factory.service';
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
 import { BaseModel } from './base-model';
@@ -19,6 +20,7 @@ export class NgtFormSchema {
     ngFormGroup: FormGroup;
     attachedLayout: any;
     layoutModel: ILayoutModel;
+    layoutUpdateStatus$: Subject<boolean> = new Subject<boolean>();
 
     private _uiGroupElementsMap: Dictionary<GroupUiElement> = {};
     private _uiElementsMap: Dictionary<UiElement> = {};
@@ -75,9 +77,10 @@ export class NgtFormSchema {
             return;
         }
 
-        // console.log('old', JSON.parse(JSON.stringify(this.attachedLayout)));
-        this.attachedLayout = this.getNewLayout();
-        // console.log('new', JSON.parse(JSON.stringify(this.attachedLayout)));
+        const newLayout = this.getNewLayout();
+        this.layoutUpdateStatus$.next(
+            this.mergeLayouts(this.attachedLayout, this.getNewLayout())
+        );
     }
 
     getUiElement(elementName: string): UiElement {
@@ -347,5 +350,49 @@ export class NgtFormSchema {
         uiElement.validateIfTouched();
         this._uiElementsMap[elName] = uiElement;
         return true;
+    }
+
+    /**
+     * Merge two layouts statically
+     */
+    private mergeLayouts(attachedLayout: ILayoutViewModel, newLayout: ILayoutViewModel): boolean {
+        let layoutUpdated: boolean = false;
+
+        for (let idx = 0; idx < newLayout.length; idx++) {
+            const uGroup = newLayout[idx];
+            const aGroup = attachedLayout[idx];
+
+            if (uGroup.group !== aGroup.group ||
+                uGroup.lines.length !== aGroup.lines.length) {
+                // group changed we need to fetch the new values to the dom
+                attachedLayout[idx] = newLayout[idx];
+                layoutUpdated = true;
+                continue;
+            }
+
+            for (let lIdx = 0; lIdx < uGroup.lines.length; lIdx++) {
+                const uLine = uGroup.lines[lIdx];
+                const aLine = aGroup.lines[lIdx];
+
+                if (uLine.length !== aLine.length) {
+                    aGroup.lines[lIdx] = uGroup.lines[lIdx];
+                    layoutUpdated = true;
+                    continue;
+                }
+
+                for (let eIdx = 0; eIdx < uLine.length; eIdx++) {
+                    if (uLine[eIdx] !== aLine[eIdx]) {
+                        layoutUpdated = true;
+                        aLine[eIdx] = uLine[eIdx];
+                    }
+                }
+            }
+        }
+
+        if (layoutUpdated && attachedLayout.length !== newLayout.length) {
+            attachedLayout = attachedLayout.filter((v, idx) => !!newLayout[idx]);
+        }
+
+        return layoutUpdated;
     }
 }

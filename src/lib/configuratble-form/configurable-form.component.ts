@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
 
@@ -55,10 +56,8 @@ export class ConfigurableFormComponent implements OnDestroy {
     @Output() onConfigurationChange: EventEmitter<IFormConfig> = new EventEmitter<IFormConfig>();
     @Output() onValidityMapChange: EventEmitter<Dictionary<boolean>> = new EventEmitter<Dictionary<boolean>>();
     @Output() onValidityChange: EventEmitter<boolean> = new EventEmitter<boolean>();
-    formSchema: NgtFormSchema;
 
-    // ngFormGroup: FormGroup = null;
-    // flattenConfigRef: Map<string, IElementConfig | IGroupElementConfig> = new Map<string, IElementConfig | IGroupElementConfig>();
+    formSchema: NgtFormSchema;
     outsideSharedData: Dictionary<any>;
     outsideDataProviders: Dictionary<Observable<any>>;
     outsideDataListeners: Dictionary<Subject<any>>;
@@ -129,25 +128,15 @@ export class ConfigurableFormComponent implements OnDestroy {
         this._valueChanges$ = this.formSchema.ngFormGroup
             .valueChanges
             .debounceTime(0)
-            .do(() => this.formSchema.changeLayoutIfNeeded())
+            .map(() => this.formSchema.changeLayoutIfNeeded())
             .map(v => this.formSchema.getValue())
             .subscribe(value => {
-                // console.info("Values change", JSON.parse(JSON.stringify(value.formValue)));
                 this.onValueChange.emit(value);
                 // this.onValidityMapChange.emit(value.formValidity);
                 // this.onValidityChange.emit(this.ngFormGroup.valid);
                 this.emitValueToListenersMap(value);
             });
     }
-
-    // private emitNewConfigIfValid(newConfig) {
-    //     if (!newConfig) {
-    //         return;
-    //     }
-    //
-    //     this.renderedFormStaticConfig.next(newConfig);
-    //     this.onConfigurationChange.emit(newConfig);
-    // }
 
     private checkBrowserEvent(): boolean {
         if (this._isBrowserEvent) {
@@ -164,9 +153,15 @@ export class ConfigurableFormComponent implements OnDestroy {
         }
 
         for (const key in this.outsideDataListeners) {
-            if (!this._lastValueFromParent ||
-                formValue[key] !== this._lastValueFromParent[key]) {
-                this.outsideDataListeners[key].next(formValue[key]);
+            const oldKeyValue = this._lastValueFromParent
+                ? utils.findValueByKey(this._lastValueFromParent, key)
+                : this._lastValueFromParent;
+            const newKeyValue = formValue
+                ? utils.findValueByKey(formValue, key)
+                : formValue;
+
+            if (oldKeyValue !== newKeyValue) {
+                this.outsideDataListeners[key].next(newKeyValue);
             }
         }
 

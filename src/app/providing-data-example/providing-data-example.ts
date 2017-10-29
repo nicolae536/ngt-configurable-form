@@ -26,7 +26,9 @@ export class ProvidingDataExampleComponent {
 
     constructor(public http: Http) {
         this.setupConfig();
-        this.listenersMap.city.subscribe(value => this.sendDataToAutocomplete(value));
+        this.listenersMap.city
+            .debounceTime(200)
+            .subscribe(value => this.sendDataToAutocomplete(value));
     }
 
     setupConfig() {
@@ -39,7 +41,9 @@ export class ProvidingDataExampleComponent {
 
     private sendDataToAutocomplete(value) {
         if (!value) {
-            this.dataProviders.city.next(this.firstFifty);
+            if (this.dataProviders.city.value !== this.firstFifty) {
+                this.dataProviders.city.next(this.firstFifty);
+            }
             return;
         }
 

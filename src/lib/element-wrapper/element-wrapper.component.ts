@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, ViewEncapsulation, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, ViewEncapsulation, ChangeDetectionStrategy, OnInit, AfterContentChecked } from '@angular/core';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { IElementChangePayload } from '../configuratble-form/configurable-form.interfaces';
@@ -14,7 +14,7 @@ import { Dictionary } from '../models/shared.interfaces';
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ElementWrapperComponent {
+export class ElementWrapperComponent implements AfterContentChecked {
     @HostBinding('class.ngt-component') isNgtComponent = true;
     @Input() formName: boolean;
     @Input() parentFormGroup: FormGroup;
@@ -52,5 +52,9 @@ export class ElementWrapperComponent {
                 this.parentFormGroup.get(updateFields[key]).patchValue(option[key]);
             }
         }
+    }
+
+    ngAfterContentChecked(): void {
+        console.log('elements-content-checked');
     }
 }

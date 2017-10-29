@@ -301,7 +301,7 @@
                 ],
                 [
                     "street",
-                    "number",
+                    "streetNumber",
                     "zip"
                 ]
             ]
@@ -315,11 +315,6 @@
                 ],
                 [
                     "expDescription"
-                ],
-                [
-                    "street",
-                    "streetNumber",
-                    "zip"
                 ]
             ]
         },

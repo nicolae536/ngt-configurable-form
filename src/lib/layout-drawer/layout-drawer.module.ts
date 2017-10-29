@@ -5,10 +5,12 @@ import { FormElementsComponentModule } from '../form-elements/form-elements.modu
 import { ExpansionPanelToggleDirective } from './expansion-panel-toggle/expansion-panel-toggle.directive';
 
 import { LayoutDrawerComponent } from './layout-drawer.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [
         CommonModule,
+        ReactiveFormsModule,
         MatExpansionModule,
         MatCardModule,
         FormElementsComponentModule
