@@ -143,7 +143,10 @@
             "validation": [
                 {
                     "type": "maxDate",
-                    "staticMetadata": "endDate",
+                    "staticMetadata": [
+                        "runningExperience",
+                        "endDate"
+                    ],
                     "ranking": 1
                 }
             ],
@@ -159,7 +162,10 @@
             "validation": [
                 {
                     "type": "minDate",
-                    "staticMetadata": "startDt",
+                    "staticMetadata": [
+                        "runningExperience",
+                        "startDt"
+                    ],
                     "ranking": 1
                 }
             ],

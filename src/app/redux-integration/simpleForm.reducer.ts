@@ -25,6 +25,8 @@ export function simpleFormReducer(state: any, action: IAction) {
             return updateStoreValueChange(state, action.payload);
         case 'VALIDITY_CHANGE':
             return updateStoreValidityChange(state, action.payload);
+        case 'SET_EXPANDED_PANES':
+            return updateExpandedPanes(state, action.payload);
     }
 
     return state;
@@ -50,6 +52,14 @@ export function updateStoreValidityChange(state: any, payload: ISimplePayload) {
     state[payload.formName] = {
         ...state[payload.formName],
         validity: JSON.parse(JSON.stringify(payload.validity))
+    };
+    return {...state};
+}
+
+function updateExpandedPanes(state: any, payload: any) {
+    state[payload.formName] = {
+        ...state[payload.formName],
+        expandedPanes: JSON.parse(JSON.stringify(payload.expandedPanes))
     };
     return {...state};
 }

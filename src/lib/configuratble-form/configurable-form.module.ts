@@ -2,9 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders, InjectionToken } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LayoutDrawerModule } from '../layout-drawer/layout-drawer.module';
-
+import '../models/rx-extensions';
 import { ConfigurableFormComponent } from './configurable-form.component';
-import { ConfigurableFormService } from './configurable-form.service';
 import { IValidationFactory } from './validation-factory.interface';
 import { ValidationFactoryService } from './validation-factory.service';
 
@@ -20,7 +19,6 @@ export function getValidationFactory(validationFactory: IValidationFactory) {
 
 export function provideForm(validationFactory: () => IValidationFactory): any[] {
     return [
-        ConfigurableFormService,
         {provide: ValidationFactoryService, useFactory: getValidationFactory, deps: [VALIDATION_FACTORY]},
         {provide: VALIDATION_FACTORY, useFactory: validationFactory || _getValidationFactory}
     ];

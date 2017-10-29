@@ -14,9 +14,9 @@ export class ConfigurationChangeComponent extends ValidatorsExampleComponent {
     }
 
     setupConfig() {
-        // '/assets/layout-examples/ngt-configuration-change.json'
         this.http.get(
-            '/assets/new-layout.json',
+            '/assets/layout-examples/configuration-change.json',
+        // '/assets/new-layout.json',
             {headers: new Headers({'Content-Type': 'application/json'})}
         ).map(r => r.json())
             .do(() => this.isRendered = true)

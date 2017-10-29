@@ -14,6 +14,7 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
     config: any;
     currentValue$: any;
     isValid: any;
+    expandedPanes: any;
     dataProviders: Dictionary<Observable<any>>;
     private formSlot: string = 'ngtReduxForm';
     private urlToFormConfig = '/assets/first-form.config.json';
@@ -22,11 +23,12 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
         super(http);
         this.setConfigurationSubscription();
         this.setValuesSubscription();
+        this.setExpandedPanesSubscription();
     }
 
     setupConfig() {
         this.http.get(
-            '/assets/layout-examples/ngt-configuration-change.json',
+            '/assets/layout-examples/configuration-change.json',
             {headers: new Headers({'Content-Type': 'application/json'})}
         ).map(r => r.json())
             .do(() => this.isRendered = true)
@@ -61,6 +63,16 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
         });
     }
 
+    handleExpandedPanesChange(event) {
+        this._store.dispatch({
+            type: 'SET_EXPANDED_PANES',
+            payload: {
+                'formName': this.formSlot,
+                'expandedPanes': event
+            }
+        });
+    }
+
     handleValidityChange(event) {
         this.isValid = event;
     }
@@ -81,13 +93,13 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
     private setConfigurationSubscription() {
         this._store.select((state) => {
             if (this.isFormInState(state) &&
-                state.simpleFormReducer[this.formSlot]['configuration']) {
-                return state.simpleFormReducer[this.formSlot]['configuration'];
+                state.simpleFormReducer[this.formSlot]['expandedPanes']) {
+                return state.simpleFormReducer[this.formSlot]['expandedPanes'];
             }
             return null;
         }).filter(v => !!v)
             .subscribe(v => {
-                this.config = v;
+                this.expandedPanes = v;
             });
     }
 
@@ -95,5 +107,19 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
         return state &&
             state.simpleFormReducer &&
             state.simpleFormReducer[this.formSlot];
+    }
+
+    private setExpandedPanesSubscription() {
+        this._store.select((state) => {
+            if (this.isFormInState(state) &&
+                state.simpleFormReducer[this.formSlot]['configuration']) {
+                return state.simpleFormReducer[this.formSlot]['configuration'];
+            }
+            return null;
+        }).filter(v => !!v)
+            .first()
+            .subscribe(v => {
+                this.config = v;
+            });
     }
 }

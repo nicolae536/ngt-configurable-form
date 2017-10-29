@@ -1,4 +1,4 @@
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
 import { ValidationFactoryService } from '../configuratble-form/validation-factory.service';
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
@@ -115,6 +115,47 @@ export class NgtFormSchema {
         }
 
         return elementUpdated;
+    }
+
+    setExpandedGroups(groups: Dictionary<boolean>) {
+        if (utils.isNullOrUndefined(groups)) {
+            return;
+        }
+
+        let wasUpdated = false;
+        for (const key in groups) {
+            if (!this._uiGroupElementsMap[key]) {
+                continue;
+            }
+
+            this._uiGroupElementsMap[key].isExpanded = !!groups[key]
+            wasUpdated = true;
+        }
+        this.layoutUpdateStatus$.next(wasUpdated);
+    }
+
+    setTouchedControls(touchedMap: Dictionary<boolean>) {
+        if (utils.isNullOrUndefined(touchedMap)) {
+            return;
+        }
+
+        this.markAsTouched(this._uiElementsMap, touchedMap);
+        this.markAsTouched(this._uiGroupElementsMap, touchedMap);
+    }
+
+    private markAsTouched(elementsMap: Dictionary<BaseModel<AbstractControl>>, touchedMap: Dictionary<boolean>) {
+        for (const key in touchedMap) {
+            if (!elementsMap[key] || !elementsMap[key].getControl()) {
+                continue;
+            }
+            const control = elementsMap[key].getControl();
+
+            touchedMap[key]
+                ? control.markAsTouched({onlySelf: true})
+                : control.markAsUntouched({onlySelf: true});
+        }
+
+        this.ngFormGroup.updateValueAndValidity({onlySelf: false, emitEvent: false});
     }
 
     private reEvaluateElement(elName: string,

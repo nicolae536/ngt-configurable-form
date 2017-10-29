@@ -3,6 +3,11 @@ import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts'
 import { BaseModel } from './base-model';
 import { Dictionary, FormGroupValidatorMetadata } from './shared.interfaces';
 
+export interface GroupExpandChangeEvent {
+    name: string;
+    isExpanded: boolean;
+}
+
 export const GROUP_TYPES = {
     ngtCard: 'ngt-card',
     matCard: 'mat-card',

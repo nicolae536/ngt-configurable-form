@@ -1,20 +1,14 @@
-import {
-    Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter, HostListener, ChangeDetectionStrategy
-} from '@angular/core';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/map';
+import { Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-import { IFormConfig, IGroupElementConfig } from '../models/groups.config.interfaces';
+import { GroupExpandChangeEvent } from '../models/group-ui-element';
+import { IFormConfig } from '../models/groups.config.interfaces';
 import { NgtFormSchema } from '../models/ngt-form-schema';
 import { Dictionary } from '../models/shared.interfaces';
 import { utils } from '../models/utils';
-import { ConfigurableFormService } from './configurable-form.service';
+import { ValidationFactoryService } from './validation-factory.service';
 
 @Component({
     selector: 'ngt-configurable-form',
@@ -44,7 +38,7 @@ export class ConfigurableFormComponent implements OnDestroy {
 
     @Input()
     set updateValues(values: Object) {
-        this.updateFormValues(values);
+        this.applyValueToSchema(values);
     }
 
     @Input()
@@ -52,10 +46,18 @@ export class ConfigurableFormComponent implements OnDestroy {
         this.setFormConfig(config);
     }
 
+    @Input()
+    set expandedGroups(groups: Dictionary<boolean>) {
+        this.setExpandedGroups(groups);
+    }
+
+    @Input()
+    set touchedControls(touchedMap: Dictionary<boolean>) {
+        this.setTouchedControls(touchedMap);
+    }
+
     @Output() onValueChange: EventEmitter<Dictionary<any>> = new EventEmitter<Dictionary<any>>();
-    @Output() onConfigurationChange: EventEmitter<IFormConfig> = new EventEmitter<IFormConfig>();
-    @Output() onValidityMapChange: EventEmitter<Dictionary<boolean>> = new EventEmitter<Dictionary<boolean>>();
-    @Output() onValidityChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() onExpandedPanesChange: EventEmitter<Dictionary<boolean>> = new EventEmitter<Dictionary<boolean>>();
 
     formSchema: NgtFormSchema;
     outsideSharedData: Dictionary<any>;
@@ -64,9 +66,10 @@ export class ConfigurableFormComponent implements OnDestroy {
 
     private _valueChanges$: Subscription;
     private _lastValueFromParent: Object;
-    private _isBrowserEvent: boolean;
+    private _expandedGroups: Dictionary<boolean> = {};
+    private _touchedControlsMap: Dictionary<boolean> = {};
 
-    constructor(private _configurableForm: ConfigurableFormService) {
+    constructor(private _validationFactory: ValidationFactoryService) {
     }
 
     ngOnDestroy(): void {
@@ -75,19 +78,9 @@ export class ConfigurableFormComponent implements OnDestroy {
         }
     }
 
-    handleTogglePanel(event: { rowConfig: IGroupElementConfig, isExpanded: boolean }) {
-        this._isBrowserEvent = true;
-        event.rowConfig.isPanelOpened = event.isExpanded;
-        // this.onConfigurationChange.emit(this.renderedFormStaticConfig.value);
-    }
-
-    @HostListener('click', ['$event'])
-    @HostListener('keydown', ['$event'])
-    @HostListener('keyup', ['$event'])
-    @HostListener('keypress', ['$event'])
-    @HostListener('paste', ['$event'])
-    handleEvent(event) {
-        this._isBrowserEvent = true;
+    handleTogglePanel(event: GroupExpandChangeEvent) {
+        this._expandedGroups[event.name] = event.isExpanded;
+        this.onExpandedPanesChange.emit(this._expandedGroups);
     }
 
     private setFormConfig(config: IFormConfig) {
@@ -95,17 +88,11 @@ export class ConfigurableFormComponent implements OnDestroy {
             return;
         }
 
-        this.formSchema = this._configurableForm.parseConfiguration(config, this._lastValueFromParent);
+        this.formSchema = new NgtFormSchema(config, this._validationFactory);
+        this.applyValueToSchema(this._lastValueFromParent);
+        this.applyGroupsSettingsToSchema(this._expandedGroups);
+        this.applyTouchedSettingsToSchema(this._touchedControlsMap);
         this.setValueChangeSubscription();
-    }
-
-    private updateFormValues(values: Object) {
-        if (!values) {
-            return;
-        }
-
-        this._lastValueFromParent = values;
-        this.patchFormValue(values);
     }
 
     private patchFormValue(values: Object) {
@@ -138,15 +125,6 @@ export class ConfigurableFormComponent implements OnDestroy {
             });
     }
 
-    private checkBrowserEvent(): boolean {
-        if (this._isBrowserEvent) {
-            setTimeout(() => this._isBrowserEvent = false);
-            return true;
-        }
-
-        return false;
-    }
-
     private emitValueToListenersMap(formValue: Dictionary<any>) {
         if (!this.outsideDataListeners) {
             return;
@@ -166,5 +144,36 @@ export class ConfigurableFormComponent implements OnDestroy {
         }
 
         this._lastValueFromParent = formValue;
+    }
+
+    private setExpandedGroups(groups: Dictionary<boolean>) {
+        this._expandedGroups = groups || {};
+        this.applyGroupsSettingsToSchema(groups);
+    }
+
+    private setTouchedControls(touchedMap: Dictionary<boolean>) {
+        this._touchedControlsMap = touchedMap || {};
+        this.applyTouchedSettingsToSchema(touchedMap);
+    }
+
+    private applyValueToSchema(values: Object) {
+        this._lastValueFromParent = values || {};
+        this.patchFormValue(values);
+    }
+
+    private applyGroupsSettingsToSchema(groups: Dictionary<boolean>) {
+        if (!this.formSchema || !groups) {
+            return;
+        }
+
+        this.formSchema.setExpandedGroups(groups);
+    }
+
+    private applyTouchedSettingsToSchema(touchedMap: Dictionary<boolean>) {
+        if (!this.formSchema || !touchedMap) {
+            return;
+        }
+
+        this.formSchema.setTouchedControls(touchedMap);
     }
 }
