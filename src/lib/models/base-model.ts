@@ -5,8 +5,11 @@ import { utils } from './utils';
 
 export abstract class BaseModel<T> {
     required: boolean;
+    hidden: boolean;
+    disabled: boolean;
     value: any;
     validation: FormGroupValidatorMetadata[];
+
     private _innerModel: {
         original?: Dictionary<string>,
         touched?: boolean,

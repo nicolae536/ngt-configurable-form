@@ -7,9 +7,7 @@ import { Dictionary } from './shared.interfaces';
 export class UiElement extends BaseModel<FormControl> {
     type: string; // html | component type of the element
     name: string;
-    disabled: boolean;
     placeholder: string;
-    hidden: boolean;
     size: number;
     classMap?: Dictionary<any>;
 

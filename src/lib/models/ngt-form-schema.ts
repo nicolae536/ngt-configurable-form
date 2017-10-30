@@ -245,7 +245,10 @@ export class NgtFormSchema {
             let newGroupDef: Dictionary<any> = group;
             if (this._linkDefinitions.hasOwnProperty(group.name) &&
                 this._linkDefinitions[group.name].defaultConfig) {
-                newGroupDef = {...this._linkDefinitions[group.name].defaultConfig as any};
+                newGroupDef = {
+                    ...newGroupDef,
+                    ...this._linkDefinitions[group.name].defaultConfig as any
+                };
             }
 
             const groupUiElement = new GroupUiElement(newGroupDef);
@@ -305,6 +308,10 @@ export class NgtFormSchema {
         const newModel: ILayoutViewModel = [];
         this.layoutModel.forEach(value => {
             const group = this.getGroupUiElement(value.group);
+            if (group && group.hidden) {
+                return;
+            }
+
             const layoutElement = {
                 group: group,
                 lines: this.getLineElementsMatrix(group, value.lines)
@@ -412,9 +419,15 @@ export class NgtFormSchema {
             const uGroup = newLayout[idx];
             const aGroup = attachedLayout[idx];
 
+            if (!aGroup) {
+                attachedLayout[idx] = newLayout[idx];
+                continue;
+            }
+
             if (uGroup.group !== aGroup.group ||
                 uGroup.lines.length !== aGroup.lines.length) {
                 // group changed we need to fetch the new values to the dom
+                aGroup.group = uGroup.group;
                 attachedLayout[idx] = newLayout[idx];
                 layoutUpdated = true;
                 continue;
@@ -439,8 +452,9 @@ export class NgtFormSchema {
             }
         }
 
-        if (layoutUpdated && attachedLayout.length !== newLayout.length) {
-            attachedLayout = attachedLayout.filter((v, idx) => !!newLayout[idx]);
+        if (attachedLayout.length > newLayout.length) {
+            attachedLayout.splice(newLayout.length, attachedLayout.length - newLayout.length);
+            layoutUpdated = true;
         }
 
         return layoutUpdated;
