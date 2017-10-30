@@ -1,10 +1,10 @@
-import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
 import { ValidationFactoryService } from '../configuratble-form/validation-factory.service';
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
 import { BaseModel } from './base-model';
 import { IElementConfig } from './element.config.interfaces';
-import { GroupUiElement, GROUP_TYPES } from './group-ui-element';
+import { GROUP_TYPES, GroupUiElement } from './group-ui-element';
 import { IFormConfig, IGroupElementConfig, ILayoutModel, ILayoutViewModel } from './groups.config.interfaces';
 import { Dictionary, IConfigurationChangeDescription } from './shared.interfaces';
 import { UiElement } from './ui-element';
@@ -76,10 +76,11 @@ export class NgtFormSchema {
         if (!this.updateElementsUsingLinks()) {
             return;
         }
-
+        // this.attachedLayout = this.getNewLayout();
         const newLayout = this.getNewLayout();
         this.layoutUpdateStatus$.next(
-            this.mergeLayouts(this.attachedLayout, this.getNewLayout())
+            // true
+            this.mergeLayouts(this.attachedLayout, newLayout)
         );
     }
 
