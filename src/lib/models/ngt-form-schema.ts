@@ -76,10 +76,23 @@ export class NgtFormSchema {
         if (!this.updateElementsUsingLinks()) {
             return;
         }
+        // If I uncomment this line when I generate a new layout
+        // this line will update all dom nodes
+        // Recheck after https://github.com/angular/angular/issues/20026 is cleared
+        // TODO 1.Bug report for all domes rerendered when this reference changed
         // this.attachedLayout = this.getNewLayout();
+        // this.layoutUpdateStatus$.next(
+        //     // true
+        // );
+
+        // This line updates only changed references
+        // this.attachedLayout = this.getNewLayout();
+        // layoutUpdateStatus$ is sending an events to the components which should be
+        // marked for check why do I need this if I create new references with onOush strategy ?
+        // it should update automatically because the reference has changed
+        // TODO 2.Bug report for why do I need to mark for check when i'm changing only references with OnPush
         const newLayout = this.getNewLayout();
         this.layoutUpdateStatus$.next(
-            // true
             this.mergeLayouts(this.attachedLayout, newLayout)
         );
     }
