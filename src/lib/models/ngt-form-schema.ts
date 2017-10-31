@@ -2,7 +2,7 @@ import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
 import { ValidationFactoryService } from '../configuratble-form/validation-factory.service';
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
-import { BaseModel } from './base-model';
+import { BaseElement } from './base-element';
 import { IElementConfig } from './element.config.interfaces';
 import { GROUP_TYPES, GroupUiElement } from './group-ui-element';
 import { IFormConfig, IGroupElementConfig, ILayoutModel, ILayoutViewModel } from './groups.config.interfaces';
@@ -67,7 +67,7 @@ export class NgtFormSchema {
 
         this.ngFormGroup.patchValue(
             value,
-            {onlySelf: false, emitEvent: false}
+            {onlySelf: true, emitEvent: false}
         );
         this.changeLayoutIfNeeded();
     }
@@ -166,7 +166,7 @@ export class NgtFormSchema {
         this.layoutUpdateStatus$.complete();
     }
 
-    private markAsTouched(elementsMap: Dictionary<BaseModel<AbstractControl>>, touchedMap: Dictionary<boolean>) {
+    private markAsTouched(elementsMap: Dictionary<BaseElement<AbstractControl>>, touchedMap: Dictionary<boolean>) {
         for (const key in touchedMap) {
             if (!elementsMap[key] || !elementsMap[key].getControl()) {
                 continue;
@@ -183,7 +183,7 @@ export class NgtFormSchema {
 
     private reEvaluateElement(elName: string,
                               formValue: any,
-                              element: BaseModel<any>,
+                              element: BaseElement<any>,
                               link: IConfigurationChangeDescription): boolean {
         if (!formValue) {
             return false;
@@ -200,7 +200,7 @@ export class NgtFormSchema {
         }
     }
 
-    private getNewElementProps(elName: string, element: BaseModel<any>, link: IConfigurationChangeDescription, formValue: any) {
+    private getNewElementProps(elName: string, element: BaseElement<any>, link: IConfigurationChangeDescription, formValue: any) {
         let newElement: Dictionary<any> = {
             name: elName,
             ...utils.cloneDeep<Dictionary<any>>(element ? element.getOriginal() : {}),
@@ -387,7 +387,7 @@ export class NgtFormSchema {
         return elementsMatrix;
     }
 
-    private updateGroupUiElement(newElement: Dictionary<any>, element: BaseModel<any>, elName: string): boolean {
+    private updateGroupUiElement(newElement: Dictionary<any>, element: BaseElement<any>, elName: string): boolean {
         const groupElement = new GroupUiElement(newElement);
         if (groupElement.isEqual(element)) {
             return false;
@@ -405,7 +405,7 @@ export class NgtFormSchema {
         return true;
     }
 
-    private updateUiElement(newElement: Dictionary<any>, element: BaseModel<any>, elName: string): boolean {
+    private updateUiElement(newElement: Dictionary<any>, element: BaseElement<any>, elName: string): boolean {
         const uiElement = new UiElement(newElement);
         if (uiElement.isEqual(element)) {
             return false;

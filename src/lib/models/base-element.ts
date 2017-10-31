@@ -3,7 +3,7 @@ import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts'
 import { Dictionary, FormGroupValidatorMetadata } from './shared.interfaces';
 import { utils } from './utils';
 
-export abstract class BaseModel<T> {
+export abstract class BaseElement<T> {
     required: boolean;
     hidden: boolean;
     disabled: boolean;
@@ -37,7 +37,7 @@ export abstract class BaseModel<T> {
     }
 
     isEqual(element: Dictionary<any>): boolean {
-        return utils.areEqual(this, element, ['_innerModel']);
+        return utils.areEqual(this, element, ['_innerModel', 'isExpanded']);
     }
 
     setRequired(validation: FormGroupValidatorMetadata[]) {

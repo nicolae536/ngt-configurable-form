@@ -1,6 +1,6 @@
 import { FormGroup } from '@angular/forms';
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
-import { BaseModel } from './base-model';
+import { BaseElement } from './base-element';
 import { Dictionary, FormGroupValidatorMetadata } from './shared.interfaces';
 
 export interface GroupExpandChangeEvent {
@@ -14,7 +14,7 @@ export const GROUP_TYPES = {
     matExpansionPane: 'mat-expansion-pane'
 };
 
-export class GroupUiElement extends BaseModel<FormGroup> {
+export class GroupUiElement extends BaseElement<FormGroup> {
     name: string;
     type: string; // 'ngt-card' | 'mat-card' | 'mat-expansion-pane' | 'simple-element';
     required: boolean;

@@ -1,10 +1,10 @@
 import { FormControl } from '@angular/forms';
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
-import { BaseModel } from './base-model';
+import { BaseElement } from './base-element';
 import { IPrefixSuffixConfig, IMatRadioButtonElement, ISelectConfig, IDatepickerConfig } from './element.config.interfaces';
 import { Dictionary } from './shared.interfaces';
 
-export class UiElement extends BaseModel<FormControl> {
+export class UiElement extends BaseElement<FormControl> {
     type: string; // html | component type of the element
     name: string;
     placeholder: string;
