@@ -1,4 +1,4 @@
-
+﻿
 
 
 
@@ -9,7 +9,7 @@ Slide 2: Application development
 Slide 3: Problems
 	Application bundle size-> which get bigger and bigger
 	Components maintenance -> we have a lot of components which must be mainteined
-	User responsiveness -> which defines the first feeling to our application
+	User responsiveness -> which defines the first feeling to our application, and concistency over screens
 Slide 4: Forms
 	If we take a look to a application we can see that a big part of it is forms defining specific user flows.
 	Which leads us to big applications where we have thousends of them.
@@ -19,10 +19,9 @@ Slide 5: Forms problems
 	The problems with forms  is that they tend be very specific in different user flows.
 	And your implementation for one component might be totally different then in other similar
 	components just becase a step in the user flow is different.
-	They also need a lot of maintenance which leads to specific bugs in specific areas
-	We can also notice that those components tend to fill 1/3 of our bundle size depending on application
+	They also need a lot of maintenance which leads to specific bugs in specific area
 --> image with app splitting in modules and sizes
-Slide 6: Technical solution
+Slide 6: Solution
 	Render forms using json files
 	- this can be very nice and will decrease our bundle size
 	- also it can decrease the maintenance for our components
