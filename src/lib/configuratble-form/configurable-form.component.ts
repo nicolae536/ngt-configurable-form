@@ -68,6 +68,7 @@ export class ConfigurableFormComponent implements OnDestroy {
     private _lastValueFromParent: Object;
     private _expandedGroups: Dictionary<boolean> = {};
     private _touchedControlsMap: Dictionary<boolean> = {};
+    private _lastEmittedModel: Object;
 
     constructor(private _validationFactory: ValidationFactoryService) {
     }
@@ -120,7 +121,9 @@ export class ConfigurableFormComponent implements OnDestroy {
             .debounceTime(0)
             .map(() => this.formSchema.changeLayoutIfNeeded())
             .map(v => this.formSchema.getValue())
+            .filter(v => !utils.areEqual(this._lastEmittedModel, v))
             .subscribe(value => {
+                this._lastEmittedModel = value;
                 this.onValueChange.emit(value);
                 // this.onValidityMapChange.emit(value.formValidity);
                 // this.onValidityChange.emit(this.ngFormGroup.valid);

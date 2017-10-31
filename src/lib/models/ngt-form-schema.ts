@@ -343,12 +343,17 @@ export class NgtFormSchema {
             return;
         }
 
+        const oldUpdateValue = this.ngFormGroup.updateValueAndValidity.bind(this.ngFormGroup);
+        this.ngFormGroup.updateValueAndValidity = () => {
+            oldUpdateValue({onlySelf: false, emitEvent: false});
+        };
         for (const key in ngFormGroup.controls) {
             if (ngFormGroup[key] instanceof FormGroup) {
                 this.cleanupFormControls(ngFormGroup[key]);
             }
             this.ngFormGroup.removeControl(key);
         }
+        this.ngFormGroup.updateValueAndValidity = oldUpdateValue;
     }
 
     private getLineElementsMatrix(group: GroupUiElement, lines: string[][]): UiElement[][] {
@@ -357,6 +362,7 @@ export class NgtFormSchema {
         }
 
         const formToAttach: FormGroup = group ? group.getControl() as FormGroup : this.ngFormGroup;
+        // formToAttach.updateValueAndValidity.bind(formToAttach, {emitEvent: false});
 
         const elementsMatrix: UiElement[][] = [];
         let arrayToRet: UiElement[] = [];
@@ -369,8 +375,14 @@ export class NgtFormSchema {
                     return;
                 }
 
+                const oldUpdateValue = formToAttach.updateValueAndValidity.bind(formToAttach);
+                formToAttach.updateValueAndValidity = () => {
+                    oldUpdateValue({onlySelf: false, emitEvent: false});
+                };
                 formToAttach.removeControl(uiElement.name);
+                // formToAttach.updateValueAndValidity = formToAttach.updateValueAndValidity.bind(formToAttach, {emitEvent: false});
                 formToAttach.addControl(uiElement.name, uiElement.getControl());
+                formToAttach.updateValueAndValidity = oldUpdateValue;
                 arrayToRet.push(uiElement);
             });
 
@@ -379,9 +391,14 @@ export class NgtFormSchema {
             }
         });
 
-        if (group) {
+        if (group && group.getControl()) {
+            const oldUpdateValue = this.ngFormGroup.updateValueAndValidity.bind(this.ngFormGroup);
+            this.ngFormGroup.updateValueAndValidity = () => {
+                oldUpdateValue({onlySelf: false, emitEvent: false});
+            };
             this.ngFormGroup.removeControl(group.name);
             this.ngFormGroup.addControl(group.name, formToAttach);
+            this.ngFormGroup.updateValueAndValidity = oldUpdateValue;
         }
 
         return elementsMatrix;
