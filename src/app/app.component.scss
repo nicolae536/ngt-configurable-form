@@ -1,7 +1,23 @@
 @import "../lib/form-elements/form-elements.theme";
 
+$backgroundColor: #424242;
+
 body {
     margin: 0;
+
+    .reveal {
+        * {
+            font-family: Roboto;
+        }
+
+        p {
+            line-height: 1.1;
+        }
+    }
+
+    .details {
+        text-align: left;
+    }
 
     .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
         text-transform: none;
@@ -14,8 +30,9 @@ body {
         height: 100%;
     }
 
+    background: $backgroundColor !important;
     &.no-reveal {
-        background: transparent !important;
+        background: $backgroundColor !important;
 
         app-root {
             .app-layout-container {
@@ -47,11 +64,20 @@ app-root {
         background-color: #DC0232;
     }
 
+    .mat-expansion-panel,
+    .mat-dialog-container {
+        //background: $backgroundColor;
+    }
+
     .mat-toolbar {
         overflow: hidden;
         height: 64px;
         min-height: 64px;
         transition: all .3s ease-in-out;
+
+        &.mat-primary {
+            background: #3a55b7;
+        }
 
         &.hidden-toolbar {
             height: 0;

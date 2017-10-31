@@ -2,81 +2,97 @@
     <div class="slides">
         <section>
             <h2>Configurable forms</h2>
-            <h4>Hello my name is Nicu</h4>
-            <p>I’m a frontend developer at yonder.</p>
-            <p>In the last 1.5 year I worked with angular on building applications.</p>
-            <p>Today I'm gonna show you an idea on how we can build forms</p>
+            <h3>Hello my name is Nicu</h3>
+            <div class="details">
+                <p>I’m a frontend developer at yonder. 1.5 years</p>
+                <p>Building applications with @angular>2,4.</p>
+                <p>Building forms</p>
+            </div>
         </section>
         <section>
-            <h4>Applications</h4>
-            <p>We are all developers and we build application</p>
-            <p>Start small</p>
-            <p>Gets big</p>
-        </section>
-
-        <section>
-            <h4>Problems</h4>
-            <p>Application bundle size</p>
-            <p>Components maintenance</p>
-            <p>User responsiveness</p>
+            <h3>Applications</h3>
+            <div class="details">
+                <p>We are all developers and we build application</p>
+                <p>1.Start small</p>
+                <p>2.Gets big</p>
+            </div>
         </section>
 
         <section>
-            <h4>Forms</h4>
-            <p>Big part of our application</p>
-            <p>As the application gets bigger we build more and more of them</p>
+            <h3>Problems</h3>
+            <div class="details">
+                <p>Application bundle size</p>
+                <p>Components maintenance</p>
+                <p>User responsiveness</p>
+            </div>
+        </section>
+
+        <section>
+            <h3>Forms</h3>
+            <div class="details">
+                <p>Big part of our application</p>
+                <p>As the application gets bigger we build more and more of them</p>
+            </div>
             <!--TODO image with forms in applications-->
         </section>
         <section>
-            <h4>Forms problems</h4>
-            <p>They are very specific bound to the user flow</p>
-            <p>Generate specific bugs</p>
+            <h3>Forms problems</h3>
+            <div class="details">
+                <p>They are very specific bound to the user flow</p>
+                <p>Generate specific bugs</p>
+            </div>
             <!--TODO image to simbolise big enterprise app with a lot of fields-->
         </section>
         <section>
             <section>
-                <h4>Solution</h4>
-                <p>Forms from json files</p>
-                <p>Small bundle size</p>
-                <p>Less maintenance</p>
-                <p>Tricky to bound elements</p>
+                <h3>Solution</h3>
+                <div class="details">
+                    <p>Forms from json files</p>
+                    <p>Small bundle size</p>
+                    <p>Less maintenance</p>
+                    <p>Tricky to bound elements</p>
+                </div>
                 <!--TODO image with app splitting in modules and sizes-->
             </section>
             <section class="future">
-                <h4>Proposal</h4>
+                <h3>Proposal</h3>
                 <p>Standard schema</p>
                 <!--TODO 1.image with simple json config-->
             </section>
             <section class="future">
-                <h4>Architectural pattern</h4>
+                <h3>Architectural pattern</h3>
                 <!--TODO 2.image with Architectural pattern-->
                 <!--Slide: 8 -> 10-->
             </section>
             <section class="future">
-                <h4>Proposed schem</h4>
+                <h3>Proposed schem</h3>
                 <!--TODO image with A simple schema reuse 1.-->
                 <!--Slide: 10 -> 13-->
             </section>
             <section class="future">
-                <h4>Architectural pattern</h4>
+                <h3>Architectural pattern</h3>
                 <!--TODO reuse 2.image with Architectural pattern-->
                 <!--make summary over it-->
             </section>
         </section>
         <section>
             <section class="future">
-                <h4>Angular implementation</h4>
-                <p>Json</p>
-                <p>UiElement, GroupUiElement</p>
-                <p>Layout</p>
-                <p>Fields linking</p>
+                <h3>Angular implementation</h3>
+                <div class="details">
+                    <p>Json</p>
+                    <p>UiElement, GroupUiElement</p>
+                    <p>Layout</p>
+                    <p>Fields linking</p>
+                </div>
                 <!--TODO image with transition states -> Explain how the schema works in current implementation-->
             </section>
             <section class="future">
-                <h2>Examples</h2>
-                <p>@angular 4+</p>
-                <p>@angular/material</p>
-                <p>ReactiveFormsModule</p>
+                <h3>Examples</h3>
+                <div class="details">
+                    <p>@angular 4+</p>
+                    <p>@angular/material</p>
+                    <p>ReactiveFormsModule</p>
+                </div>
             </section>
             <section class="future">
                 <h3>Simple layout</h3>
@@ -100,18 +116,22 @@
             </section>
         </section>
         <section>
-            <h4>Future</h4>
-            <p>Unit and E2e testing</p>
-            <p>Add arrays -> (array of group/ui elements)</p>
-            <p>Custom links defined using DI</p>
-            <p>A bundle with the component in npm as (ngt-configuable-form)</p>
+            <h3>Future</h3>
+            <div class="details">
+                <p>Unit and E2e testing</p>
+                <p>Add arrays -> (array of group/ui elements)</p>
+                <p>Custom links defined using DI</p>
+                <p>A bundle with the component in npm as (ngt-configuable-form)</p>
+            </div>
         </section>
         <section>
             <h3>Benefits</h3>
-            <p>Only one component manages the forms in our app</p>
-            <p>Easy to track bugs related to forms</p>
-            <p>Fast ui prototyping</p>
-            <p>Less js code to the client</p>
+            <div class="details">
+                <p>Only one component manages the forms in our app</p>
+                <p>Easy to track bugs related to forms</p>
+                <p>Fast ui prototyping</p>
+                <p>Less js code to the client</p>
+            </div>
         </section>
         <section>
             <h3>Q&A</h3>
