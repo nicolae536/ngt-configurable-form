@@ -27,6 +27,8 @@ export function simpleFormReducer(state: any, action: IAction) {
             return updateStoreValidityChange(state, action.payload);
         case 'SET_EXPANDED_PANES':
             return updateExpandedPanes(state, action.payload);
+        case 'SET_TOUCHED_ELEMENTS':
+            return updateTouchedElements(state, action.payload);
     }
 
     return state;
@@ -64,3 +66,11 @@ function updateExpandedPanes(state: any, payload: any) {
     return {...state};
 }
 
+function updateTouchedElements(state: any, payload: any) {
+    state[payload.formName] = {
+        ...state[payload.formName],
+        touchedElements: JSON.parse(JSON.stringify(payload.touchedElements))
+    };
+    return {...state};
+
+}

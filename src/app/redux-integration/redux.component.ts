@@ -16,6 +16,7 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
     isValid: any;
     expandedPanes: any;
     dataProviders: Dictionary<Observable<any>>;
+    touchedControls: any;
     private formSlot: string = 'ngtReduxForm';
     private urlToFormConfig = '/assets/first-form.config.json';
 
@@ -24,6 +25,7 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
         this.setConfigurationSubscription();
         this.setValuesSubscription();
         this.setExpandedPanesSubscription();
+        this.setTouchedMapSubscription();
     }
 
     setupConfig() {
@@ -77,6 +79,16 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
         this.isValid = event;
     }
 
+    handleTouchedChange(event) {
+        this._store.dispatch({
+            type: 'SET_TOUCHED_ELEMENTS',
+            payload: {
+                'formName': this.formSlot,
+                'touchedElements': event
+            }
+        });
+    }
+
     private setValuesSubscription() {
         this._store.select((state) => {
             if (this.isFormInState(state) &&
@@ -120,6 +132,20 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
             .first()
             .subscribe(v => {
                 this.config = v;
+            });
+    }
+
+    private setTouchedMapSubscription() {
+        this._store.select((state) => {
+            if (this.isFormInState(state) &&
+                state.simpleFormReducer[this.formSlot]['touchedElements']) {
+                return state.simpleFormReducer[this.formSlot]['touchedElements'];
+            }
+            return null;
+        }).filter(v => !!v)
+            .first()
+            .subscribe(v => {
+                this.touchedControls = v;
             });
     }
 }

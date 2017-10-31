@@ -58,6 +58,7 @@ export class ConfigurableFormComponent implements OnDestroy {
 
     @Output() onValueChange: EventEmitter<Dictionary<any>> = new EventEmitter<Dictionary<any>>();
     @Output() onExpandedPanesChange: EventEmitter<Dictionary<boolean>> = new EventEmitter<Dictionary<boolean>>();
+    @Output() onTouchedChange: EventEmitter<Dictionary<boolean>> = new EventEmitter<Dictionary<boolean>>();
 
     formSchema: NgtFormSchema;
     outsideSharedData: Dictionary<any>;
@@ -125,6 +126,7 @@ export class ConfigurableFormComponent implements OnDestroy {
             .subscribe(value => {
                 this._lastEmittedModel = value;
                 this.onValueChange.emit(value);
+                this.onTouchedChange.emit(this.formSchema.getTouchedMap());
                 // this.onValidityMapChange.emit(value.formValidity);
                 // this.onValidityChange.emit(this.ngFormGroup.valid);
                 this.emitValueToListenersMap(value);

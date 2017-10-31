@@ -3,7 +3,9 @@
                            [fieldsDataProviders]="dataProviders"
                            [updateValues]="currentValue$"
                            [expandedGroups]="expandedPanes"
+                           [touchedControls]="touchedControls"
                            (onValueChange)="handleValueChange($event)"
+                           (onTouchedChange)="handleTouchedChange($event)"
                            (onExpandedPanesChange)="handleExpandedPanesChange($event)">
     </ngt-configurable-form>
     <div class="middle-button">

@@ -490,4 +490,22 @@ export class NgtFormSchema {
 
         return layoutUpdated;
     }
+
+    getTouchedMap() {
+        return {
+            ...this.getTouchedFromElements(this._uiElementsMap),
+            ...this.getTouchedFromElements(this._uiGroupElementsMap)
+        };
+    }
+
+    private getTouchedFromElements(baseElements: Dictionary<BaseElement<AbstractControl>>): Dictionary<boolean> {
+        const touchedMap = {};
+        baseElements = baseElements || {};
+        for (const key in baseElements) {
+            if (baseElements[key] && baseElements[key].getControl()) {
+                touchedMap[key] = baseElements[key].getControl().touched;
+            }
+        }
+        return touchedMap;
+    }
 }
