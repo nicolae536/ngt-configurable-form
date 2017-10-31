@@ -14,7 +14,7 @@ import { Dictionary } from '../models/shared.interfaces';
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ElementWrapperComponent implements AfterContentChecked {
+export class ElementWrapperComponent {
     @HostBinding('class.ngt-component') isNgtComponent = true;
     @Input() formName: boolean;
     @Input() parentFormGroup: FormGroup;
@@ -28,20 +28,16 @@ export class ElementWrapperComponent implements AfterContentChecked {
     constructor() {
     }
 
-    getErrorMessage(errorField: AbstractControl) {
+    handleErrorMessage(errorField: AbstractControl) {
         return errorField && errorField.errors ? JSON.stringify(errorField.errors) : '';
     }
 
-    isSelectConfigurationValid(selectElement: IMatSelectElement) {
+    handleSelectConfig(selectElement: IMatSelectElement) {
         elementWrapperError.throwIfConfigInvalid(selectElement, this.elementDataProvider);
         return true;
     }
 
-    handleConfigurationChange(change: IElementChangePayload) {
-
-    }
-
-    patchElementsValues(option: Object, updateFields: Dictionary<string>) {
+    handlePropagateValue(option: Object, updateFields: Dictionary<string>) {
         if (!updateFields || !option || !(option instanceof Object)) {
             return;
         }
@@ -52,9 +48,5 @@ export class ElementWrapperComponent implements AfterContentChecked {
                 this.parentFormGroup.get(updateFields[key]).patchValue(option[key]);
             }
         }
-    }
-
-    ngAfterContentChecked(): void {
-        console.log('elements-content-checked');
     }
 }

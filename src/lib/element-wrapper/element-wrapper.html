@@ -33,7 +33,7 @@
                     *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
         </mat-form-field>
     </ng-template>
@@ -41,13 +41,14 @@
     <ng-template [ngIf]="currentElement.type === 'select' && !currentElement.hidden">
         <mat-form-field [ngClass]="currentElement?.classMap"
                         [attr.e2e-name]="formName + currentElement.name">
-            <mat-select *ngIf="isSelectConfigurationValid(currentElement)"
+            <mat-select *ngIf="handleSelectConfig(currentElement)"
                         [placeholder]="currentElement.placeholder"
                         [formControlName]="currentElement.name">
                 <mat-option
                         *ngFor="let option of (elementDataProvider ? (elementDataProvider | async) : currentElement?.selectConfig?.optionsList)"
                         [ngClass]="currentElement?.selectConfig?.optionClassMap"
-                        [value]="option[currentElement?.selectConfig?.valueField]">
+                        [value]="option[currentElement?.selectConfig?.valueField]"
+                        (click)="handlePropagateValue(option, currentElement?.updateFields)">
                     <span *ngFor="let visibleKey of currentElement?.selectConfig?.visibleProps">
                         {{option[visibleKey]}}
                     </span>
@@ -57,7 +58,7 @@
         <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-            {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+            {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
         </mat-error>
     </ng-template>
 
@@ -73,7 +74,7 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
         </ngt-form-field>
     </ng-template>
@@ -95,7 +96,7 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
         </ngt-form-field>
     </ng-template>
@@ -112,7 +113,7 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
         </ngt-form-field>
     </ng-template>
@@ -148,7 +149,7 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
             <mat-datepicker-toggle *ngIf="currentElement?.dateConfig?.useTogglePrefix"
                                    matPrefix
@@ -198,13 +199,14 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
             <mat-autocomplete #auto="matAutocomplete">
                 <mat-option
                         *ngFor="let option of (elementDataProvider ? (elementDataProvider | async) : currentElement?.selectConfig?.optionsList)"
                         [ngClass]="currentElement?.selectConfig?.optionClassMap"
-                        [value]="option[currentElement?.selectConfig?.valueField]">
+                        [value]="option[currentElement?.selectConfig?.valueField]"
+                        (click)="handlePropagateValue(option, currentElement?.updateFields)">
                     <span *ngFor="let visibleKey of currentElement?.selectConfig?.visibleProps">
                         {{option[visibleKey]}}
                     </span>
