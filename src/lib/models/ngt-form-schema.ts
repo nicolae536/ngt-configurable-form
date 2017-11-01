@@ -69,7 +69,10 @@ export class NgtFormSchema {
             value,
             {onlySelf: true, emitEvent: false}
         );
-        this.changeLayoutIfNeeded();
+
+        if (!this.changeLayoutIfNeeded()) {
+            this.layoutUpdateStatus$.next(true);
+        }
     }
 
     changeLayoutIfNeeded() {
@@ -91,10 +94,11 @@ export class NgtFormSchema {
         // marked for check why do I need this if I create new references with onOush strategy ?
         // it should update automatically because the reference has changed
         // TODO 2.Bug report for why do I need to mark for check when i'm changing only references with OnPush
-        const newLayout = this.getNewLayout();
+        const wasLayoutMerged = this.mergeLayouts(this.attachedLayout, this.getNewLayout());
         this.layoutUpdateStatus$.next(
-            this.mergeLayouts(this.attachedLayout, newLayout)
+            wasLayoutMerged
         );
+        return wasLayoutMerged;
     }
 
     getUiElement(elementName: string): UiElement {

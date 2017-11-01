@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, OnDestroy, Output, ViewEncapsulation } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -82,7 +82,7 @@ export class ConfigurableFormComponent implements OnDestroy {
 
     handleTogglePanel(event: GroupExpandChangeEvent) {
         this._expandedGroups[event.name] = event.isExpanded;
-        this.onExpandedPanesChange.emit(this._expandedGroups);
+        this.onExpandedPanesChange.emit({...this._expandedGroups});
     }
 
     private setFormConfig(config: IFormConfig) {
