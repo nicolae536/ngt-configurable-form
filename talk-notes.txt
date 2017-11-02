@@ -1,4 +1,8 @@
-﻿
+﻿Presentation
+	Hello my name is Nicu
+	I'm a frontend developer at yonder
+	Where I build application @angular > 4
+	And today I will show you how you can build scalable forms in your application
 Application development
 	We are all developers and we build application and we like to do that.
 	At the begining we start small.
@@ -10,9 +14,12 @@ Problems
 	Application bundle size-> which get bigger and bigger
 	Components maintenance -> we have a lot of components which must be mainteined
 	User responsiveness -> which defines the first feeling to our application, and concistency over screens
+	So let's analize this.
 Forms
 	If we take a look to a application we can see that a big part of it is forms defining specific user flows.
-	Which leads us to big applications where we have thousends of them.
+	In small applications we have a few of them
+	In big applications we have more and more
+	In large applications we can count thousends.
 Forms problems
 	The problems with forms  is that they tend be very specific in different user flows.
 	And your implementation for one component might be totally different then in other similar
