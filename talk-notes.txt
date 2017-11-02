@@ -1,11 +1,11 @@
 ﻿
-
-
-
 Slide 2: Application development
-	We are all developers and we build applications applications which usually start very small
-	and after some time they get very big and very heavy in functionality, which takes us to specific
-	problems
+	We are all developers and we build application and we like to do that.
+	At the begining we start small.
+	New requirements are comming we add a lot of components and the result
+	is that our application get's bigger.
+	And after some time guess what the application gets bigger and bigger and BIGGER.
+	Where does this lead us ?
 Slide 3: Problems
 	Application bundle size-> which get bigger and bigger
 	Components maintenance -> we have a lot of components which must be mainteined
@@ -64,10 +64,11 @@ Slide 14: Summary over those discussed
 -->	Show again the architecture and explain it
 	So we have a base element which is extended in two specific elements
 	
-	GroupUiElement
+	GroupUiElement // why is this ?
 	UiElements
 	Layout which is a representation of the view containing all possible elements
 	And links which define a change over time depending on a value from another field
+	
 	
 	All those described define our schema
 Slide 15: Angular implementation

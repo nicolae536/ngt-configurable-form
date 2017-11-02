@@ -141,11 +141,7 @@ export class NgtFormSchema {
         }
 
         let wasUpdated = false;
-        for (const key in groups) {
-            if (!this._uiGroupElementsMap[key]) {
-                continue;
-            }
-
+        for (const key in this._uiGroupElementsMap) {
             this._uiGroupElementsMap[key].isExpanded = !!groups[key];
             wasUpdated = true;
         }
@@ -167,6 +163,7 @@ export class NgtFormSchema {
             emitEvent: false
         });
         this.attachedLayout = null;
+        this.layoutUpdateStatus$.next(true);
         this.layoutUpdateStatus$.complete();
     }
 

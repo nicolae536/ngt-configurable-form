@@ -14,10 +14,9 @@ export abstract class BaseElement<T> {
         original?: Dictionary<string>,
         touched?: boolean,
         ngControl?: AbstractControl,
-        attachedUiElements: any[],
         _ngMarkAsTouched?: (opts?: { onlySelf?: boolean }) => void,
         _ngMarkAsUnTouched?: (opts?: { onlySelf?: boolean }) => void,
-    } = {attachedUiElements: []};
+    } = {};
 
     constructor(value: Dictionary<any>) {
         this._innerModel.original = utils.cloneDeep<Dictionary<string>>(value);
