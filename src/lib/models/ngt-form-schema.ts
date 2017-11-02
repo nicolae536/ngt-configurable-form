@@ -26,8 +26,6 @@ export class NgtFormSchema {
     private _uiElementsMap: Dictionary<UiElement> = {};
     private _linkDefinitions: Dictionary<IConfigurationChangeDescription> = {};
 
-    // private _jsonModel: IFormConfig = null;
-
     constructor(jsonModel: IFormConfig,
                 private _validationFactory: ValidationFactoryService) {
         this.validateModel(jsonModel);

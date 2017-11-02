@@ -80,7 +80,7 @@ export abstract class BaseElement<T> {
 
     setValidation(validator: ValidatorFn) {
         this._innerModel.ngControl.validator = validator;
-        this._innerModel.ngControl.updateValueAndValidity({onlySelf: true, emitEvent: false});
+        this._innerModel.ngControl.updateValueAndValidity({onlySelf: false, emitEvent: false});
     }
 
     getOriginal(): Dictionary<any> {
