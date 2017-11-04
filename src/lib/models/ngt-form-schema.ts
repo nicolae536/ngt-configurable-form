@@ -10,11 +10,6 @@ import { Dictionary, IConfigurationChangeDescription } from './shared.interfaces
 import { UiElement } from './ui-element';
 import { utils } from './utils';
 
-interface ILayoutChange {
-    ngFormGroup: FormGroup;
-    activeLayout?: any;
-}
-
 export class NgtFormSchema {
     name: string;
     ngFormGroup: FormGroup;
@@ -50,19 +45,7 @@ export class NgtFormSchema {
             return;
         }
 
-        for (const key in value) {
-            if (this._uiElementsMap[key]) {
-                this._uiElementsMap[key].setValue(
-                    utils.findValueByKey(value, key)
-                );
-            }
-
-            if (this._uiGroupElementsMap[key]) {
-                this._uiGroupElementsMap[key].setValue(
-                    utils.findValueByKey(value, key)
-                );
-            }
-        }
+        this.ngFormGroup.patchValue(value, {onlySelf: false, emitEvent: false});
         this.changeLayoutIfNeeded();
     }
 
@@ -70,28 +53,7 @@ export class NgtFormSchema {
         if (!this.updateElementsUsingLinks()) {
             return;
         }
-        // If I uncomment this line when I generate a new layout
-        // this line will update all dom nodes
-        // Recheck after https://github.com/angular/angular/issues/20026 is cleared
-        // TODO 1.Bug report for all domes rerendered when this reference changed
-        // this.attachedLayout = this.getInMemoryLayout();
-        // this.layoutUpdateStatus$.next(
-        //     // true
-        // );
 
-        // This line updates only changed references
-        // this.attachedLayout = this.getInMemoryLayout();
-        // layoutUpdateStatus$ is sending an events to the components which should be
-        // marked for check why do I need this if I create new references with onOush strategy ?
-        // it should update automatically because the reference has changed
-        // TODO 2.Bug report for why do I need to mark for check when i'm changing only references with OnPush
-        // const wasLayoutMerged = this.mergeLayouts(this.attachedLayout, this.getInMemoryLayout());
-        // this.layoutUpdateStatus$.next(
-        //     wasLayoutMerged
-        // );
-        // return wasLayoutMerged;
-
-        // TODO UPDATE ATTACHED LAYOUT
         let wasUpdated = false;
         this.attachedLayout.forEach(element => {
             if (element.group !== this._uiGroupElementsMap[element.group.name]) {
@@ -111,40 +73,6 @@ export class NgtFormSchema {
         });
 
         this.layoutUpdateStatus$.next(wasUpdated);
-    }
-
-    getUiElement(elementName: string): UiElement {
-        if (this._uiElementsMap[elementName]) {
-            return this._uiElementsMap[elementName];
-        }
-
-        return null;
-    }
-
-    getGroupUiElement(elementName: string): GroupUiElement {
-        if (this._uiGroupElementsMap[elementName]) {
-            return this._uiGroupElementsMap[elementName];
-        }
-        return null;
-    }
-
-    updateElementsUsingLinks(): boolean {
-        if (!this._linkDefinitions) {
-            return false;
-        }
-
-        const formValue = this.ngFormGroup.getRawValue();
-        let elementUpdated = false;
-        for (const elName in this._linkDefinitions) {
-            const link = this._linkDefinitions[elName];
-
-            const element = this._uiGroupElementsMap[elName] || this._uiElementsMap[elName];
-            if (this.reEvaluateElement(elName, formValue, element, link)) {
-                elementUpdated = true;
-            }
-        }
-
-        return elementUpdated;
     }
 
     setExpandedGroups(groups: Dictionary<boolean>) {
@@ -184,59 +112,6 @@ export class NgtFormSchema {
         this.attachedLayout = null;
         this.layoutUpdateStatus$.next(true);
         this.layoutUpdateStatus$.complete();
-    }
-
-    private markAsTouched(elementsMap: Dictionary<BaseElement<AbstractControl>>, touchedMap: Dictionary<boolean>) {
-        for (const key in touchedMap) {
-            if (!elementsMap[key] || !elementsMap[key].getControl()) {
-                continue;
-            }
-            const control = elementsMap[key].getControl();
-
-            touchedMap[key]
-                ? control.markAsTouched({onlySelf: true})
-                : control.markAsUntouched({onlySelf: true});
-        }
-
-        this.ngFormGroup.updateValueAndValidity({onlySelf: false, emitEvent: false});
-    }
-
-    private reEvaluateElement(elName: string,
-                              formValue: any,
-                              element: BaseElement<any>,
-                              link: IConfigurationChangeDescription): boolean {
-        if (!formValue) {
-            return false;
-        }
-        const newElement = this.getNewElementProps(elName, element, link, formValue);
-
-        switch (newElement.type) {
-            case GROUP_TYPES.matCard:
-            case GROUP_TYPES.ngtCard:
-            case GROUP_TYPES.matExpansionPane:
-                return this.updateGroupUiElement(newElement, element, elName);
-            default:
-                return this.updateUiElement(newElement, element, elName);
-        }
-    }
-
-    private getNewElementProps(elName: string, element: BaseElement<any>, link: IConfigurationChangeDescription, formValue: any) {
-        let newElement: Dictionary<any> = {
-            name: elName,
-            ...utils.cloneDeep<Dictionary<any>>(element ? element.getOriginal() : {}),
-            ...link.defaultConfig
-        };
-
-        const activeLink = link.configChangesMap
-            .find(v => v.expectedValue === utils.findValueByKey(formValue, v.linkedElement));
-
-        if (activeLink) {
-            newElement = {
-                ...newElement,
-                ...activeLink.newConfig
-            };
-        }
-        return newElement;
     }
 
     private validateModel(jsonModel: IFormConfig) {
@@ -336,6 +211,114 @@ export class NgtFormSchema {
         }
     }
 
+    private updateElementsUsingLinks(): boolean {
+        if (!this._linkDefinitions) {
+            return false;
+        }
+
+        const formValue = this.ngFormGroup.getRawValue();
+        let elementUpdated = false;
+        for (const elName in this._linkDefinitions) {
+            const link = this._linkDefinitions[elName];
+
+            const element = this._uiGroupElementsMap[elName] || this._uiElementsMap[elName];
+            if (this.reEvaluateElement(elName, formValue, element, link)) {
+                elementUpdated = true;
+            }
+        }
+
+        return elementUpdated;
+    }
+
+    private reEvaluateElement(elName: string,
+                              formValue: any,
+                              element: BaseElement<any>,
+                              link: IConfigurationChangeDescription): boolean {
+        if (!formValue) {
+            return false;
+        }
+        const newElement = this.getNewElementProps(elName, element, link, formValue);
+
+        switch (newElement.type) {
+            case GROUP_TYPES.matCard:
+            case GROUP_TYPES.ngtCard:
+            case GROUP_TYPES.matExpansionPane:
+                return this.updateGroupUiElement(newElement, element, elName);
+            default:
+                return this.updateUiElement(newElement, element, elName);
+        }
+    }
+
+    private updateGroupUiElement(newElement: Dictionary<any>, element: BaseElement<any>, elName: string): boolean {
+        const groupElement = new GroupUiElement(newElement);
+        if (groupElement.isEqual(element)) {
+            return false;
+        }
+
+        groupElement.attachControl(!element ? new FormGroup({}) : element.getControl());
+        groupElement.setValidation(
+            this._validationFactory.getElementValidation(
+                this.ngFormGroup,
+                groupElement
+            )
+        );
+        groupElement.validateIfTouched(false);
+        this._uiGroupElementsMap[elName] = groupElement;
+        return true;
+    }
+
+    private updateUiElement(newElement: Dictionary<any>, element: BaseElement<any>, elName: string): boolean {
+        const uiElement = new UiElement(newElement);
+        if (uiElement.isEqual(element)) {
+            return false;
+        }
+
+        uiElement.attachControl(!element ? new FormGroup({}) : element.getControl());
+        uiElement.setValidation(
+            this._validationFactory.getElementValidation(
+                this.ngFormGroup,
+                uiElement
+            )
+        );
+        uiElement.validateIfTouched(false);
+        this._uiElementsMap[elName] = uiElement;
+        return true;
+    }
+
+    private markAsTouched(elementsMap: Dictionary<BaseElement<AbstractControl>>, touchedMap: Dictionary<boolean>) {
+        for (const key in touchedMap) {
+            if (!elementsMap[key] || !elementsMap[key].getControl()) {
+                continue;
+            }
+            const control = elementsMap[key].getControl();
+
+            touchedMap[key]
+                ? control.markAsTouched({onlySelf: true})
+                : control.markAsUntouched({onlySelf: true});
+        }
+
+        this.ngFormGroup.updateValueAndValidity({onlySelf: false, emitEvent: false});
+    }
+
+    private getNewElementProps(elName: string, element: BaseElement<any>, link: IConfigurationChangeDescription, formValue: any) {
+        let newElement: Dictionary<any> = {
+            name: elName,
+            ...utils.cloneDeep<Dictionary<any>>(element ? element.getOriginal() : {}),
+            ...link.defaultConfig
+        };
+
+        const activeLink = link.configChangesMap
+            .find(v => v.expectedValue === utils.findValueByKey(formValue, v.linkedElement));
+
+        if (activeLink) {
+            newElement = {
+                ...newElement,
+                ...activeLink.newConfig
+            };
+        }
+        return newElement;
+    }
+
     private getInMemoryLayout(): ILayoutViewModel {
         this.cleanupFormControls(this.ngFormGroup);
 
@@ -404,42 +387,6 @@ export class NgtFormSchema {
         return elementsMatrix;
     }
 
-    private updateGroupUiElement(newElement: Dictionary<any>, element: BaseElement<any>, elName: string): boolean {
-        const groupElement = new GroupUiElement(newElement);
-        if (groupElement.isEqual(element)) {
-            return false;
-        }
-
-        groupElement.attachControl(!element ? new FormGroup({}) : element.getControl());
-        groupElement.setValidation(
-            this._validationFactory.getElementValidation(
-                this.ngFormGroup,
-                groupElement
-            )
-        );
-        groupElement.validateIfTouched(false);
-        this._uiGroupElementsMap[elName] = groupElement;
-        return true;
-    }
-
-    private updateUiElement(newElement: Dictionary<any>, element: BaseElement<any>, elName: string): boolean {
-        const uiElement = new UiElement(newElement);
-        if (uiElement.isEqual(element)) {
-            return false;
-        }
-
-        uiElement.attachControl(!element ? new FormGroup({}) : element.getControl());
-        uiElement.setValidation(
-            this._validationFactory.getElementValidation(
-                this.ngFormGroup,
-                uiElement
-            )
-        );
-        uiElement.validateIfTouched(false);
-        this._uiElementsMap[elName] = uiElement;
-        return true;
-    }
-
     private getTouchedFromElements(baseElements: Dictionary<BaseElement<AbstractControl>>): Dictionary<boolean> {
         const touchedMap = {};
         baseElements = baseElements || {};
@@ -449,5 +396,20 @@ export class NgtFormSchema {
             }
         }
         return touchedMap;
+    }
+
+    private getUiElement(elementName: string): UiElement {
+        if (this._uiElementsMap[elementName]) {
+            return this._uiElementsMap[elementName];
+        }
+
+        return null;
+    }
+
+    private getGroupUiElement(elementName: string): GroupUiElement {
+        if (this._uiGroupElementsMap[elementName]) {
+            return this._uiGroupElementsMap[elementName];
+        }
+        return null;
     }
 }
