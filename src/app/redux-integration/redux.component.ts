@@ -75,10 +75,6 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
         });
     }
 
-    handleValidityChange(event) {
-        this.isValid = event;
-    }
-
     handleTouchedChange(event) {
         this._store.dispatch({
             type: 'SET_TOUCHED_ELEMENTS',
