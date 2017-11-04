@@ -34,6 +34,9 @@ export class ElementWrapperComponent {
 
     handleErrorMessage(control: UiElement) {
         const maxPriorityError = this.getMaxPriorityError(control.getControl().errors);
+        if (!maxPriorityError) {
+            return null;
+        }
 
         if (utils.isFunction(this._errorMessages[maxPriorityError.key])) {
             const messageF: IMessageFunction = this._errorMessages[maxPriorityError.key] as IMessageFunction;

@@ -12,6 +12,7 @@ interface ErrorMessages {
     maxValue?: string;
     maxTime?: string;
     minTime?: string;
+    minlength?: string;
 }
 
 export const DEFAULT_ERROR_MESSAGES: ErrorMessages = {
@@ -27,7 +28,8 @@ export const DEFAULT_ERROR_MESSAGES: ErrorMessages = {
     minValue: 'Min value exceeded',
     maxValue: 'Max value exceeded',
     maxTime: 'Min time exceeded',
-    minTime: 'Max time exceeded'
+    minTime: 'Max time exceeded',
+    minlength: 'Min length exceeded'
 };
 const errorKeys = {};
 for (const key in DEFAULT_ERROR_MESSAGES) {
