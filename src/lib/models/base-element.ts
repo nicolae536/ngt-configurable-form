@@ -85,10 +85,6 @@ export abstract class BaseElement<T> {
     }
 
     setValidation(validator: ValidatorFn) {
-        if (this.hidden || this.disabled) {
-            return;
-        }
-
         this._innerModel.ngControl.validator = validator;
         this._innerModel.ngControl.updateValueAndValidity({onlySelf: false, emitEvent: false});
     }

@@ -16,6 +16,7 @@ export class NgtFormSchema {
     attachedLayout: ILayoutViewModel;
     layoutModel: ILayoutModel;
     layoutUpdateStatus$: Subject<boolean> = new Subject<boolean>();
+    validityChange$: Subject<boolean> = new Subject<boolean>();
 
     private _uiGroupElementsMap: Dictionary<GroupUiElement> = {};
     private _uiElementsMap: Dictionary<UiElement> = {};
@@ -32,8 +33,8 @@ export class NgtFormSchema {
         this.compileUiElements(jsonModel.elements);
         this.compileUiGroupElements(jsonModel.groupElements);
         this.compileRemainedLinkElements();
-        this.fetchValidation();
         this.attachedLayout = this.getInMemoryLayout();
+        this.validityChange$.next(this.ngFormGroup.valid);
     }
 
     getValue(): Object {
@@ -58,6 +59,13 @@ export class NgtFormSchema {
         this.attachedLayout.forEach(element => {
             if (element.group !== this._uiGroupElementsMap[element.group.name]) {
                 element.group = this._uiGroupElementsMap[element.group.name];
+                if (element.group) {
+                    element.group.setValidation(
+                        element.group.hidden || element.group.disabled
+                            ? () => null
+                            : this._validationFactory.getElementValidation(this.ngFormGroup, element.group)
+                    );
+                }
                 wasUpdated = true;
             }
 
@@ -68,11 +76,20 @@ export class NgtFormSchema {
                         element.lines[line][column] = this._uiElementsMap[elementName];
                         wasUpdated = true;
                     }
+
+                    const uiElement = element.lines[line][column];
+                    element.lines[line][column].setValidation(
+                        element.group && (element.group.hidden || element.group.disabled) || uiElement.hidden || uiElement.disabled
+                            ? () => null
+                            : this._validationFactory.getElementValidation(this.ngFormGroup, element.group)
+                    );
                 }
             }
         });
 
+        this.ngFormGroup.updateValueAndValidity({onlySelf: false, emitEvent: false});
         this.layoutUpdateStatus$.next(wasUpdated);
+        this.validityChange$.next(this.ngFormGroup.value);
     }
 
     setExpandedGroups(groups: Dictionary<boolean>) {
@@ -113,6 +130,7 @@ export class NgtFormSchema {
         this.attachedLayout = null;
         this.layoutUpdateStatus$.next(true);
         this.layoutUpdateStatus$.complete();
+        this.validityChange$.complete();
     }
 
     private validateModel(jsonModel: IFormConfig) {
@@ -193,22 +211,6 @@ export class NgtFormSchema {
                     this._uiElementsMap[key] = element;
                     break;
             }
-        }
-    }
-
-    private fetchValidation() {
-        for (const key in this._uiElementsMap) {
-            const uiElement = this._uiElementsMap[key];
-            uiElement.setValidation(
-                this._validationFactory.getElementValidation(this.ngFormGroup, uiElement)
-            );
-        }
-
-        for (const key in this._uiGroupElementsMap) {
-            const groupUiElement = this._uiGroupElementsMap[key];
-            groupUiElement.setValidation(
-                this._validationFactory.getElementValidation(this.ngFormGroup, groupUiElement)
-            );
         }
     }
 
@@ -299,6 +301,7 @@ export class NgtFormSchema {
         }
 
         this.ngFormGroup.updateValueAndValidity({onlySelf: false, emitEvent: false});
+        this.validityChange$.next(this.ngFormGroup.valid);
     }
 
     private getNewElementProps(elName: string, element: BaseElement<any>, link: IConfigurationChangeDescription, formValue: any) {
@@ -321,11 +324,16 @@ export class NgtFormSchema {
     }
 
     private getInMemoryLayout(): ILayoutViewModel {
-        this.cleanupFormControls(this.ngFormGroup);
-
         const inMemoryLayout: ILayoutViewModel = [];
         this.layoutModel.forEach(value => {
             const group = this.getGroupUiElement(value.group);
+            if (group) {
+                group.setValidation(
+                    group.hidden || group.disabled
+                        ? () => null
+                        : this._validationFactory.getElementValidation(this.ngFormGroup, group)
+                );
+            }
             const layoutElement = {
                 group: group,
                 lines: this.getLineElementsMatrix(group, value.lines)
@@ -333,27 +341,9 @@ export class NgtFormSchema {
 
             inMemoryLayout.push(layoutElement);
         });
-        this.ngFormGroup.updateValueAndValidity({onlySelf: true, emitEvent: false});
+        this.ngFormGroup.updateValueAndValidity({onlySelf: false, emitEvent: false});
+        this.validityChange$.next(this.ngFormGroup.valid);
         return inMemoryLayout;
-    }
-
-    private cleanupFormControls(ngFormGroup: FormGroup) {
-        if (!ngFormGroup ||
-            !ngFormGroup.controls) {
-            return;
-        }
-
-        const oldUpdateValue = this.ngFormGroup.updateValueAndValidity.bind(this.ngFormGroup);
-        this.ngFormGroup.updateValueAndValidity = () => {
-            oldUpdateValue({onlySelf: false, emitEvent: false});
-        };
-        for (const key in ngFormGroup.controls) {
-            if (ngFormGroup[key] instanceof FormGroup) {
-                this.cleanupFormControls(ngFormGroup[key]);
-            }
-            this.ngFormGroup.removeControl(key);
-        }
-        this.ngFormGroup.updateValueAndValidity = oldUpdateValue;
     }
 
     private getLineElementsMatrix(group: GroupUiElement, lines: string[][]): UiElement[][] {
@@ -362,7 +352,6 @@ export class NgtFormSchema {
         }
 
         const formToAttach: FormGroup = group ? group.getControl() as FormGroup : this.ngFormGroup;
-        // formToAttach.updateValueAndValidity.bind(formToAttach, {emitEvent: false});
 
         const elementsMatrix: UiElement[][] = [];
         let arrayToRet: UiElement[] = [];
@@ -370,6 +359,12 @@ export class NgtFormSchema {
             arrayToRet = [];
             line.forEach(uiElementName => {
                 const uiElement = this.getUiElement(uiElementName);
+                uiElement.setValidation(
+                    group.hidden || group.disabled || uiElement.hidden || uiElement.disabled
+                        ? () => null
+                        : this._validationFactory.getElementValidation(this.ngFormGroup, uiElement)
+                );
+
                 formToAttach.removeControl(uiElement.name);
                 formToAttach.addControl(uiElement.name, uiElement.getControl());
                 arrayToRet.push(uiElement);

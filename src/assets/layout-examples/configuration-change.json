@@ -142,12 +142,16 @@
             },
             "validation": [
                 {
+                    "type": "required",
+                    "ranking": 1
+                },
+                {
                     "type": "maxDate",
                     "staticMetadata": [
                         "runningExperience",
                         "endDate"
                     ],
-                    "ranking": 1
+                    "ranking": 2
                 }
             ],
             "size": 1
@@ -161,12 +165,16 @@
             },
             "validation": [
                 {
+                    "type": "required",
+                    "ranking": 1
+                },
+                {
                     "type": "minDate",
                     "staticMetadata": [
                         "runningExperience",
                         "startDt"
                     ],
-                    "ranking": 1
+                    "ranking": 2
                 }
             ],
             "placeholder": "End date",

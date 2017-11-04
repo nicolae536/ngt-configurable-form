@@ -100,6 +100,7 @@ export class ConfigurableFormComponent implements OnDestroy {
         this.applyGroupsSettingsToSchema(this._expandedGroups);
         this.applyTouchedSettingsToSchema(this._touchedControlsMap);
         this.setValueChangeSubscription();
+        this.setValidationChangeSubscription();
     }
 
     private patchFormValue(values: Object) {
@@ -129,7 +130,7 @@ export class ConfigurableFormComponent implements OnDestroy {
                 this._lastEmittedModel = value;
                 this.onValueChange.emit(value);
                 this.onTouchedChange.emit(this.formSchema.getTouchedMap());
-                this.onValidityChange.emit(this.formSchema.ngFormGroup.valid);
+                this.formSchema.validityChange$.next(this.formSchema.ngFormGroup.valid);
                 this.emitValueToListenersMap(value);
             });
     }
@@ -184,5 +185,14 @@ export class ConfigurableFormComponent implements OnDestroy {
         }
 
         this.formSchema.setTouchedControls(touchedMap);
+    }
+
+    private setValidationChangeSubscription() {
+        this.formSchema
+            .validityChange$
+            .debounceTime(0)
+            .subscribe(value => {
+                this.onValidityChange.emit(value);
+            });
     }
 }
