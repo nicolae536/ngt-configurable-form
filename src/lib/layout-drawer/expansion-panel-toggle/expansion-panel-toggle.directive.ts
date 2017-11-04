@@ -6,7 +6,7 @@ export class ExpansionPanelToggleDirective {
     @Input()
     set isExpanded(state: boolean) {
         this.setIsExpanded(state);
-    };
+    }
 
     @Output() onToggle: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -40,7 +40,7 @@ export class ExpansionPanelToggleDirective {
     }
 
     private getExpandedState(): boolean {
-        const panelState = this._matExpansionPanel._getExpandedState()
+        const panelState = this._matExpansionPanel._getExpandedState();
 
         if (panelState === 'expanded') {
             return true;

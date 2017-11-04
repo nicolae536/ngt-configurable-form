@@ -25,10 +25,8 @@
             </div>
         </ng-template>
         <ng-template [ngSwitchCase]="groupTypes.matExpansionPane">
-            <mat-expansion-panel>
-                <mat-expansion-panel-header ngtExpansionPanelToggle
-                                            [isExpanded]="rowConfig?.group?.isExpanded"
-                                            (onToggle)="handleTogglePanel(rowConfig, $event)">
+            <mat-expansion-panel [expanded]="rowConfig?.group?.isExpanded">
+                <mat-expansion-panel-header (click)="handleTogglePanel(rowConfig)">
                     <mat-panel-title class="ngt-group-title">
                         {{rowConfig.group.title}}
                     </mat-panel-title>

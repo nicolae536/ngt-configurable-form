@@ -80,12 +80,10 @@ export class NgtFormSchema {
             return;
         }
 
-        let wasUpdated = false;
         for (const key in this._uiGroupElementsMap) {
-            this._uiGroupElementsMap[key].isExpanded = !!groups[key];
-            wasUpdated = true;
+            this._uiGroupElementsMap[key].isExpanded = groups[key] ? true : false;
         }
-        this.layoutUpdateStatus$.next(wasUpdated);
+        this.layoutUpdateStatus$.next(true);
     }
 
     setTouchedControls(touchedMap: Dictionary<boolean>) {
@@ -106,9 +104,12 @@ export class NgtFormSchema {
 
     destroy() {
         this.ngFormGroup.reset({}, {
-            onlySelf: true,
+            onlySelf: false,
             emitEvent: false
         });
+        for (const key in this._uiGroupElementsMap) {
+            this._uiGroupElementsMap[key].isExpanded = false;
+        }
         this.attachedLayout = null;
         this.layoutUpdateStatus$.next(true);
         this.layoutUpdateStatus$.complete();

@@ -36,8 +36,9 @@ export function simpleFormReducer(state: any, action: IAction) {
 
 export function updateStoreConfiguration(state: any, payload: ISimplePayload) {
     state[payload.formName] = {
-        ...state[payload.formName],
-        configuration: JSON.parse(JSON.stringify(payload.configuration)),
+        // ...state[payload.formName],
+        expandedPanes: {},
+        configuration: JSON.parse(JSON.stringify(payload.configuration))
     };
     return {...state};
 }

@@ -31,9 +31,9 @@ export class LayoutDrawerComponent implements OnInit, OnDestroy {
     constructor(private _cdRef: ChangeDetectorRef) {
     }
 
-    handleTogglePanel(rowConfig, isExpanded) {
-        rowConfig.group.isExpanded = isExpanded;
-        this.onPanelToggle.emit({name: rowConfig.group.name, isExpanded});
+    handleTogglePanel(rowConfig) {
+        rowConfig.group.isExpanded = !rowConfig.group.isExpanded;
+        this.onPanelToggle.emit({name: rowConfig.group.name, isExpanded: rowConfig.group.isExpanded});
     }
 
     ngOnInit(): void {
