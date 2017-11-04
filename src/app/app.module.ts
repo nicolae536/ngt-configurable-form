@@ -42,7 +42,8 @@ export function createValidationFactory() {
         MatButtonModule,
         MatToolbarModule,
         ConfigurableFormComponentModule.forRoot({
-            validationFactory: createValidationFactory
+            validationFactory: createValidationFactory,
+            errorMessagesMap: {invalidPhoneNumber: 'Invalid phone number'}
         }),
         StoreModule.forRoot({
             simpleFormReducer: simpleFormReducer

@@ -15,8 +15,7 @@ import { getRootProviders, IRootProviders } from './configurable-form.providers'
         LayoutDrawerModule
     ],
     exports: [ConfigurableFormComponent],
-    declarations: [ConfigurableFormComponent],
-    providers: []
+    declarations: [ConfigurableFormComponent]
 })
 export class ConfigurableFormComponentModule {
     static forRoot(params: IRootProviders): ModuleWithProviders {

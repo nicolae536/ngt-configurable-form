@@ -1,6 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { Dictionary } from '../models/shared.interfaces';
 import { ErrorMessagesFactory, IValidationFactory } from './configurable-form.interfaces';
+import { DEFAULT_ERROR_MESSAGES } from './default-error.messages';
 import { ValidationFactoryService } from './validation-factory.service';
 
 export const VALIDATION_FACTORY = new InjectionToken<IValidationFactory>('ngt-configurable-form/validation-factory');
@@ -11,7 +12,7 @@ export function getValidationFactory(validationFactory: IValidationFactory) {
 }
 
 export interface IRootProviders {
-    errorMessagesFactory?: ErrorMessagesFactory;
+    errorMessagesMap?: ErrorMessagesFactory;
     validationFactory?: () => IValidationFactory;
 }
 
@@ -19,6 +20,6 @@ export function getRootProviders(params: IRootProviders): any[] {
     return [
         {provide: ValidationFactoryService, useFactory: getValidationFactory, deps: [VALIDATION_FACTORY]},
         {provide: VALIDATION_FACTORY, useFactory: params.validationFactory},
-        {provide: ERROR_MESSAGES, useValue: params.errorMessagesFactory || {}}
+        {provide: ERROR_MESSAGES, useValue: {...DEFAULT_ERROR_MESSAGES, ...params.errorMessagesMap}}
     ];
 }

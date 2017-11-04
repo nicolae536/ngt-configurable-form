@@ -1,6 +1,7 @@
 import { Component, HostBinding, Input, ViewEncapsulation, ChangeDetectionStrategy, Inject } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ValidationErrors } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
+import { ErrorMessagesFactory, IMessageFunction } from '../configuratble-form/configurable-form.interfaces';
 import { ERROR_MESSAGES } from '../configuratble-form/configurable-form.providers';
 import { MAT_INPUT_ELEMENTS } from '../form-elements/form-elements.consts';
 import { IMatSelectElement, IElementConfig } from '../models/element.config.interfaces';
@@ -8,7 +9,6 @@ import { Dictionary } from '../models/shared.interfaces';
 import { UiElement } from '../models/ui-element';
 import { utils } from '../models/utils';
 import { elementWrapperError } from './element-wrapper.consts';
-import { ErrorMessagesFactory, IMessageFunction } from '../configuratble-form/configurable-form.interfaces';
 
 @Component({
     selector: 'ngt-element-wrapper',
@@ -33,13 +33,15 @@ export class ElementWrapperComponent {
     }
 
     handleErrorMessage(control: UiElement) {
-        if (utils.isFunction(this._errorMessages[control.name])) {
-            const messageF: IMessageFunction = this._errorMessages[control.name] as IMessageFunction;
-            return messageF(this.rootFormGroup, control.getControl().errors);
+        const maxPriorityError = this.getMaxPriorityError(control.getControl().errors);
+
+        if (utils.isFunction(this._errorMessages[maxPriorityError.key])) {
+            const messageF: IMessageFunction = this._errorMessages[maxPriorityError.key] as IMessageFunction;
+            return messageF(this.rootFormGroup, maxPriorityError.error);
         }
 
-        if (this._errorMessages[control.name]) {
-            return this._errorMessages[control.name];
+        if (this._errorMessages[maxPriorityError.key]) {
+            return this._errorMessages[maxPriorityError.key];
         }
 
         return control.getControl().errors ? JSON.stringify(control.getControl().errors) : '';
@@ -61,5 +63,39 @@ export class ElementWrapperComponent {
                 this.parentFormGroup.get(updateFields[key]).patchValue(option[key]);
             }
         }
+    }
+
+    private getMaxPriorityError(errors: ValidationErrors | any): {
+        error: ValidationErrors,
+        key: string
+    } {
+        if (!errors) {
+            return null;
+        }
+
+        let errorToReturn = {ranking: -1};
+        let keyToReturn = null;
+        for (const key in errors) {
+            if (!errors[key]) {
+                continue;
+            }
+
+            if (!errors[key].hasOwnProperty('ranking')) {
+                return {
+                    key: key,
+                    error: errors[key]
+                };
+            }
+
+            if (errors[key].ranking > errorToReturn.ranking) {
+                errorToReturn = errors[key];
+                keyToReturn = key;
+            }
+        }
+
+        return {
+            key: keyToReturn,
+            error: errorToReturn
+        };
     }
 }

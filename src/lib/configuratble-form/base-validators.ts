@@ -1,6 +1,7 @@
 import { FormGroup, ValidatorFn, AbstractControl } from '@angular/forms';
 import { IElementConfig } from '../models/element.config.interfaces';
 import { FormGroupValidatorMetadata } from '../models/shared.interfaces';
+import { DEFAULT_ERROR_KEYS } from './default-error.messages';
 
 /* Interface for error map */
 export interface IValidationResult {
@@ -85,7 +86,9 @@ export class BaseValidators {
                  validator: FormGroupValidatorMetadata): IValidationResult {
         controlValue = '' + controlValue;
         if (controlValue !== '' && !controlValue.match(EMAIL_VALIDATION_REGEXP)) {
-            return {'invalidEmailAddress': true};
+            const retVal = {};
+            retVal[DEFAULT_ERROR_KEYS.email] = true;
+            return retVal;
         }
 
         return null;
@@ -99,17 +102,16 @@ export class BaseValidators {
                    element: IElementConfig,
                    controlValue: any,
                    validator: FormGroupValidatorMetadata): IValidationResult {
+        const retVal = {};
+        retVal[DEFAULT_ERROR_KEYS.integer] = true;
+
         if (BaseValidators.number(ngFormGroup, element, controlValue, validator) !== null) {
-            return {
-                'integer': true
-            };
+            return retVal;
         }
 
         const zeroDecimalCount = BaseValidators.maxDecimalLength(ngFormGroup, element, controlValue, {type: '', staticMetadata: 0});
         if (zeroDecimalCount(ngFormGroup, element, controlValue, validator) !== null) {
-            return {
-                'integer': true
-            };
+            return retVal;
 
         }
 
@@ -126,12 +128,16 @@ export class BaseValidators {
                   controlValue: any,
                   validator: FormGroupValidatorMetadata): IValidationResult {
         const valueAsString = '' + (controlValue);
+        const retVal = {};
+        retVal[DEFAULT_ERROR_KEYS.number] = true;
+
+
         if (controlValue && valueAsString !== '' &&
             (isNaN(controlValue) ||
                 valueAsString[0] === '.' ||
                 valueAsString[valueAsString.length - 1] === '.'
             )) {
-            return {'invalidNumber': true};
+            return retVal;
         }
 
         if (controlValue && valueAsString !== '') {
@@ -144,7 +150,7 @@ export class BaseValidators {
                 hasZeroAfterDash ||
                 valueAsString.indexOf('.-') !== -1 ||
                 valueAsString.indexOf('-.') !== -1) {
-                return {'invalidNumber': true};
+                return retVal;
             }
         }
 
@@ -168,13 +174,16 @@ export class BaseValidators {
                 return null;
             }
 
+            const retVal = {};
+            retVal[DEFAULT_ERROR_KEYS.maxDecimalLength] = true;
             const decimalCount = validator.staticMetadata;
             if (+decimalCount === 0 && valueAsString.indexOf('.') !== -1) {
-                return {'maxDecimalLength': decimalCount};
+                retVal[DEFAULT_ERROR_KEYS.maxDecimalLength] = decimalCount;
+                return retVal;
             }
-
+            retVal[DEFAULT_ERROR_KEYS.maxDecimalLength] = decimalCount;
             const decimalStringValue = valueAsString.replace(new RegExp(/^([0-9]*.)/), '');
-            return decimalStringValue !== '0' && decimalStringValue.length > decimalCount ? {'maxDecimalLength': decimalCount} : null;
+            return decimalStringValue !== '0' && decimalStringValue.length > decimalCount ? retVal : null;
         };
     }
 
@@ -191,7 +200,9 @@ export class BaseValidators {
         // {6,100}           - Assert password is between 6 and 100 characters
         // (?=.*[0-9])       - Assert a string has at least one number
         if (!controlValue.match(/^(?=.*[0-9])[a-zA-Z0-9!@#$%^&*]{6,100}$/)) {
-            return {'invalidPassword': true};
+            const retVal = {};
+            retVal[DEFAULT_ERROR_KEYS.password] = true;
+            return retVal;
         }
 
         return null;
@@ -226,7 +237,9 @@ export class BaseValidators {
             minDateValue.getTime() &&
             controlValue.getTime() &&
             minDateValue.getTime() > controlValue.getTime()) {
-            return {'minDate': minDateValue};
+            const retVal = {};
+            retVal[DEFAULT_ERROR_KEYS.minDate] = minDateValue;
+            return retVal;
         }
 
         if (minDateControl && minDateControl.errors && minDateControl.errors.maxDate) {
@@ -256,7 +269,9 @@ export class BaseValidators {
             maxDateValue.getTime() &&
             controlValue.getTime() &&
             maxDateValue.getTime() < controlValue.getTime()) {
-            return {'maxDate': maxDateValue};
+            const retVal = {};
+            retVal[DEFAULT_ERROR_KEYS.maxDate] = maxDateValue;
+            return retVal;
         }
 
         if (maxDateControl && maxDateControl.errors && maxDateControl.errors.minDate) {
@@ -273,7 +288,10 @@ export class BaseValidators {
         }
         const value = validator.staticMetadata;
 
-        return +controlValue < +value ? {'minValue': {'minValue': value, 'actualvalue': controlValue}} : null;
+        const retVal = {};
+        retVal[DEFAULT_ERROR_KEYS.minValue] = {'minValue': value, 'actualvalue': controlValue};
+
+        return +controlValue < +value ? retVal : null;
     }
 
     static maxValue(ngFormGroup: FormGroup,
@@ -281,7 +299,9 @@ export class BaseValidators {
                     controlValue: any,
                     validator: FormGroupValidatorMetadata): IValidationResult {
         const value = validator.staticMetadata;
-        return +controlValue > +value ? {'maxValue': {'maxValue': value, 'actualvalue': controlValue}} : null;
+        const retVal = {};
+        retVal[DEFAULT_ERROR_KEYS.maxValue] = {'maxValue': value, 'actualvalue': controlValue};
+        return +controlValue > +value ? retVal : null;
     }
 
     static maxTime(ngFormGroup: FormGroup,
@@ -301,9 +321,10 @@ export class BaseValidators {
         splittedTime = controlValue.split(':');
         hours = splittedTime[0] ? +splittedTime[0] * 3600 : 0;
         minutes = splittedTime[1] ? +splittedTime[1] * 60 : 0;
-
+        const retVal = {};
+        retVal[DEFAULT_ERROR_KEYS.maxTime] = {'maxTime': validator.staticMetadata, 'actualvalue': controlValue};
         return +(hours + minutes) > +maxTimeValue
-            ? {'maxTime': {'maxTime': validator.staticMetadata, 'actualvalue': controlValue}}
+            ? retVal
             : null;
 
     }
@@ -322,15 +343,18 @@ export class BaseValidators {
         splittedTime = controlValue.split(':');
         hours = +splittedTime[0] * 3600;
         minutes = +splittedTime[1] * 60;
-
+        const retVal = {};
+        retVal[DEFAULT_ERROR_KEYS.minTime] = {'minTime': value, 'actualvalue': controlValue};
         return +(hours + minutes ) < +maxTimeValue
-            ? {'minTime': {'minTime': value, 'actualvalue': controlValue}}
+            ? retVal
             : null;
     }
 
     static isMdDateInvalid(value: Date): IValidationResult {
         if (value === null || (value && value.toString() === INVALID_DATE_ERROR)) {
-            return {'dateValidator': true};
+            const retVal = {};
+            retVal[DEFAULT_ERROR_KEYS.date] = true;
+            return retVal;
         }
     }
 }
