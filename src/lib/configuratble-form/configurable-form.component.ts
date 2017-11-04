@@ -19,6 +19,7 @@ import { ValidationFactoryService } from './validation-factory.service';
 })
 export class ConfigurableFormComponent implements OnDestroy {
     @HostBinding('class.ngt-component') isNgtComponent = true;
+    @Input() logging: boolean = false;
 
     // Not used planned for connecting data from outside
     @Input()

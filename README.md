@@ -29,5 +29,5 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## TODO list
 
-1. Demo case for changing form configuration
-2. Integrate in redux
+1. Plugin for update element with programatic links 
+2. Plugin for errors map

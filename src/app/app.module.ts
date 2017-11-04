@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { MatButtonModule, MatToolbarModule } from '@angular/material';
@@ -9,16 +10,14 @@ import { ConfigurableFormComponentModule } from '../lib/configuratble-form/confi
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
+import { ConfigurationChangeComponent } from './configuration-change/configuration-change';
 import { ExampleSimpleFormComponent } from './layout-example/layout-example';
+import { PresentationModule } from './presentation/presentation.module';
 import { ProvidingDataExampleComponent } from './providing-data-example/providing-data-example';
 import { ReduxFormComponent } from './redux-integration/redux.component';
 import { simpleFormReducer } from './redux-integration/simpleForm.reducer';
 import { CustomValidationFactory } from './validators-example/custom-validation-factory';
 import { ValidatorsExampleComponent } from './validators-example/validators-example.component';
-import { ConfigurationChangeComponent } from './configuration-change/configuration-change';
-import { PresentationComponent } from './presentation/presentation.component';
-import { CommonModule } from '@angular/common';
-import { PresentationModule } from './presentation/presentation.module';
 
 export function createValidationFactory() {
     return new CustomValidationFactory();
@@ -42,7 +41,9 @@ export function createValidationFactory() {
         PresentationModule,
         MatButtonModule,
         MatToolbarModule,
-        ConfigurableFormComponentModule.forRoot(createValidationFactory),
+        ConfigurableFormComponentModule.forRoot({
+            validationFactory: createValidationFactory
+        }),
         StoreModule.forRoot({
             simpleFormReducer: simpleFormReducer
         }),

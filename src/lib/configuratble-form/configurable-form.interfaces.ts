@@ -1,7 +1,8 @@
 import { FormGroup } from '@angular/forms';
-import { IFormConfig, IGroupElementConfig } from '../models/groups.config.interfaces';
 import { IElementConfig } from '../models/element.config.interfaces';
-import { Dictionary } from '../models/shared.interfaces';
+import { IFormConfig, IGroupElementConfig } from '../models/groups.config.interfaces';
+import { Dictionary, FormGroupValidatorMetadata } from '../models/shared.interfaces';
+import { IValidationResult } from './base-validators';
 
 
 /**
@@ -27,4 +28,19 @@ export interface IElementChangePayload {
     element: Dictionary<any>;
     groupName?: string;
     afterElement?: string;
+}
+
+export type IMessageFunction = (rootElement: FormGroup, errors: Dictionary<string>) => string;
+
+export type ErrorMessagesFactory = Dictionary<string | IMessageFunction>;
+
+export type IValidatorFunction = (ngFormControl: FormGroup,
+                                  elementConfig: IElementConfig,
+                                  value: any,
+                                  staticMetadata: any) => IValidationResult;
+
+export interface IValidationFactory {
+    hasValidator(validator: FormGroupValidatorMetadata): boolean;
+
+    getValidator(validator: FormGroupValidatorMetadata): IValidatorFunction;
 }

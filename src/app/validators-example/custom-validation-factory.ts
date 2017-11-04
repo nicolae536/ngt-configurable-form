@@ -1,8 +1,8 @@
 import { FormGroup } from '@angular/forms';
 import { IValidationResult } from '../../lib/configuratble-form/base-validators';
-import { IValidationFactory, IValidatorFunction } from '../../lib/configuratble-form/validation-factory.interface';
-import { FormGroupValidatorMetadata } from '../../lib/models/shared.interfaces';
+import { IValidationFactory, IValidatorFunction } from '../../lib/configuratble-form/configurable-form.interfaces';
 import { IElementConfig } from '../../lib/models/element.config.interfaces';
+import { FormGroupValidatorMetadata } from '../../lib/models/shared.interfaces';
 
 export class CustomValidationFactory implements IValidationFactory {
     phoneRegex = /^(?=0[723][2-8]\d{7})(?!.*(.)\1{2,}).{10}$/;

@@ -18,13 +18,14 @@ import { UiElement } from '../models/ui-element';
 export class FormElementsComponent implements OnInit, OnDestroy {
     @HostBinding('class.ngt-component') isNgtComponent = true;
     @Input() layoutUpdateStatus$: Subject<boolean>;
-    @Input() formName: boolean;
+    @Input() formName: string;
+    @Input() rootFormGroup: FormGroup;
     @Input() parentFormGroup: FormGroup;
     @Input() elements: UiElement[];
     @Input() outsideSharedData: Dictionary<any>;
     @Input() outsideDataProviders: Dictionary<Observable<any>>;
 
-    private _layoutUpdateTeardown$: Subscription;
+    private _layoutUpdateTearDown$: Subscription;
 
     constructor(private _cdRef: ChangeDetectorRef) {
     }
@@ -34,15 +35,15 @@ export class FormElementsComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this._layoutUpdateTeardown$ = this.layoutUpdateStatus$
+        this._layoutUpdateTearDown$ = this.layoutUpdateStatus$
             .filter(v => v)
             .subscribe(v => this._cdRef.markForCheck());
     }
 
     ngOnDestroy(): void {
-        if (!this._layoutUpdateTeardown$) {
+        if (!this._layoutUpdateTearDown$) {
             return;
         }
-        this._layoutUpdateTeardown$.unsubscribe();
+        this._layoutUpdateTearDown$.unsubscribe();
     }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ValidatorFn, FormGroup, Validators } from '@angular/forms';
 import { Dictionary, FormGroupValidatorMetadata } from '../models/shared.interfaces';
 import { BaseValidators, ValidableElement } from './base-validators';
-import { IValidationFactory } from './validation-factory.interface';
+import { IValidationFactory } from './configurable-form.interfaces';
 
 @Injectable()
 export class ValidationFactoryService {

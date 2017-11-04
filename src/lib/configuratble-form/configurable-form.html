@@ -10,7 +10,14 @@
                        [outsideDataProviders]="outsideDataProviders"
                        [outsideSharedData]="outsideSharedData"
                        (onPanelToggle)="handleTogglePanel($event)"></ngt-layout-drawer>
-    <!--{{ formSchema?.ngFormGroup?.getRawValue() | json }}-->
-    <!--{{ ngFormGroup.value | json }}-->
-    <!--{{ ngFormGroup?.valid }}-->
+    <div *ngIf="logging">
+        <div> Form value:
+            <div>
+                <pre>{{ formSchema?.ngFormGroup?.getRawValue() | json }}</pre>
+            </div>
+        </div>
+        <div> Form validity:
+            {{ ngFormGroup?.valid ? 'is-valid' : 'is-not-valid' }}
+        </div>
+    </div>
 </form>

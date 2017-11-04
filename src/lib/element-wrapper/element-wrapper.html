@@ -33,7 +33,7 @@
                     *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(currentElement)}}
             </mat-error>
         </mat-form-field>
     </ng-template>
@@ -58,7 +58,7 @@
         <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-            {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
+            {{handleErrorMessage(currentElement)}}
         </mat-error>
     </ng-template>
 
@@ -74,7 +74,7 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(currentElement)}}
             </mat-error>
         </ngt-form-field>
     </ng-template>
@@ -96,7 +96,7 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(currentElement)}}
             </mat-error>
         </ngt-form-field>
     </ng-template>
@@ -113,7 +113,7 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(currentElement)}}
             </mat-error>
         </ngt-form-field>
     </ng-template>
@@ -149,7 +149,7 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(currentElement)}}
             </mat-error>
             <mat-datepicker-toggle *ngIf="currentElement?.dateConfig?.useTogglePrefix"
                                    matPrefix
@@ -199,7 +199,7 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(currentElement)}}
             </mat-error>
             <mat-autocomplete #auto="matAutocomplete">
                 <mat-option

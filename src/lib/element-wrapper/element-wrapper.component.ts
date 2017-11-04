@@ -1,11 +1,14 @@
-import { Component, HostBinding, Input, ViewEncapsulation, ChangeDetectionStrategy, OnInit, AfterContentChecked } from '@angular/core';
-import { FormGroup, AbstractControl } from '@angular/forms';
+import { Component, HostBinding, Input, ViewEncapsulation, ChangeDetectionStrategy, Inject } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
-import { IElementChangePayload } from '../configuratble-form/configurable-form.interfaces';
+import { ERROR_MESSAGES } from '../configuratble-form/configurable-form.providers';
 import { MAT_INPUT_ELEMENTS } from '../form-elements/form-elements.consts';
-import { elementWrapperError } from './element-wrapper.consts';
 import { IMatSelectElement, IElementConfig } from '../models/element.config.interfaces';
 import { Dictionary } from '../models/shared.interfaces';
+import { UiElement } from '../models/ui-element';
+import { utils } from '../models/utils';
+import { elementWrapperError } from './element-wrapper.consts';
+import { ErrorMessagesFactory, IMessageFunction } from '../configuratble-form/configurable-form.interfaces';
 
 @Component({
     selector: 'ngt-element-wrapper',
@@ -16,7 +19,8 @@ import { Dictionary } from '../models/shared.interfaces';
 })
 export class ElementWrapperComponent {
     @HostBinding('class.ngt-component') isNgtComponent = true;
-    @Input() formName: boolean;
+    @Input() formName: string;
+    @Input() rootFormGroup: FormGroup;
     @Input() parentFormGroup: FormGroup;
     @Input() elementDataProvider: Observable<any>;
     @Input() currentElement: IElementConfig;
@@ -25,11 +29,20 @@ export class ElementWrapperComponent {
 
     matInputContainerElements = MAT_INPUT_ELEMENTS;
 
-    constructor() {
+    constructor(@Inject(ERROR_MESSAGES) private _errorMessages: ErrorMessagesFactory) {
     }
 
-    handleErrorMessage(errorField: AbstractControl) {
-        return errorField && errorField.errors ? JSON.stringify(errorField.errors) : '';
+    handleErrorMessage(control: UiElement) {
+        if (utils.isFunction(this._errorMessages[control.name])) {
+            const messageF: IMessageFunction = this._errorMessages[control.name] as IMessageFunction;
+            return messageF(this.rootFormGroup, control.getControl().errors);
+        }
+
+        if (this._errorMessages[control.name]) {
+            return this._errorMessages[control.name];
+        }
+
+        return control.getControl().errors ? JSON.stringify(control.getControl().errors) : '';
     }
 
     handleSelectConfig(selectElement: IMatSelectElement) {
