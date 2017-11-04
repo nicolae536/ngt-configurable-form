@@ -1,7 +1,7 @@
 <div *ngFor="let rowConfig of layout"
      class="ngt-group-wrapper"
      [ngClass]="rowConfig?.group?.classMap">
-    <div *ngIf="rowConfig && rowConfig.group"
+    <div *ngIf="rowConfig && rowConfig.group && !rowConfig.group.hidden"
          [ngSwitch]="rowConfig.group.type">
         <ng-template [ngSwitchCase]="groupTypes.ngtCard">
             <div class="ngt-card">

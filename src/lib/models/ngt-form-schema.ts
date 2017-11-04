@@ -18,7 +18,7 @@ interface ILayoutChange {
 export class NgtFormSchema {
     name: string;
     ngFormGroup: FormGroup;
-    attachedLayout: any;
+    attachedLayout: ILayoutViewModel;
     layoutModel: ILayoutModel;
     layoutUpdateStatus$: Subject<boolean> = new Subject<boolean>();
 
@@ -38,20 +38,7 @@ export class NgtFormSchema {
         this.compileUiGroupElements(jsonModel.groupElements);
         this.compileRemainedLinkElements();
         this.fetchValidation();
-        this.attachedLayout = this.getNewLayout();
-        // TODO Consider letting angular to draw the layout and used the main control group for changes
-        /** TODO flow valueChanges$ -> check links for element recompilation (recompile only if this is needed)
-         *  TODO                    -> create a new layout
-         *  TODO                    -> do reference checks for the new Layout
-         *  TODO                    -> if references have changed rerender the changed nodes
-         *  TODO consequences       -> OnPush must depend on inputs which are in layout references and rerender the dom accordingly
-         */
-
-        // TODO add ngControls to elements
-        // TODO add rx BS which supports hot value changes for the main element group
-        // TODO find a way to keep the ngControls touched/disabled state
-        // TODO The ngControls must support hot reloading of validation without triggering changes
-        // TODO Create visible layout -> the layout should not reRender unless this is needed
+        this.attachedLayout = this.getInMemoryLayout();
     }
 
     getValue(): Object {
@@ -63,14 +50,20 @@ export class NgtFormSchema {
             return;
         }
 
-        this.ngFormGroup.patchValue(
-            value,
-            {onlySelf: true, emitEvent: false}
-        );
+        for (const key in value) {
+            if (this._uiElementsMap[key]) {
+                this._uiElementsMap[key].setValue(
+                    utils.findValueByKey(value, key)
+                );
+            }
 
-        if (!this.changeLayoutIfNeeded()) {
-            this.layoutUpdateStatus$.next(true);
+            if (this._uiGroupElementsMap[key]) {
+                this._uiGroupElementsMap[key].setValue(
+                    utils.findValueByKey(value, key)
+                );
+            }
         }
+        this.changeLayoutIfNeeded();
     }
 
     changeLayoutIfNeeded() {
@@ -81,22 +74,43 @@ export class NgtFormSchema {
         // this line will update all dom nodes
         // Recheck after https://github.com/angular/angular/issues/20026 is cleared
         // TODO 1.Bug report for all domes rerendered when this reference changed
-        // this.attachedLayout = this.getNewLayout();
+        // this.attachedLayout = this.getInMemoryLayout();
         // this.layoutUpdateStatus$.next(
         //     // true
         // );
 
         // This line updates only changed references
-        // this.attachedLayout = this.getNewLayout();
+        // this.attachedLayout = this.getInMemoryLayout();
         // layoutUpdateStatus$ is sending an events to the components which should be
         // marked for check why do I need this if I create new references with onOush strategy ?
         // it should update automatically because the reference has changed
         // TODO 2.Bug report for why do I need to mark for check when i'm changing only references with OnPush
-        const wasLayoutMerged = this.mergeLayouts(this.attachedLayout, this.getNewLayout());
-        this.layoutUpdateStatus$.next(
-            wasLayoutMerged
-        );
-        return wasLayoutMerged;
+        // const wasLayoutMerged = this.mergeLayouts(this.attachedLayout, this.getInMemoryLayout());
+        // this.layoutUpdateStatus$.next(
+        //     wasLayoutMerged
+        // );
+        // return wasLayoutMerged;
+
+        // TODO UPDATE ATTACHED LAYOUT
+        let wasUpdated = false;
+        this.attachedLayout.forEach(element => {
+            if (element.group !== this._uiGroupElementsMap[element.group.name]) {
+                element.group = this._uiGroupElementsMap[element.group.name];
+                wasUpdated = true;
+            }
+
+            for (let line = 0; line < element.lines.length; line++) {
+                for (let column = 0; column < element.lines[line].length; column++) {
+                    const elementName = element.lines[line][column].name;
+                    if (element.lines[line][column] !== this._uiElementsMap[elementName]) {
+                        element.lines[line][column] = this._uiElementsMap[elementName];
+                        wasUpdated = true;
+                    }
+                }
+            }
+        });
+
+        this.layoutUpdateStatus$.next(wasUpdated);
     }
 
     getUiElement(elementName: string): UiElement {
@@ -153,6 +167,13 @@ export class NgtFormSchema {
 
         this.markAsTouched(this._uiElementsMap, touchedMap);
         this.markAsTouched(this._uiGroupElementsMap, touchedMap);
+    }
+
+    getTouchedMap() {
+        return {
+            ...this.getTouchedFromElements(this._uiElementsMap),
+            ...this.getTouchedFromElements(this._uiGroupElementsMap)
+        };
     }
 
     destroy() {
@@ -315,25 +336,21 @@ export class NgtFormSchema {
         }
     }
 
-    private getNewLayout(): ILayoutViewModel {
+    private getInMemoryLayout(): ILayoutViewModel {
         this.cleanupFormControls(this.ngFormGroup);
 
-        const newModel: ILayoutViewModel = [];
+        const inMemoryLayout: ILayoutViewModel = [];
         this.layoutModel.forEach(value => {
             const group = this.getGroupUiElement(value.group);
-            if (group && group.hidden) {
-                return;
-            }
-
             const layoutElement = {
                 group: group,
                 lines: this.getLineElementsMatrix(group, value.lines)
             };
 
-            newModel.push(layoutElement);
+            inMemoryLayout.push(layoutElement);
         });
         this.ngFormGroup.updateValueAndValidity({onlySelf: true, emitEvent: false});
-        return newModel;
+        return inMemoryLayout;
     }
 
     private cleanupFormControls(ngFormGroup: FormGroup) {
@@ -369,19 +386,8 @@ export class NgtFormSchema {
             arrayToRet = [];
             line.forEach(uiElementName => {
                 const uiElement = this.getUiElement(uiElementName);
-                if (!uiElement ||
-                    uiElement.hidden) {
-                    return;
-                }
-
-                const oldUpdateValue = formToAttach.updateValueAndValidity.bind(formToAttach);
-                formToAttach.updateValueAndValidity = () => {
-                    oldUpdateValue({onlySelf: false, emitEvent: false});
-                };
                 formToAttach.removeControl(uiElement.name);
-                // formToAttach.updateValueAndValidity = formToAttach.updateValueAndValidity.bind(formToAttach, {emitEvent: false});
                 formToAttach.addControl(uiElement.name, uiElement.getControl());
-                formToAttach.updateValueAndValidity = oldUpdateValue;
                 arrayToRet.push(uiElement);
             });
 
@@ -391,13 +397,8 @@ export class NgtFormSchema {
         });
 
         if (group && group.getControl()) {
-            const oldUpdateValue = this.ngFormGroup.updateValueAndValidity.bind(this.ngFormGroup);
-            this.ngFormGroup.updateValueAndValidity = () => {
-                oldUpdateValue({onlySelf: false, emitEvent: false});
-            };
             this.ngFormGroup.removeControl(group.name);
             this.ngFormGroup.addControl(group.name, formToAttach);
-            this.ngFormGroup.updateValueAndValidity = oldUpdateValue;
         }
 
         return elementsMatrix;
@@ -416,7 +417,7 @@ export class NgtFormSchema {
                 groupElement
             )
         );
-        groupElement.validateIfTouched();
+        groupElement.validateIfTouched(false);
         this._uiGroupElementsMap[elName] = groupElement;
         return true;
     }
@@ -434,67 +435,9 @@ export class NgtFormSchema {
                 uiElement
             )
         );
-        uiElement.validateIfTouched();
+        uiElement.validateIfTouched(false);
         this._uiElementsMap[elName] = uiElement;
         return true;
-    }
-
-    /**
-     * Merge two layouts statically
-     */
-    private mergeLayouts(attachedLayout: ILayoutViewModel, newLayout: ILayoutViewModel): boolean {
-        let layoutUpdated: boolean = false;
-
-        for (let idx = 0; idx < newLayout.length; idx++) {
-            const uGroup = newLayout[idx];
-            const aGroup = attachedLayout[idx];
-
-            if (!aGroup) {
-                attachedLayout[idx] = newLayout[idx];
-                continue;
-            }
-
-            if (uGroup.group !== aGroup.group ||
-                uGroup.lines.length !== aGroup.lines.length) {
-                // group changed we need to fetch the new values to the dom
-                aGroup.group = uGroup.group;
-                attachedLayout[idx] = newLayout[idx];
-                layoutUpdated = true;
-                continue;
-            }
-
-            for (let lIdx = 0; lIdx < uGroup.lines.length; lIdx++) {
-                const uLine = uGroup.lines[lIdx];
-                const aLine = aGroup.lines[lIdx];
-
-                if (uLine.length !== aLine.length) {
-                    aGroup.lines[lIdx] = uGroup.lines[lIdx];
-                    layoutUpdated = true;
-                    continue;
-                }
-
-                for (let eIdx = 0; eIdx < uLine.length; eIdx++) {
-                    if (uLine[eIdx] !== aLine[eIdx]) {
-                        layoutUpdated = true;
-                        aLine[eIdx] = uLine[eIdx];
-                    }
-                }
-            }
-        }
-
-        if (attachedLayout.length > newLayout.length) {
-            attachedLayout.splice(newLayout.length, attachedLayout.length - newLayout.length);
-            layoutUpdated = true;
-        }
-
-        return layoutUpdated;
-    }
-
-    getTouchedMap() {
-        return {
-            ...this.getTouchedFromElements(this._uiElementsMap),
-            ...this.getTouchedFromElements(this._uiGroupElementsMap)
-        };
     }
 
     private getTouchedFromElements(baseElements: Dictionary<BaseElement<AbstractControl>>): Dictionary<boolean> {

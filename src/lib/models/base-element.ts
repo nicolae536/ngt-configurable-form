@@ -11,6 +11,7 @@ export abstract class BaseElement<T> {
     validation: FormGroupValidatorMetadata[];
 
     private _innerModel: {
+        isGroup?: boolean
         original?: Dictionary<string>,
         touched?: boolean,
         ngControl?: AbstractControl,
@@ -18,8 +19,9 @@ export abstract class BaseElement<T> {
         _ngMarkAsUnTouched?: (opts?: { onlySelf?: boolean }) => void,
     } = {};
 
-    constructor(value: Dictionary<any>) {
+    constructor(value: Dictionary<any>, isGroup: boolean = false) {
         this._innerModel.original = utils.cloneDeep<Dictionary<string>>(value);
+        this._innerModel.isGroup = isGroup;
         if (!value) {
             this.throwError(elementErrorMessages.notDefined);
         }
@@ -29,6 +31,10 @@ export abstract class BaseElement<T> {
         }
 
         this.setRequired(this.validation);
+    }
+
+    isGroup() {
+        return this._innerModel.isGroup;
     }
 
     throwError(errorMsg: string) {
@@ -67,10 +73,10 @@ export abstract class BaseElement<T> {
         }
     }
 
-    validateIfTouched() {
+    validateIfTouched(emitEvent: boolean = false) {
         if (this._innerModel.ngControl &&
             this._innerModel.ngControl.touched) {
-            this._innerModel.ngControl.updateValueAndValidity({onlySelf: true});
+            this._innerModel.ngControl.updateValueAndValidity({onlySelf: false, emitEvent: emitEvent});
         }
     }
 
@@ -86,6 +92,16 @@ export abstract class BaseElement<T> {
     getOriginal(): Dictionary<any> {
         return this._innerModel.original;
     }
+
+
+    setValue(newValue: any) {
+        if (!this._innerModel.ngControl) {
+            return;
+        }
+
+        this._innerModel.ngControl.patchValue(newValue, {onlySelf: false, emitEvent: false});
+    }
+
 
     private setTouchedHooks() {
         this._innerModel._ngMarkAsTouched = this._innerModel.ngControl.markAsTouched.bind(this._innerModel.ngControl);

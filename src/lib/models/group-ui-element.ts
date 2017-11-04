@@ -26,7 +26,7 @@ export class GroupUiElement extends BaseElement<FormGroup> {
     classMap?: Dictionary<any>;
 
     constructor(groupElement: Dictionary<any>) {
-        super(groupElement);
+        super(groupElement, true);
         this.validateGroup();
     }
 
