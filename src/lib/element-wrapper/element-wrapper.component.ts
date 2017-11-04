@@ -1,9 +1,11 @@
-import { Component, HostBinding, Input, ViewEncapsulation, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, ViewEncapsulation, ChangeDetectionStrategy, OnInit, AfterContentChecked } from '@angular/core';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
-import { IElementConfig, Dictionary, IMatSelectElement, IElementChangePayload } from '../configuratble-form/configurable-form.interfaces';
+import { IElementChangePayload } from '../configuratble-form/configurable-form.interfaces';
 import { MAT_INPUT_ELEMENTS } from '../form-elements/form-elements.consts';
 import { elementWrapperError } from './element-wrapper.consts';
+import { IMatSelectElement, IElementConfig } from '../models/element.config.interfaces';
+import { Dictionary } from '../models/shared.interfaces';
 
 @Component({
     selector: 'ngt-element-wrapper',
@@ -26,21 +28,16 @@ export class ElementWrapperComponent {
     constructor() {
     }
 
-    getErrorMessage(errorField: AbstractControl) {
+    handleErrorMessage(errorField: AbstractControl) {
         return errorField && errorField.errors ? JSON.stringify(errorField.errors) : '';
     }
 
-    isSelectConfigurationValid(selectElement: IMatSelectElement) {
-        elementWrapperError.throwIfNotDefined(selectElement);
+    handleSelectConfig(selectElement: IMatSelectElement) {
         elementWrapperError.throwIfConfigInvalid(selectElement, this.elementDataProvider);
         return true;
     }
 
-    handleConfigurationChange(change: IElementChangePayload) {
-
-    }
-
-    patchElementsValues(option: Object, updateFields: Dictionary<string>) {
+    handlePropagateValue(option: Object, updateFields: Dictionary<string>) {
         if (!updateFields || !option || !(option instanceof Object)) {
             return;
         }

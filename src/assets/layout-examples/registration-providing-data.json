@@ -1,188 +1,239 @@
 {
     "name": "first-form",
-    "addCardClass": true,
-    "groupElements": [
+    "elements": [
         {
-            "elements": [
+            "name": "headerTemplate",
+            "type": "header",
+            "value": "Runner Information",
+            "classMap": {
+                "heading-1": true
+            }
+        },
+        {
+            "name": "name",
+            "type": "text",
+            "placeholder": "Name",
+            "validation": [
                 {
-                    "elementsOnLine": [
-                        {
-                            "name": "headerTemplate",
-                            "type": "header",
-                            "value": "Runner Information",
-                            "class": {
-                                "heading-1": true
-                            }
-                        }
-                    ]
-                },
-                {
-                    "elementsOnLine": [
-                        {
-                            "name": "name",
-                            "required": true,
-                            "type": "text",
-                            "placeholder": "Name",
-                            "required": true,
-                            "size": 1
-                        },
-                        {
-                            "name": "email",
-                            "type": "email",
-                            "required": true,
-                            "placeholder": "Email Address",
-                            "size": 1
-                        }
-                    ]
-                },
-                {
-                    "elementsOnLine": [
-                        {
-                            "name": "address",
-                            "type": "text",
-                            "placeholder": "Address",
-                            "required": true,
-                            "size": 1
-                        },
-                        {
-                            "name": "city",
-                            "type": "autocomplete",
-                            "placeholder": "City",
-                            "selectConfig": {
-                                "valueField": "city",
-                                "visibleProps": [
-                                    "city",
-                                    "population"
-                                ]
-                            },
-                            "required": true,
-                            "size": 1
-                        }
-                    ]
-                },
-                {
-                    "elementsOnLine": [
-                        {
-                            "name": "state",
-                            "type": "text",
-                            "placeholder": "State",
-                            "required": true,
-                            "size": 1
-                        },
-                        {
-                            "name": "zip",
-                            "type": "text",
-                            "placeholder": "Zip",
-                            "required": true,
-                            "size": 1
-                        }
-                    ]
-                },
-                {
-                    "elementsOnLine": [
-                        {
-                            "name": "phone",
-                            "type": "text",
-                            "placeholder": "Phone",
-                            "required": true,
-                            "size": 1
-                        },
-                        {
-                            "name": "date",
-                            "type": "datepicker",
-                            "placeholder": "Date of birth",
-                            "required": true,
-                            "dateConfig": {
-                                "useToggleSuffix": true
-                            },
-                            "size": 1
-                        }
-                    ]
-                },
-                {
-                    "elementsOnLine": [
-                        {
-                            "name": "tShirtSize",
-                            "type": "select",
-                            "placeholder": "T-Shirt Size",
-                            "required": true,
-                            "selectConfig": {
-                                "valueField": "id",
-                                "visibleProps": [
-                                    "title"
-                                ],
-                                "optionsList": [
-                                    {
-                                        "title": "Small",
-                                        "id": "s"
-                                    },
-                                    {
-                                        "title": "Medium",
-                                        "id": "m"
-                                    },
-                                    {
-                                        "title": "Large",
-                                        "id": "l"
-                                    },
-                                    {
-                                        "title": "Extra large",
-                                        "id": "xl"
-                                    }
-                                ]
-                            },
-                            "size": 5
-                        },
-                        {
-                            "name": "genderLabel",
-                            "type": "label",
-                            "value": "Gender",
-                            "size": 1
-                        },
-                        {
-                            "name": "gender",
-                            "required": true,
-                            "type": "radiogroup",
-                            "placeholder": "Gender",
-                            "radioElements": [
-                                {
-                                    "label": "Male",
-                                    "value": "m"
-                                },
-                                {
-                                    "label": "Female",
-                                    "value": "f"
-                                }
-                            ],
-                            "size": 4
-                        }
-                    ]
-                },
-                {
-                    "elementsOnLine": [
-                        {
-                            "name": "RaceLabel",
-                            "type": "label",
-                            "value": "Chose Race :",
-                            "size": 1
-                        },
-                        {
-                            "name": "race",
-                            "required": true,
-                            "type": "radiogroup",
-                            "radioElements": [
-                                {
-                                    "label": "5k - $25",
-                                    "value": "smallCache"
-                                },
-                                {
-                                    "label": "10K - $25",
-                                    "value": "aLotOfCache"
-                                }
-                            ],
-                            "size": 7
-                        }
-                    ]
+                    "type": "required",
+                    "ranking": 1
                 }
+            ],
+            "size": 1
+        },
+        {
+            "name": "email",
+            "type": "email",
+            "required": true,
+            "placeholder": "Email Address",
+            "validation": [
+                {
+                    "type": "email",
+                    "ranking": 1
+                }
+            ],
+            "size": 1
+        },
+        {
+            "name": "address",
+            "type": "text",
+            "placeholder": "Address",
+            "validation": [
+                {
+                    "type": "required",
+                    "ranking": 1
+                }
+            ],
+            "size": 1
+        },
+        {
+            "name": "city",
+            "type": "autocomplete",
+            "placeholder": "City",
+            "selectConfig": {
+                "valueField": "city",
+                "visibleProps": [
+                    "city",
+                    "population"
+                ]
+            },
+            "validation": [
+                {
+                    "type": "required",
+                    "ranking": 1
+                }
+            ],
+            "size": 1
+        },
+        {
+            "name": "state",
+            "type": "text",
+            "placeholder": "State",
+            "validation": [
+                {
+                    "type": "required",
+                    "ranking": 1
+                }
+            ],
+            "size": 1
+        },
+        {
+            "name": "zip",
+            "type": "text",
+            "placeholder": "Zip",
+            "validation": [
+                {
+                    "type": "required",
+                    "ranking": 1
+                }
+            ],
+            "size": 1
+        },
+        {
+            "name": "phone",
+            "type": "text",
+            "placeholder": "Phone",
+            "validation": [
+                {
+                    "type": "required",
+                    "ranking": 1
+                }
+            ],
+            "size": 1
+        },
+        {
+            "name": "date",
+            "type": "datepicker",
+            "placeholder": "Date of birth",
+            "required": true,
+            "dateConfig": {
+                "useToggleSuffix": true
+            },
+            "validation": [
+                {
+                    "type": "required",
+                    "ranking": 1
+                },
+                {
+                    "type": "date",
+                    "ranking": 1
+                }
+            ],
+            "size": 1
+        },
+        {
+            "name": "tShirtSize",
+            "type": "select",
+            "placeholder": "T-Shirt Size",
+            "validation": [
+                {
+                    "type": "required",
+                    "ranking": 1
+                }
+            ],
+            "selectConfig": {
+                "valueField": "id",
+                "visibleProps": [
+                    "title"
+                ],
+                "optionsList": [
+                    {
+                        "title": "Small",
+                        "id": "s"
+                    },
+                    {
+                        "title": "Medium",
+                        "id": "m"
+                    },
+                    {
+                        "title": "Large",
+                        "id": "l"
+                    },
+                    {
+                        "title": "Extra large",
+                        "id": "xl"
+                    }
+                ]
+            },
+            "size": 5
+        },
+        {
+            "name": "genderLabel",
+            "type": "label",
+            "value": "Gender",
+            "size": 1
+        },
+        {
+            "name": "gender",
+            "required": true,
+            "type": "radiogroup",
+            "placeholder": "Gender",
+            "radioElements": [
+                {
+                    "label": "Male",
+                    "value": "m"
+                },
+                {
+                    "label": "Female",
+                    "value": "f"
+                }
+            ],
+            "size": 4
+        },
+        {
+            "name": "RaceLabel",
+            "type": "label",
+            "value": "Chose Race",
+            "size": 1
+        },
+        {
+            "name": "race",
+            "required": true,
+            "type": "radiogroup",
+            "radioElements": [
+                {
+                    "label": "5k - $25",
+                    "value": "smallCache"
+                },
+                {
+                    "label": "10K - $25",
+                    "value": "aLotOfCache"
+                }
+            ],
+            "size": 7
+        }
+    ],
+    "layout": [
+        {
+            "lines": [
+                [
+                    "headerTemplate"
+                ],
+                [
+                    "name",
+                    "email"
+                ],
+                [
+                    "address",
+                    "city"
+                ],
+                [
+                    "state",
+                    "zip"
+                ],
+                [
+                    "phone",
+                    "date"
+                ],
+                [
+                    "tShirtSize",
+                    "genderLabel",
+                    "gender"
+                ],
+                [
+                    "RaceLabel",
+                    "race"
+                ]
             ]
         }
     ]

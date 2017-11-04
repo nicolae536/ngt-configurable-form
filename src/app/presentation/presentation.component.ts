@@ -10,6 +10,7 @@ import { EXAMPLES } from './presentation.consts';
 export class PresentationComponent implements AfterViewInit, OnDestroy {
     codeExamples = EXAMPLES;
     private scriptTag: any;
+    private scriptTag1: any;
 
     constructor(private _cd: ChangeDetectorRef,
                 private _elementRef: ElementRef) {
@@ -17,6 +18,23 @@ export class PresentationComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this._cd.detach();
+
+        // head.min.js
+        this.scriptTag1 = document.createElement('script');
+        this.scriptTag1.type = 'text/javascript';
+        this.scriptTag1.onload = () => this.loadReavealJs();
+        this.scriptTag1.src = 'libs/head.min.js';
+        document.body.classList.remove('no-reveal');
+        this._elementRef.nativeElement.appendChild(this.scriptTag1);
+    }
+
+    ngOnDestroy(): void {
+        document.body.classList.add('no-reveal');
+        this._elementRef.nativeElement.removeChild(this.scriptTag);
+        this._elementRef.nativeElement.removeChild(this.scriptTag1);
+    }
+
+    private loadReavealJs() {
         this.scriptTag = document.createElement('script');
         this.scriptTag.type = 'text/javascript';
         this.scriptTag.onload = () => {
@@ -30,17 +48,14 @@ export class PresentationComponent implements AfterViewInit, OnDestroy {
                 transition: 'slide', // none/fade/slide/convex/concave/zoom
                 transitionSpeed: 'slow', // default/fast/slow
                 dependencies: [
-                    // not working right now
+                    { src: '/libs/zoom.js', async: true },
                 ]
             });
+
+            // this.l
         };
-        this.scriptTag.src = 'assets/lib_reveal/reveal.js';
+        this.scriptTag.src = 'libs/reveal.js';
         document.body.classList.remove('no-reveal');
         this._elementRef.nativeElement.appendChild(this.scriptTag);
-    }
-
-    ngOnDestroy(): void {
-        document.body.classList.add('no-reveal');
-        this._elementRef.nativeElement.removeChild(this.scriptTag);
     }
 }

@@ -2,9 +2,11 @@
     <ngt-configurable-form [formConfig]="config"
                            [fieldsDataProviders]="dataProviders"
                            [updateValues]="currentValue$"
-                           (onConfigurationChange)="handleConfigChange($event)"
+                           [expandedGroups]="expandedPanes"
+                           [touchedControls]="touchedControls"
                            (onValueChange)="handleValueChange($event)"
-                           (onValidityChange)="handleValidityChange($event)">
+                           (onTouchedChange)="handleTouchedChange($event)"
+                           (onExpandedPanesChange)="handleExpandedPanesChange($event)">
     </ngt-configurable-form>
     <div class="middle-button">
         <button mat-raised-button

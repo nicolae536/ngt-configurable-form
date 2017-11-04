@@ -2,161 +2,149 @@
     <div class="slides">
         <section>
             <h2>Configurable forms</h2>
-            <h4>Hello my name is Nicu</h4>
-            <p>I’m a frontend developer at yonder.</p>
-
-            <p>In the last 1.5 year I worked with angular on building applications.</p>
-            <p>Today I would like to talk about forms and some ideas on how we can build forms. As a framework of reference I will take
-                angular > 2,4.
-            </p>
+            <h3>Hello my name is Nicu</h3>
+            <div class="details">
+                <p>I’m a frontend developer at Yonder.</p>
+                <p>Building applications with @angular>2,4.</p>
+                <p>Scalable forms in your application</p>
+                <!--TODAY I will show you some steps on how you can build -->
+                <!--TODO interesting introduction-->
+                <!--TODO repeat introduction-->
+            </div>
+        </section>
+        <section>
+            <h3>Applications</h3>
+            <div class="details">
+                <p>We are all developers and we build application</p>
+                <p>1.Start small</p>
+                <p>2.Gets bigger</p>
+                <p>3.Gets bigger and bigger and bigger</p>
+            </div>
         </section>
 
         <section>
-            <h2>@angular/forms</h2>
-            <p>
-                There are two modules FormsModule.
-            </p>
-            <p>
-                Which enables you to do template driven forms.
-            </p>
-            <p>
-                This means that your code will look something like...
-            </p>
+            <h3>Problems</h3>
+            <div class="details">
+                <!--TODO detail more each lane create a story-->
+                <p>Application bundle size</p>
+                <p>Components maintenance</p>
+                <p>Application responsiveness</p>
+                <p>Flow inconsistency</p>
+                <!--<img src="assets/images/source-map.png">-->
+            </div>
         </section>
-        <section>
-            <h2>FormsModule</h2>
 
-            <pre>
-                <code data-trim class="no-overflow">
-                    {{codeExamples.templateForms}}
-	            </code>
-            </pre>
+        <section>
+            <h3>Specific problems</h3>
+            <!--<div class="details">-->
+                <!--<p>Big part of our application</p>-->
+                <p>Application gets bigger -> more and more Forms</p>
+            <!--</div>-->
+            <img width="580px" src="assets/images/source-map.png">
         </section>
         <section>
-            <h2>And the typescript code</h2>
-            <pre>
-                <code data-trim class="no-overflow">
-                    {{codeExamples.templateFormTypescript}}
-	            </code>
-            </pre>
-        </section>
-        <section>
-            <h2>And the ReactiveFormsModule</h2>
-            <p>And your code in this case will look something like this</p>
-        </section>
-        <section>
-            <h2>Html</h2>
-            <pre>
-                <code data-trim class="no-overflow">
-                    {{codeExamples.reactiveForms}}
-                </code>
-            </pre>
-        </section>
-        <section>
-            <h2>And the typescript code</h2>
-            <pre>
-                <code data-trim class="no-overflow">
-                    {{codeExamples.reactiveFormsCode}}
-                </code>
-            </pre>
-        </section>
-        <section>
-            <h3>Application development</h3>
-            <p>We start developing the application, we have the power or creating any form in our hand</p>
-            <p>And usually each form we build is different in it's own way</p>
-        </section>
-        <section>
-            <h3>Large applications</h3>
-            <p>If the application is big enough in about a year we will reach 300+ components</p>
-            <p>And when you look on your repository you see about 70+ being forms</p>
-        </section>
-        <section>
-            <h3>Consequences</h3>
-            <p>A lot of code to the client</p>
-            <p>We have a lot of maintenance going on and very specific bugs for each implementation</p>
-            <p>So probably it's time to optimize and find a solution</p>
-        </section>
-        <section>
-            <h3>Proposed Solution</h3>
-            <p>Build a component which supports a json form schema</p>
-            <p>Create a core for all common functionality and allow for elements changes</p>
-        </section>
-        <section>
-            <p>So this is the code which we write now</p>
-            <pre>
-                <code data-trim class="no-overflow">
-                    {{codeExamples.solutionExample}}
-                </code>
-            </pre>
+            <!--<h3>Forms problems</h3>-->
+            <div class="details">
+                <p>Very specific</p>
+                <p>Bound to the user flow -> specific bugs</p>
+            </div>
+            <img width="580px" src="assets/images/sort-rows.gif">
         </section>
         <section>
             <section>
-                <h3>Architectural pattern</h3>
-                <p>Each time the configuration changes it goes to a normalization process</p>
-                <p>All the elements which have a state in the form object are moved in a map</p>
-                <p>FormControls are initialized</p>
-                <a href="#" class="navigate-down enabled">
-                </a>
+                <h3>Solution</h3>
+                <div class="details">
+                    <p>Forms from json files</p>
+                    <p>Small bundle size</p>
+                    <p>Less maintenance</p>
+                    <p>!Tricky to bound elements</p>
+                </div>
+                <!--TODO image with app splitting in modules and sizes-->
+            </section>
+            <section class="future">
+                <h3>Proposal</h3>
+                <p>Standard schema</p>
+                <img width="580px" height="auto" src="assets/images/schema-json.PNG">
             </section>
             <section class="future">
                 <h3>Architectural pattern</h3>
-                <p>After all controls are created the validators are fetched</p>
-                <p>The current json is checked for all "configuration changes" and those are applyed to the current schema</p>
-                <p>The form is rendered in the view</p>
+                <img width="580px" height="auto" src="assets/images/class-representation.jpg">
+                <!--Slide: 8 -> 10-->
             </section>
-            <select class="future">
-                !!!poza arhitectura!!!
-            </select>
+            <!--<section class="future">-->
+                <!--<h3>Proposed schema</h3>-->
+                <!--<img width="580px" height="auto" src="assets/images/schema-json.PNG">-->
+                <!--&lt;!&ndash;Slide: 10 -> 13&ndash;&gt;-->
+            <!--</section>-->
             <section class="future">
                 <h3>Architectural pattern</h3>
-                <p>Updates from parents must not trigger events</p>
-                <p>Only real user/machine updates should trigger output events</p>
-                <p>The configuration must always be stabilized in only one pass</p>
-                <p>Controls configuration changes are handled by each control, a control can listen to another control but it can change only
-                    it's own configuration</p>
+                <img width="580px" height="auto" src="assets/images/flow_diagram.jpg">
+                <!--make summary over it-->
+            </section>
+        </section>
+        <section>
+            <section class="future">
+                <h3>Angular implementation</h3>
+                <div class="details">
+                    <p>Json</p>
+                    <p>UiElement, GroupUiElement</p>
+                    <p>Layout</p>
+                    <p>Fields linking</p>
+                </div>
+                <!--TODO image with transition states -> Explain how the schema works in current implementation-->
             </section>
             <section class="future">
-                <h3>Architectural pattern</h3>
-                <p>How we managed to make the component stateful and redux compatible</p>
-                <p>We make a clear difference between redux state changes and component state changes</p>
-                <p>So if the component changed even the new state from redux does not need to be fetched</p>
-                <p>We rerender the view only when we know that there is no change triggered by the component</p>
-            </section>
-        </section>
-
-        <section>
-            <section>
-                <h3>Current features</h3>
-                <p>Render from a configuration</p>
-                <p>Add existing validators to elements and also provide custom validators using a service</p>
-                <p>Provide data to elements using observables also listen to element data changes</p>
-                <p>Wrap elements in cards/expansion panes</p>
-                <a href="#" class="navigate-down enabled"></a>
+                <h3>Examples</h3>
+                <div class="details">
+                    <p>@angular 4+</p>
+                    <p>@angular/material</p>
+                    <p>ReactiveFormsModule</p>
+                </div>
             </section>
             <section class="future">
-                <h3>Current features</h3>
-                <p>Support for field linking</p>
-                <p>The component works with ChangeDetectionStrategy.OnPush</p>
-                <p>Full support for redux</p>
+                <h3>Simple layout</h3>
+            </section>
+            <section class="future">
+                <h3>Data providers</h3>
+                <p>External data providers</p>
+            </section>
+            <section class="future">
+                <h3>Validation</h3>
+                <p>Custom validation service using DI</p>
+            </section>
+            <section class="future">
+                <h3>Layout change</h3>
+                <p>Changing configuration based on values</p>
+            </section>
+            <section class="future">
+                <h3>State management</h3>
+                <p>Redux</p>
+                <!--TODO explain why-->
+                <p>Flux</p>
             </section>
         </section>
-
         <section>
-            <h3>Coming next</h3>
-            <p>Unit testing and e2e testing</p>
-            <p>A bundle with the component in npm</p>
-            <p>Configuration changes at group level</p>
-            <p>Render an array of elements as a subgroup to the form</p>
+            <h3>Future</h3>
+            <div class="details">
+                <p>Unit and E2e testing</p>
+                <p>Add arrays -> (array of group/ui elements)</p>
+                <p>Custom links defined using DI</p>
+                <p>A bundle with the component in npm</p>
+                <p>(ngt-configuable-form)</p>
+            </div>
         </section>
         <section>
-            <h3>Benefits</h3>
-            <p>Only one component manages the forms in our app</p>
-            <p>Easy to track bugs related to forms</p>
-            <p>Fast ui prototyping</p>
-            <p>Less js code to the client</p>
+            <h3>Sum up</h3>
+            <div class="details">
+                <p>Only one component manages the forms</p>
+                <p>Faster track to form related bugs</p>
+                <p>Fast ui prototyping</p>
+                <p>Less js code to the client</p>
+                <p>Faster development -> Faster delivery</p>
+            </div>
         </section>
         <section>
-            <h3>Q&A</h3>
+            <h1>Q&A</h1>
         </section>
     </div>
 </div>

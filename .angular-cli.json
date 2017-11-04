@@ -9,7 +9,23 @@
       "outDir": "dist",
       "assets": [
         "assets",
-        "favicon.ico"
+        "favicon.ico",
+        "libs",
+        {
+          "input": "../node_modules/reveal.js/js",
+          "glob": "*.js",
+          "output": "libs/reveal.js"
+        },
+        {
+          "input": "../node_modules/reveal.js/plugin/zoom-js",
+          "glob": "*.js",
+          "output": "libs/zoom.js"
+        },
+        {
+          "input": "../node_modules/reveal.js/lib/js",
+          "glob": "head.min.js",
+          "output": "libs/head.min.js"
+        }
       ],
       "index": "index.html",
       "main": "main.ts",

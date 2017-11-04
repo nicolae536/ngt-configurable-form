@@ -58,7 +58,7 @@ export RactiveForm {
                             "name": "headerTemplate",
                             "type": "header",
                             "value": "Runner Information",
-                            "class": {
+                            "classMap": {
                                 "heading-1": true
                             }
                         }

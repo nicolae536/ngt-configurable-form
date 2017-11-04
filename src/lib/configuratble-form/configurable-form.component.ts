@@ -1,20 +1,14 @@
-import {
-    Component, ViewEncapsulation, Input, HostBinding, OnDestroy, Output, EventEmitter, HostListener, ChangeDetectionStrategy
-} from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/map';
-
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, OnDestroy, Output, ViewEncapsulation } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-import { IFormConfig, IElementConfig, IMappedFormConfig, Dictionary, IGroupElementsConfig } from './configurable-form.interfaces';
-import { ConfigurableFormService } from './configurable-form.service';
-import { ConfigurationChangeFactoryService } from './configuration-change-factory.service';
+import { GroupExpandChangeEvent } from '../models/group-ui-element';
+import { IFormConfig } from '../models/groups.config.interfaces';
+import { NgtFormSchema } from '../models/ngt-form-schema';
+import { Dictionary } from '../models/shared.interfaces';
+import { utils } from '../models/utils';
+import { ValidationFactoryService } from './validation-factory.service';
 
 @Component({
     selector: 'ngt-configurable-form',
@@ -44,152 +38,99 @@ export class ConfigurableFormComponent implements OnDestroy {
 
     @Input()
     set updateValues(values: Object) {
-        this.updateFormValues(values);
+        this.applyValueToSchema(values);
     }
 
     @Input()
-    set formConfig(config$: Observable<IFormConfig> | IFormConfig) {
-        this.subscribeToConfig(config$);
+    set formConfig(config: IFormConfig) {
+        this.setFormConfig(config);
+    }
+
+    @Input()
+    set expandedGroups(groups: Dictionary<boolean>) {
+        this.setExpandedGroups(groups);
+    }
+
+    @Input()
+    set touchedControls(touchedMap: Dictionary<boolean>) {
+        this.setTouchedControls(touchedMap);
     }
 
     @Output() onValueChange: EventEmitter<Dictionary<any>> = new EventEmitter<Dictionary<any>>();
-    @Output() onConfigurationChange: EventEmitter<IFormConfig> = new EventEmitter<IFormConfig>();
-    @Output() onValidityMapChange: EventEmitter<Dictionary<boolean>> = new EventEmitter<Dictionary<boolean>>();
-    @Output() onValidityChange: EventEmitter<boolean> = new EventEmitter<boolean>();
-    renderedFormStaticConfig: BehaviorSubject<IFormConfig> = new BehaviorSubject(null);
+    @Output() onExpandedPanesChange: EventEmitter<Dictionary<boolean>> = new EventEmitter<Dictionary<boolean>>();
+    @Output() onTouchedChange: EventEmitter<Dictionary<boolean>> = new EventEmitter<Dictionary<boolean>>();
 
-    ngFormGroup: FormGroup = null;
-    flattenConfigRef: Map<string, IElementConfig> = new Map<string, IElementConfig>();
+    formSchema: NgtFormSchema;
     outsideSharedData: Dictionary<any>;
     outsideDataProviders: Dictionary<Observable<any>>;
     outsideDataListeners: Dictionary<Subject<any>>;
 
-    private _subscriptions$: Subscription[] = [];
+    private _valueChanges$: Subscription;
     private _lastValueFromParent: Object;
-    private _isBrowserEvent: boolean;
+    private _expandedGroups: Dictionary<boolean> = {};
+    private _touchedControlsMap: Dictionary<boolean> = {};
+    private _lastEmittedModel: Object;
 
-    constructor(private _configurableForm: ConfigurableFormService,
-                private _configurationChangeFactory: ConfigurationChangeFactoryService) {
+    constructor(private _validationFactory: ValidationFactoryService) {
     }
 
     ngOnDestroy(): void {
-        this._subscriptions$.forEach(sub => sub.unsubscribe());
+        if (this._valueChanges$) {
+            this._valueChanges$.unsubscribe();
+        }
     }
 
-    handleTogglePanel(rowConfig: IGroupElementsConfig, event) {
-        this._isBrowserEvent = true;
-        rowConfig.isPanelOpened = event;
-        this.onConfigurationChange.emit(this.renderedFormStaticConfig.value);
+    handleTogglePanel(event: GroupExpandChangeEvent) {
+        this._expandedGroups[event.name] = event.isExpanded;
+        this.onExpandedPanesChange.emit({...this._expandedGroups});
     }
 
-    @HostListener('click', ['$event'])
-    @HostListener('keydown', ['$event'])
-    @HostListener('keyup', ['$event'])
-    @HostListener('keypress', ['$event'])
-    @HostListener('paste', ['$event'])
-    handleEvent(event) {
-        this._isBrowserEvent = true;
-    }
-
-    private subscribeToConfig(config$: Observable<IFormConfig> | IFormConfig) {
-        if (!config$ || this.checkBrowserEvent()) {
+    private setFormConfig(config: IFormConfig) {
+        if (!config) {
             return;
         }
 
-        if (this._subscriptions$) {
-            this._subscriptions$.forEach(v => v.unsubscribe());
+        if (this.formSchema) {
+            this.formSchema.destroy();
         }
-
-        if (!(config$ instanceof Observable)) {
-            this.setFormConfig(this._configurableForm.parseConfiguration(config$, this._lastValueFromParent));
-            return;
-        }
-
-        this._subscriptions$.push(config$
-            .map((config: IFormConfig) => this._configurableForm.parseConfiguration(config, this._lastValueFromParent))
-            .subscribe(transformed => {
-                this.setFormConfig(transformed);
-            }));
-    }
-
-    private setFormConfig(transformed: IMappedFormConfig) {
-        this.flattenConfigRef = transformed.flattenConfigRef;
-        this.ngFormGroup = transformed.ngFormControls;
-        this.renderedFormStaticConfig.next(transformed.formConfig);
+        this.formSchema = new NgtFormSchema(config, this._validationFactory);
+        this.applyValueToSchema(this._lastValueFromParent);
+        this.applyGroupsSettingsToSchema(this._expandedGroups);
+        this.applyTouchedSettingsToSchema(this._touchedControlsMap);
         this.setValueChangeSubscription();
     }
 
-    private updateFormValues(values: Object) {
-        if (!values) {
-            return;
-        }
-
-        this._lastValueFromParent = values;
-
-        if (this.checkBrowserEvent()) {
-            return;
-        }
-        this.patchFormValue(values);
-    }
-
     private patchFormValue(values: Object) {
-        if (!this.ngFormGroup || !values) {
+        if (!this.formSchema || !values) {
             return;
         }
 
-        this.ngFormGroup.patchValue(values, {
-            onlySelf: true,
-            emitEvent: false
-        });
-        const configChanged = this._configurationChangeFactory.stabilizeConfigurationStructure(
-            this.renderedFormStaticConfig.value,
-            this.flattenConfigRef,
-            this.ngFormGroup
-        );
-        if (configChanged) {
-            this.renderedFormStaticConfig.next(configChanged);
+        if (utils.areEqual(this.formSchema.getValue(), values)) {
+            return;
         }
+
+        this.formSchema.setValueWithLayoutChange(values);
     }
 
     private setValueChangeSubscription() {
-        this._subscriptions$.push(
-            this.ngFormGroup
-                .valueChanges
-                .debounceTime(0)
-                .do(() => this._isBrowserEvent = true)
-                .map(v => this._configurationChangeFactory.stabilizeConfigurationStructure(
-                    this.renderedFormStaticConfig.value,
-                    this.flattenConfigRef,
-                    this.ngFormGroup
-                ))
-                .do((newConfig) => this.emitNewConfigIfValid(newConfig))
-                .map(v => this._configurableForm.unWrapFormValue(this.ngFormGroup))
-                .subscribe(value => {
-                    // console.info("Values change", JSON.parse(JSON.stringify(value.formValue)));
-                    this.onValueChange.emit(value.formValue);
-                    this.onValidityMapChange.emit(value.formValidity);
-                    this.onValidityChange.emit(this.ngFormGroup.valid);
-                    this.emitValueToListenersMap(value.formValue);
-                })
-        );
-    }
-
-    private emitNewConfigIfValid(newConfig) {
-        if (!newConfig) {
-            return;
+        if (this._valueChanges$) {
+            this._valueChanges$.unsubscribe();
         }
 
-        this.renderedFormStaticConfig.next(newConfig);
-        this.onConfigurationChange.emit(newConfig);
-    }
-
-    private checkBrowserEvent(): boolean {
-        if (this._isBrowserEvent) {
-            setTimeout(() => this._isBrowserEvent = false);
-            return true;
-        }
-
-        return false;
+        this._valueChanges$ = this.formSchema.ngFormGroup
+            .valueChanges
+            .debounceTime(0)
+            .map(() => this.formSchema.changeLayoutIfNeeded())
+            .map(v => this.formSchema.getValue())
+            .filter(v => !utils.areEqual(this._lastEmittedModel, v))
+            .subscribe(value => {
+                this._lastEmittedModel = value;
+                this.onValueChange.emit(value);
+                this.onTouchedChange.emit(this.formSchema.getTouchedMap());
+                // this.onValidityMapChange.emit(value.formValidity);
+                // this.onValidityChange.emit(this.ngFormGroup.valid);
+                this.emitValueToListenersMap(value);
+            });
     }
 
     private emitValueToListenersMap(formValue: Dictionary<any>) {
@@ -198,12 +139,49 @@ export class ConfigurableFormComponent implements OnDestroy {
         }
 
         for (const key in this.outsideDataListeners) {
-            if (!this._lastValueFromParent ||
-                formValue[key] !== this._lastValueFromParent[key]) {
-                this.outsideDataListeners[key].next(formValue[key]);
+            const oldKeyValue = this._lastValueFromParent
+                ? utils.findValueByKey(this._lastValueFromParent, key)
+                : this._lastValueFromParent;
+            const newKeyValue = formValue
+                ? utils.findValueByKey(formValue, key)
+                : formValue;
+
+            if (oldKeyValue !== newKeyValue) {
+                this.outsideDataListeners[key].next(newKeyValue);
             }
         }
 
         this._lastValueFromParent = formValue;
+    }
+
+    private setExpandedGroups(groups: Dictionary<boolean>) {
+        this._expandedGroups = groups || {};
+        this.applyGroupsSettingsToSchema(groups);
+    }
+
+    private setTouchedControls(touchedMap: Dictionary<boolean>) {
+        this._touchedControlsMap = touchedMap || {};
+        this.applyTouchedSettingsToSchema(touchedMap);
+    }
+
+    private applyValueToSchema(values: Object) {
+        this._lastValueFromParent = values || {};
+        this.patchFormValue(values);
+    }
+
+    private applyGroupsSettingsToSchema(groups: Dictionary<boolean>) {
+        if (!this.formSchema || !groups) {
+            return;
+        }
+
+        this.formSchema.setExpandedGroups(groups);
+    }
+
+    private applyTouchedSettingsToSchema(touchedMap: Dictionary<boolean>) {
+        if (!this.formSchema || !touchedMap) {
+            return;
+        }
+
+        this.formSchema.setTouchedControls(touchedMap);
     }
 }

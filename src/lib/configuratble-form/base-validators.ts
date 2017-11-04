@@ -1,5 +1,6 @@
-import { FormGroup, ValidatorFn, AbstractControl, Validators } from '@angular/forms';
-import { FormGroupValidatorMetadata, IElementConfig } from './configurable-form.interfaces';
+import { FormGroup, ValidatorFn, AbstractControl } from '@angular/forms';
+import { IElementConfig } from '../models/element.config.interfaces';
+import { FormGroupValidatorMetadata } from '../models/shared.interfaces';
 
 /* Interface for error map */
 export interface IValidationResult {
@@ -16,10 +17,15 @@ const EMAIL_VALIDATION_REGEXP =
 const REQUIRED_ERROR = {'required': true};
 export const INVALID_DATE_ERROR: string = 'Invalid Date';
 
+export interface ValidableElement {
+    required: boolean;
+    validation: FormGroupValidatorMetadata[];
+}
+
 export class BaseValidators {
 
     static getAngularValidator(ngFormControl: FormGroup,
-                               elementConfig: IElementConfig,
+                               elementConfig: ValidableElement,
                                fn: (ngFormControl: FormGroup, elementConfig, value, metadata?) => IValidationResult,
                                validator: FormGroupValidatorMetadata,
                                isAngularValidator: boolean = false): ValidatorFn {
@@ -65,7 +71,7 @@ export class BaseValidators {
             return REQUIRED_ERROR;
         }
 
-        return Validators.required(ngFormGroup.get(element.name));
+        // return Validators.required(ngFormGroup.get(element.name));
     }
 
     /**

@@ -1,0 +1,55 @@
+{
+    "name": "first-form",
+    "elements": [
+        {
+            "name": "lastName",
+            "type": "text",
+            "placeholder": "Last name",
+            "validation": [
+                {
+                    "type": "required",
+                    "ranking": 1
+                }
+            ],
+            "size": 1
+        },
+        {
+            "name": "smiley",
+            "type": "icon",
+            "size": 1
+        }
+    ],
+    "groupElements": [
+        {
+            "type": "ngt-card",
+            "name": "runnerInformation",
+            "title": "Runner Information"
+        }
+    ],
+    "layout": [
+        {
+            "group": "runnerInformation",
+            "lines": [
+                [
+                    "lastName"
+                ]
+            ]
+        }
+    ],
+    "linkDefinitions": {
+        "smiley": {
+            "defaultConfig": {
+                "hidden": true
+            },
+            "configChangesMap": [
+                {
+                    "linkedElement": "lastName",
+                    "expectedValue": "Nicu",
+                    "newConfig": {
+                        "hidden": false
+                    }
+                }
+            ]
+        }
+    }
+}

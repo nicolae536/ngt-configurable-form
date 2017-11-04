@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "assets/fonts/roboto.css";
-@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+@import "~@angular/material/prebuilt-themes/pink-bluegrey.css";
 @import "~reveal.js/css/reveal.css";
 /*@import "~reveal.js/css/theme/white.css";*/
 @import "~reveal.js/css/theme/black.css";

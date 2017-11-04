@@ -1,57 +1,16 @@
-<form *ngIf="renderedFormStaticConfig | async as formStaticConfig"
+<form *ngIf="formSchema"
       novalidate
       autocomplete="off"
-      [class.ngt-card]="formStaticConfig.addCardClass"
-      [name]="formStaticConfig.name"
-      [formGroup]="ngFormGroup">
-    <div style="height: 0px; overflow: hidden;">
-        {{formStaticConfig | json}}
-    </div>
-    <div *ngFor="let rowConfig of formStaticConfig.groupElements"
-         class="ngt-group-wrapper"
-         [ngClass]="rowConfig?.classMap"
-         [class.ngt-card]="!rowConfig.wrapInExpansionPane && rowConfig.addCardClass">
-        <ng-template [ngIf]="rowConfig.wrapInExpansionPane">
-            <mat-expansion-panel>
-                <mat-expansion-panel-header ngtExpansionPanelToggle
-                                            [isExpanded]="rowConfig?.isPanelOpened"
-                                            (onToggle)="handleTogglePanel(rowConfig, $event)">
-                    <mat-panel-title class="ngt-group-title">
-                        {{rowConfig.title}}
-                    </mat-panel-title>
-                    <mat-panel-description class="ngt-group-description">
-                        {{rowConfig.description}}
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
-
-                <ngt-form-elements *ngFor="let rowElements of rowConfig.elements"
-                                   [formName]="formStaticConfig.name"
-                                   [parentFormGroup]="ngFormGroup"
-                                   [outsideDataProviders]="outsideDataProviders"
-                                   [outsideSharedData]="outsideSharedData"
-                                   [elements]="rowElements.elementsOnLine">
-                </ngt-form-elements>
-            </mat-expansion-panel>
-        </ng-template>
-        <ng-template [ngIf]="!rowConfig.wrapInExpansionPane">
-            <div class="ngt-header-wrapper">
-                <div class="ngt-group-title">
-                    {{rowConfig.title}}
-                </div>
-                <div class="ngt-group-description">
-                    {{rowConfig.description}}
-                </div>
-            </div>
-            <ngt-form-elements *ngFor="let rowElements of rowConfig.elements"
-                               [formName]="formStaticConfig.name"
-                               [parentFormGroup]="ngFormGroup"
-                               [outsideSharedData]="outsideSharedData"
-                               [outsideDataProviders]="outsideDataProviders"
-                               [elements]="rowElements.elementsOnLine">
-            </ngt-form-elements>
-        </ng-template>
-    </div>
-    <!--{{ ngFormGroup?.getRawValue() | json }}-->
+      [name]="formSchema?.name"
+      [formGroup]="formSchema?.ngFormGroup">
+    <!--[class.ngt-card]="formStaticConfig.addCardClass"-->
+    <ngt-layout-drawer [layout]="formSchema?.attachedLayout"
+                       [parentFormGroup]="formSchema?.ngFormGroup"
+                       [layoutUpdateStatus$]="formSchema?.layoutUpdateStatus$"
+                       [outsideDataProviders]="outsideDataProviders"
+                       [outsideSharedData]="outsideSharedData"
+                       (onPanelToggle)="handleTogglePanel($event)"></ngt-layout-drawer>
+    <!--{{ formSchema?.ngFormGroup?.getRawValue() | json }}-->
     <!--{{ ngFormGroup.value | json }}-->
     <!--{{ ngFormGroup?.valid }}-->
 </form>

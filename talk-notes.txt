@@ -1,3 +1,150 @@
+ï»¿Presentation
+	Hello my name is Nicu
+	I'm a frontend developer at yonder
+	Where I build application @angular > 4
+	And today I will show you how you can build scalable forms in your application
+Application development
+	We are all developers and we build application and we like to do that.
+	At the begining we start small.
+	New requirements are comming we add a lot of components and the result
+	is that our application get's bigger.
+	And after some time guess what the application gets bigger and bigger and BIGGER.
+	Where does this lead us ?
+Problems
+	Application bundle size-> which get bigger and bigger
+	Components maintenance -> we have a lot of components which must be mainteined
+	User responsiveness -> which defines the first feeling to our application, and concistency over screens
+	So let's analize this.
+Forms
+	If we take a look to a application we can see that a big part of it is forms defining specific user flows.
+	In small applications we have a few of them
+	In big applications we have more and more
+	In large applications we can count thousends.
+Forms problems
+	The problems with forms  is that they tend be very specific in different user flows.
+	And your implementation for one component might be totally different then in other similar
+	components just becase a step in the user flow is different.
+	They also need a lot of maintenance which leads to specific bugs in specific area
+Solution
+	Render forms using json files
+	- this can be very nice and will decrease our bundle size
+	- also it can decrease the maintenance for our components
+	- but it gets trickier when you need to define user flows and rules/links between fields
+Proposal
+	So my proposal on how we can manage this easier using json configuration is to define a schema
+	on how we can load elements and define them using configuration.
+	UiElement, GroupUiElement, layout, links 
+	And the tricky part remains. Field linking
+	How we can think of this.
+	Two ways -> 1. one element changes another
+	or the opposite way aground -> the element listen to the other elements and change itself
+
+	I worked with both and I found that the second one is much easier to maintain
+	To listen from one element to multiple elements and define how you should changed.
+	Also a important thing to links is that they should be resolved in only one pass.
+	For example a value changes a link is triggered for another element that element should be able to
+	define itself in a simple iteration
+	"Like in life is easier to depend on yourself not to the others."
+Architectural pattern.
+	// class diagram
+	We have a baseElement which take our common methods and properties
+ 	a group can have validation/disabled/value also an group element can have those/ 
+	And from this baseElement we create another two entityes which are GroupUiElement
+	and UiElement first one for groups the second one ui elements like fields
+	// Explain every slide
+Architectural pattern: 
+	// Flow diagram
+	Form schema
+	CompileAllElements
+	Check Links
+	Build Layout
+	Render layout changed nodes
+	Simple example with one element
+	User value changes -> update elements -> fetch new layout -> emit new value
+	Programatic value change -> update elements -> fetch new layout
+
+	Linking elements
+Summary over those discussed
+-->	Show again the architecture and explain it
+	So we have a base element which is extended in two specific elements
+	GroupUiElement // why is this ?
+	UiElements
+	Layout which is a representation of the view containing all possible elements
+	And links which define a change over time depending on a value from another field
+	All those described define our schema
+Angular implementation
+	So we take all the UiElements, GroupUiElement and wrap them objects
+	We cache all of them to be easy accessible
+	Build the first layout (representation in memory of the UiElements)
+	Normalise using the current value for form if any
+	We travers the links and check with the current elements values if we need to change the layout
+	Render the layout -> view render
+Show demos
+--> 	For all what I described I have an implementation using @angular>4.x and material desing
+	I chased the ReactiveFormsModule since I define all my elements using code
+	And I have built a component to support the described functionality
+	So this is an example for simple layout
+	We can add validations to it/and also custom validations using DI
+	We can link data providers to select/autocomplete elements
+	And the one which all of us like we can link fields (select with autocomplete)
+	Show/Hide fields, change validations example
+State management -> But there is even more 
+	Some applications have complex state management 
+	Multiple forms binded to same model
+	The most popular pattern for this is redux. 
+	I tried to keep to component in the one way data flow to be easy integrable with redux pattern
+Future improvements
+	Unit and E2e testing
+	Add arrays -> (array of group/ui elements)
+	Custom links defined using DI
+	A bundle with the component in npm
+Sum upBenefits
+	Only one component manages the forms in our app
+	Easy to track bugs related to forms
+	Fast ui prototyping
+	Less js code to the client
+	Faster development -> Faster delivery
+	
+	
+
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <ngt-configurable-form [formConfig]="config"
                            [fieldsDataProviders]="dataProviders">
     </ngt-configurable-form> 
@@ -6,14 +153,14 @@ As the redux part what I noticed in the last time is that [(value)] and cycles i
 set value(myVal: any) {
 	this.onMyValChanges.emit(myVal);
 }
-(onMyValChanges)=”emitActionValChanges($event)”
+(onMyValChanges)=ï¿½emitActionValChanges($event)ï¿½
 
 Are not really friendly with redux pattern in angular because will tringger at least two change detection cycles 
 set value(myVal: any) {
 	this.onMyValChanges.emit(new MyValue(myVal));
 }
 
-(onMyValChanges)=”emitActionValChanges($event)”
+(onMyValChanges)=ï¿½emitActionValChanges($event)ï¿½
 Will get you a nice infinite cycle. So what I wold like to do is create a basic integration with ngrx to prove the this component is fully compatible with redux pattern.
 
 

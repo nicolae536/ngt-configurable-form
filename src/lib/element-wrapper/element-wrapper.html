@@ -1,7 +1,7 @@
 <div [formGroup]="parentFormGroup"
      class="ngt-element-wrapper">
     <ng-template [ngIf]="matInputContainerElements[currentElement.type] && !currentElement.hidden">
-        <mat-form-field [ngClass]="currentElement?.class"
+        <mat-form-field [ngClass]="currentElement?.classMap"
                         [attr.e2e-name]="formName + currentElement.name">
             <input *ngIf="currentElement.type !== 'textarea'"
                    matInput
@@ -33,21 +33,22 @@
                     *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
         </mat-form-field>
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'select' && !currentElement.hidden">
-        <mat-form-field [ngClass]="currentElement?.class"
+        <mat-form-field [ngClass]="currentElement?.classMap"
                         [attr.e2e-name]="formName + currentElement.name">
-            <mat-select *ngIf="isSelectConfigurationValid(currentElement)"
+            <mat-select *ngIf="handleSelectConfig(currentElement)"
                         [placeholder]="currentElement.placeholder"
                         [formControlName]="currentElement.name">
                 <mat-option
                         *ngFor="let option of (elementDataProvider ? (elementDataProvider | async) : currentElement?.selectConfig?.optionsList)"
                         [ngClass]="currentElement?.selectConfig?.optionClassMap"
-                        [value]="option[currentElement?.selectConfig?.valueField]">
+                        [value]="option[currentElement?.selectConfig?.valueField]"
+                        (click)="handlePropagateValue(option, currentElement?.updateFields)">
                     <span *ngFor="let visibleKey of currentElement?.selectConfig?.visibleProps">
                         {{option[visibleKey]}}
                     </span>
@@ -57,12 +58,12 @@
         <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-            {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+            {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
         </mat-error>
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'checkbox' && !currentElement.hidden">
-        <ngt-form-field [ngClass]="currentElement?.class"
+        <ngt-form-field [ngClass]="currentElement?.classMap"
                         [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid)">
             <mat-checkbox [required]="currentElement.required"
@@ -73,13 +74,13 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
         </ngt-form-field>
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'radiogroup' && !currentElement.hidden">
-        <ngt-form-field [ngClass]="currentElement?.class"
+        <ngt-form-field [ngClass]="currentElement?.classMap"
                         [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid)">
             <mat-radio-group [required]="currentElement.required"
@@ -95,13 +96,13 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
         </ngt-form-field>
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'slidetoggle' && !currentElement.hidden">
-        <ngt-form-field [ngClass]="currentElement?.class"
+        <ngt-form-field [ngClass]="currentElement?.classMap"
                         [hasErrors]="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid)">
             <mat-slide-toggle [required]="currentElement.required"
@@ -112,19 +113,20 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
         </ngt-form-field>
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'datepicker' && !currentElement.hidden">
         <mat-form-field [attr.e2e-name]="formName + currentElement.name"
-                        [ngClass]="currentElement?.class">
+                        [ngClass]="currentElement?.classMap">
             <input matInput
                    type="text"
                    [required]="currentElement.required"
                    [matDatepicker]="picker"
                    [formControlName]="currentElement.name"/>
+
             <mat-placeholder *ngIf="currentElement.placeholder">
                 {{currentElement.placeholder}}
             </mat-placeholder>
@@ -147,7 +149,7 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
             <mat-datepicker-toggle *ngIf="currentElement?.dateConfig?.useTogglePrefix"
                                    matPrefix
@@ -171,7 +173,7 @@
 
     <ng-template [ngIf]="currentElement.type === 'autocomplete' && !currentElement.hidden">
         <mat-form-field [attr.e2e-name]="formName + currentElement.name"
-                        [ngClass]="currentElement?.class">
+                        [ngClass]="currentElement?.classMap">
             <input matInput
                    type="text"
                    [required]="currentElement.required"
@@ -197,13 +199,14 @@
             <mat-error *ngIf="((parentFormGroup?.get(currentElement.name).statusChanges | async) ||
             parentFormGroup?.get(currentElement.name)?.invalid) &&
             parentFormGroup?.get(currentElement.name)?.touched">
-                {{getErrorMessage(parentFormGroup?.get(currentElement.name))}}
+                {{handleErrorMessage(parentFormGroup?.get(currentElement.name))}}
             </mat-error>
             <mat-autocomplete #auto="matAutocomplete">
                 <mat-option
                         *ngFor="let option of (elementDataProvider ? (elementDataProvider | async) : currentElement?.selectConfig?.optionsList)"
                         [ngClass]="currentElement?.selectConfig?.optionClassMap"
-                        [value]="option[currentElement?.selectConfig?.valueField]">
+                        [value]="option[currentElement?.selectConfig?.valueField]"
+                        (click)="handlePropagateValue(option, currentElement?.updateFields)">
                     <span *ngFor="let visibleKey of currentElement?.selectConfig?.visibleProps">
                         {{option[visibleKey]}}
                     </span>
@@ -214,21 +217,21 @@
 
     <ng-template [ngIf]="currentElement.type === 'header' && !currentElement.hidden">
         <div class="ngt-form-header-element"
-             [ngClass]="currentElement?.class">
+             [ngClass]="currentElement?.classMap">
             {{parentFormGroup?.get(currentElement.name)?.value}}
         </div>
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'divider' && !currentElement.hidden">
         <div class="ngt-form-divider-element"
-             [ngClass]="currentElement?.class">
+             [ngClass]="currentElement?.classMap">
         </div>
     </ng-template>
 
     <ng-template [ngIf]="currentElement.type === 'label' && !currentElement.hidden">
         <ngt-form-field>
             <div class="ngt-form-label-element"
-                 [ngClass]="currentElement?.class">
+                 [ngClass]="currentElement?.classMap">
                 {{parentFormGroup?.get(currentElement.name)?.value}}
             </div>
         </ngt-form-field>

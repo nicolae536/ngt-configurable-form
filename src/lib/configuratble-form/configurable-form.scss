@@ -4,7 +4,6 @@ ngt-configurable-form {
     display: block;
 
     .ngt-group-wrapper {
-        background: #fff;
         &:not(:last-of-type) {
             margin-bottom: 20px;
         }
@@ -40,7 +39,6 @@ ngt-configurable-form {
         }
 
         .ngt-group-description {
-            color: rgba(0,0,0,.54);
             flex: 2;
         }
     }
