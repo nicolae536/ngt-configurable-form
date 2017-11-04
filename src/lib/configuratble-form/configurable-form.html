@@ -17,7 +17,9 @@
             </div>
         </div>
         <div> Form validity:
-            {{ ngFormGroup?.valid ? 'is-valid' : 'is-not-valid' }}
+            <div>
+                <pre>{{getValidMap() | json }}</pre>
+            </div>
         </div>
     </div>
 </form>

@@ -37,8 +37,12 @@
             "placeholder": "Email Address",
             "validation": [
                 {
-                    "type": "email",
+                    "type": "required",
                     "ranking": 1
+                },
+                {
+                    "type": "email",
+                    "ranking": 2
                 }
             ],
             "size": 1
@@ -50,8 +54,12 @@
             "required": true,
             "validation": [
                 {
-                    "type": "phone",
+                    "type": "required",
                     "ranking": 1
+                },
+                {
+                    "type": "phone",
+                    "ranking": 2
                 }
             ],
             "size": 1
@@ -66,8 +74,12 @@
             },
             "validation": [
                 {
-                    "type": "date",
+                    "type": "required",
                     "ranking": 1
+                },
+                {
+                    "type": "date",
+                    "ranking": 2
                 }
             ],
             "size": 1

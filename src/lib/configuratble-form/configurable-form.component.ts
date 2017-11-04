@@ -87,6 +87,27 @@ export class ConfigurableFormComponent implements OnDestroy {
         this.onExpandedPanesChange.emit({...this._expandedGroups});
     }
 
+    getValidMap() {
+        if (!this.formSchema || !this.formSchema.ngFormGroup) {
+            return;
+        }
+
+        const validMap = {};
+        for (const key in this.formSchema.ngFormGroup.controls) {
+            const control = this.formSchema.ngFormGroup.get(key);
+            validMap[key] = {isValid: control.valid};
+
+            if (control.hasOwnProperty('controls')) {
+                validMap[key].controls = {};
+
+                for (const cN in control['controls']) {
+                    validMap[key].controls[cN] = control['controls'][cN].valid;
+                }
+            }
+        }
+        return validMap;
+    }
+
     private setFormConfig(config: IFormConfig) {
         if (!config) {
             return;
