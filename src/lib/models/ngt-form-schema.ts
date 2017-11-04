@@ -79,7 +79,7 @@ export class NgtFormSchema {
 
                     const uiElement = element.lines[line][column];
                     element.lines[line][column].setValidation(
-                        element.group && (element.group.hidden || element.group.disabled) || uiElement.hidden || uiElement.disabled
+                        (element.group && (element.group.hidden || element.group.disabled)) || uiElement.hidden || uiElement.disabled
                             ? () => null
                             : this._validationFactory.getElementValidation(this.ngFormGroup, element.lines[line][column])
                     );
@@ -360,7 +360,7 @@ export class NgtFormSchema {
             line.forEach(uiElementName => {
                 const uiElement = this.getUiElement(uiElementName);
                 uiElement.setValidation(
-                    group.hidden || group.disabled || uiElement.hidden || uiElement.disabled
+                    (group && (group.hidden || group.disabled)) || uiElement.hidden || uiElement.disabled
                         ? () => null
                         : this._validationFactory.getElementValidation(this.ngFormGroup, uiElement)
                 );
