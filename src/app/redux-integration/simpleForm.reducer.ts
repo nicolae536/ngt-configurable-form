@@ -1,6 +1,7 @@
 // ngt-form-reducer
 
 import { Action } from '@ngrx/store';
+import { utils } from '../../lib/models/utils';
 
 export interface IAction extends Action {
     payload: any;
@@ -36,42 +37,35 @@ export function simpleFormReducer(state: any, action: IAction) {
 
 export function updateStoreConfiguration(state: any, payload: ISimplePayload) {
     state[payload.formName] = {
-        // ...state[payload.formName],
         expandedPanes: {},
-        configuration: JSON.parse(JSON.stringify(payload.configuration))
+        value: {},
+        touchedElements: {},
+        configuration: utils.cloneDeep(payload.configuration)
     };
     return {...state};
 }
 
 export function updateStoreValueChange(state: any, payload: ISimplePayload) {
-    state[payload.formName] = {
-        ...state[payload.formName],
-        value: {...payload.value}
-    };
+    state[payload.formName] = utils.cloneDeep(state[payload.formName]);
+    state[payload.formName].value = utils.cloneDeep(payload.value);
     return {...state};
 }
 
 export function updateStoreValidityChange(state: any, payload: ISimplePayload) {
-    state[payload.formName] = {
-        ...state[payload.formName],
-        validity: JSON.parse(JSON.stringify(payload.validity))
-    };
+    state[payload.formName] = utils.cloneDeep(state[payload.formName]);
+    state[payload.formName].validity = utils.cloneDeep(payload.validity);
     return {...state};
 }
 
 function updateExpandedPanes(state: any, payload: any) {
-    state[payload.formName] = {
-        ...state[payload.formName],
-        expandedPanes: JSON.parse(JSON.stringify(payload.expandedPanes))
-    };
+    state[payload.formName] = utils.cloneDeep(state[payload.formName]);
+    state[payload.formName].expandedPanes = JSON.parse(JSON.stringify(payload.expandedPanes));
     return {...state};
 }
 
 function updateTouchedElements(state: any, payload: any) {
-    state[payload.formName] = {
-        ...state[payload.formName],
-        touchedElements: JSON.parse(JSON.stringify(payload.touchedElements))
-    };
+    state[payload.formName] = utils.cloneDeep(state[payload.formName]);
+    state[payload.formName].touchedElements = JSON.parse(JSON.stringify(payload.touchedElements));
     return {...state};
 
 }

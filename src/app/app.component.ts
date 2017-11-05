@@ -14,10 +14,14 @@ export class AppComponent {
     hideToolbar: boolean = false;
     isPresentationView: boolean = false;
 
-    constructor(private _route: Router) {
-        this._route.events.subscribe(valu => {
+    constructor(private _router: Router) {
+        this._router.events.subscribe(valu => {
             this.isPresentationView = valu.toString().indexOf('presentation') !== -1;
         });
+    }
+
+    navigateBack() {
+        window.history.back();
     }
 
     @HostListener('mousemove', ['$event'])

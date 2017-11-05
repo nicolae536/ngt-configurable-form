@@ -98,14 +98,14 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
             });
     }
 
-    private setConfigurationSubscription() {
+    private setExpandedPanesSubscription() {
         this._store.select((state) => {
             if (this.isFormInState(state) &&
                 state.simpleFormReducer[this.formSlot]['expandedPanes']) {
                 return state.simpleFormReducer[this.formSlot]['expandedPanes'];
             }
             return null;
-        }).filter(v => !!v)
+        }).filter(v => v !== null)
             .subscribe(v => {
                 this.expandedPanes = v;
             });
@@ -117,7 +117,7 @@ export class ReduxFormComponent extends ConfigurationChangeComponent {
             state.simpleFormReducer[this.formSlot];
     }
 
-    private setExpandedPanesSubscription() {
+    private setConfigurationSubscription() {
         this._store.select((state) => {
             if (this.isFormInState(state) &&
                 state.simpleFormReducer[this.formSlot]['configuration']) {
