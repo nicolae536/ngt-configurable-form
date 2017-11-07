@@ -1,5 +1,5 @@
 import {
-    Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ViewEncapsulation, OnInit, ChangeDetectorRef, OnDestroy
+    Component, ChangeDetectionStrategy, Input, Output, EventEmitter, DoCheck, ViewEncapsulation, OnInit, ChangeDetectorRef, OnDestroy
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';

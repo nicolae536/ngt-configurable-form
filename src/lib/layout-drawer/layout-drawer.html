@@ -50,9 +50,9 @@
             <mat-card>
                 <mat-card-header *ngIf="rowConfig.group.title || rowConfig.group.description">
                     <mat-card-title *ngIf="rowConfig.group.title">{{rowConfig.group.title}}</mat-card-title>
-                    <md-card-subtitle *ngIf="rowConfig.group.description">{{rowConfig.group.description}}</md-card-subtitle>
+                    <mat-card-subtitle *ngIf="rowConfig.group.description">{{rowConfig.group.description}}</mat-card-subtitle>
                 </mat-card-header>
-                <md-card-content>
+                <mat-card-content>
                     <ngt-form-elements *ngFor="let elementsOnLine of rowConfig.lines"
                                        [layoutUpdateStatus$]="layoutUpdateStatus$"
                                        [formName]="formName"
@@ -62,7 +62,7 @@
                                        [outsideSharedData]="outsideSharedData"
                                        [elements]="elementsOnLine">
                     </ngt-form-elements>
-                </md-card-content>
+                </mat-card-content>
             </mat-card>
         </ng-template>
     </div>
