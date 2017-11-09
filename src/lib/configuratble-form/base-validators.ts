@@ -232,7 +232,7 @@ export class BaseValidators {
             return isNotValid;
         }
 
-        if (this.isDateReadyToCompare(minDateValue, controlValue) &&
+        if (BaseValidators.isDateReadyToCompare(minDateValue, controlValue) &&
             minDateValue.getTime() > controlValue.getTime()) {
             const retVal = {};
             retVal[DEFAULT_ERROR_KEYS.minDate] = minDateValue;
@@ -261,7 +261,7 @@ export class BaseValidators {
             return isNotValid;
         }
 
-        if (this.isDateReadyToCompare(maxDateValue, controlValue) &&
+        if (BaseValidators.isDateReadyToCompare(maxDateValue, controlValue) &&
             maxDateValue.getTime() < controlValue.getTime()) {
             const retVal = {};
             retVal[DEFAULT_ERROR_KEYS.maxDate] = maxDateValue;
