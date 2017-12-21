@@ -1,7 +1,8 @@
 import { FormControl } from '@angular/forms';
 import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts';
 import { BaseElement } from './base-element';
-import { IPrefixSuffixConfig, IMatRadioButtonElement, ISelectConfig, IDatepickerConfig } from './element.config.interfaces';
+import { IDatepickerConfig, IMatRadioButtonElement, IPrefixSuffixConfig, ISelectConfig } from './element.config.interfaces';
+import { GroupUiElement } from './group-ui-element';
 import { Dictionary } from './shared.interfaces';
 
 export class UiElement extends BaseElement<FormControl> {
@@ -29,6 +30,10 @@ export class UiElement extends BaseElement<FormControl> {
     constructor(element: Dictionary<any>) {
         super(element);
         this.validateElement();
+    }
+
+    isNotReachable(parentGroup?: GroupUiElement) {
+        return (parentGroup && (parentGroup.hidden || parentGroup.disabled)) || this.hidden || this.disabled;
     }
 
     private validateElement() {

@@ -14,7 +14,6 @@
                     </div>
                 </div>
                 <ngt-form-elements *ngFor="let elementsOnLine of rowConfig.lines"
-                                   [layoutUpdateStatus$]="layoutUpdateStatus$"
                                    [formName]="formName"
                                    [rootFormGroup]="parentFormGroup"
                                    [parentFormGroup]="rowConfig.group.getControl()"
@@ -36,7 +35,6 @@
                 </mat-expansion-panel-header>
 
                 <ngt-form-elements *ngFor="let elementsOnLine of rowConfig.lines"
-                                   [layoutUpdateStatus$]="layoutUpdateStatus$"
                                    [formName]="formName"
                                    [rootFormGroup]="parentFormGroup"
                                    [parentFormGroup]="rowConfig.group.getControl()"
@@ -54,7 +52,6 @@
                 </mat-card-header>
                 <mat-card-content>
                     <ngt-form-elements *ngFor="let elementsOnLine of rowConfig.lines"
-                                       [layoutUpdateStatus$]="layoutUpdateStatus$"
                                        [formName]="formName"
                                        [rootFormGroup]="parentFormGroup"
                                        [parentFormGroup]="rowConfig.group.getControl()"
@@ -68,7 +65,6 @@
     </div>
     <div *ngIf="rowConfig && !rowConfig.group">
         <ngt-form-elements *ngFor="let elementsOnLine of rowConfig.lines"
-                           [layoutUpdateStatus$]="layoutUpdateStatus$"
                            [formName]="formName"
                            [rootFormGroup]="parentFormGroup"
                            [parentFormGroup]="parentFormGroup"

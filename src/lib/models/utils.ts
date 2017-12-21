@@ -1,3 +1,4 @@
+import { FormControl, FormGroup } from '@angular/forms';
 import { Dictionary } from './shared.interfaces';
 
 export class UtilsService {
@@ -93,6 +94,20 @@ export class UtilsService {
 
     throwError(errorMsg: string, context: any) {
         throw new Error(errorMsg + ' , context: ' + JSON.stringify(context));
+    }
+
+    runControlFunctionInSafeContext(formGroup: FormGroup | FormControl, fn: () => void, params?: { onlySelf?: boolean, emitEvent?: boolean }) {
+        const oldUpdateValueAndValidity = formGroup.updateValueAndValidity.bind(formGroup);
+        const eventParams = {
+            onlySelf: params && params.hasOwnProperty('onlySelf') ? params['onlySelf'] : false,
+            emitEvent: params && params.hasOwnProperty('emitEvent') ? params['emitEvent'] : false
+        };
+
+        formGroup.updateValueAndValidity = () => {
+            oldUpdateValueAndValidity(eventParams);
+        };
+        fn();
+        formGroup.updateValueAndValidity = oldUpdateValueAndValidity;
     }
 
     private areArraysEquals(obj: any[], obj1: any[], ignoredProps: string[]): boolean {

@@ -5,7 +5,7 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { GroupExpandChangeEvent } from '../models/group-ui-element';
 import { IFormConfig } from '../models/groups.config.interfaces';
-import { NgtFormSchema } from '../models/ngt-form-schema';
+import { NgtFormSchemaController } from '../models/ngt-form-schema';
 import { Dictionary } from '../models/shared.interfaces';
 import { utils } from '../models/utils';
 import { ValidationFactoryService } from './validation-factory.service';
@@ -62,7 +62,7 @@ export class ConfigurableFormComponent implements OnDestroy {
     @Output() onExpandedPanesChange: EventEmitter<Dictionary<boolean>> = new EventEmitter<Dictionary<boolean>>();
     @Output() onTouchedChange: EventEmitter<Dictionary<boolean>> = new EventEmitter<Dictionary<boolean>>();
 
-    formSchema: NgtFormSchema;
+    formSchema: NgtFormSchemaController;
     outsideSharedData: Dictionary<any>;
     outsideDataProviders: Dictionary<Observable<any>>;
     outsideDataListeners: Dictionary<Subject<any>>;
@@ -116,7 +116,7 @@ export class ConfigurableFormComponent implements OnDestroy {
         if (this.formSchema) {
             this.formSchema.destroy();
         }
-        this.formSchema = new NgtFormSchema(config, this._validationFactory);
+        this.formSchema = new NgtFormSchemaController(config, this._validationFactory);
         this.applyValueToSchema(this._lastValueFromParent);
         this.applyGroupsSettingsToSchema(this._expandedGroups);
         this.applyTouchedSettingsToSchema(this._touchedControlsMap);

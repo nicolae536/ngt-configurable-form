@@ -1,5 +1,5 @@
 import {
-    Component, ChangeDetectionStrategy, Input, Output, EventEmitter, DoCheck, ViewEncapsulation, OnInit, ChangeDetectorRef, OnDestroy
+    Component, ChangeDetectionStrategy, Input, Output, EventEmitter, DoCheck, ViewEncapsulation, OnInit, ChangeDetectorRef, OnDestroy, OnChanges, SimpleChanges
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
@@ -16,8 +16,7 @@ import { Dictionary } from '../models/shared.interfaces';
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LayoutDrawerComponent implements OnInit, OnDestroy {
-    @Input() layoutUpdateStatus$: Subject<boolean>;
+export class LayoutDrawerComponent {
     @Input() outsideSharedData: Dictionary<any>;
     @Input() outsideDataProviders: Dictionary<Observable<any>>;
     @Input() parentFormGroup: FormGroup;
@@ -26,29 +25,12 @@ export class LayoutDrawerComponent implements OnInit, OnDestroy {
     @Output() onPanelToggle: EventEmitter<GroupExpandChangeEvent> = new EventEmitter<GroupExpandChangeEvent>();
 
     groupTypes = GROUP_TYPES;
-    private _layoutUpdateTearDown$: Subscription;
 
-    constructor(private _cdRef: ChangeDetectorRef) {
+    constructor() {
     }
 
     handleTogglePanel(rowConfig) {
         rowConfig.group.isExpanded = !rowConfig.group.isExpanded;
         this.onPanelToggle.emit({name: rowConfig.group.name, isExpanded: rowConfig.group.isExpanded});
-    }
-
-    ngOnInit(): void {
-        if (!this.layoutUpdateStatus$) {
-            return;
-        }
-        this._layoutUpdateTearDown$ = this.layoutUpdateStatus$
-            .filter(v => v)
-            .subscribe(v => this._cdRef.markForCheck());
-    }
-
-    ngOnDestroy(): void {
-        if (!this._layoutUpdateTearDown$) {
-            return;
-        }
-        this._layoutUpdateTearDown$.unsubscribe();
     }
 }

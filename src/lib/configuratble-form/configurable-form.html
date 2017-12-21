@@ -6,7 +6,6 @@
     <!--[class.ngt-card]="formStaticConfig.addCardClass"-->
     <ngt-layout-drawer [layout]="formSchema?.attachedLayout"
                        [parentFormGroup]="formSchema?.ngFormGroup"
-                       [layoutUpdateStatus$]="formSchema?.layoutUpdateStatus$"
                        [outsideDataProviders]="outsideDataProviders"
                        [outsideSharedData]="outsideSharedData"
                        (onPanelToggle)="handleTogglePanel($event)"></ngt-layout-drawer>

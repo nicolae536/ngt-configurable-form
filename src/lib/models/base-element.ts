@@ -33,6 +33,10 @@ export abstract class BaseElement<T> {
         this.setRequired(this.validation);
     }
 
+    shouldInheritValue(): boolean {
+        return !!this._innerModel.original['inheritValueOnChanges'];
+    }
+
     isGroup() {
         return this._innerModel.isGroup;
     }
@@ -58,10 +62,10 @@ export abstract class BaseElement<T> {
         if (!ngControl) {
             return;
         }
-        const oldControlValue = this._innerModel.ngControl
+        const oldControlValue = this.shouldInheritValue() && this._innerModel.ngControl
             ? this._innerModel.ngControl.value
-            : this.value || null;
-        if (oldControlValue) {
+            : this.value || this.defaultValue();
+        if (oldControlValue !== ngControl.value) {
             ngControl.patchValue(oldControlValue, {onlySelf: true, emitEvent: false});
         }
         this.removeOldTouchedHooks();
@@ -92,7 +96,6 @@ export abstract class BaseElement<T> {
     getOriginal(): Dictionary<any> {
         return this._innerModel.original;
     }
-
 
     setValue(newValue: any) {
         if (!this._innerModel.ngControl) {
@@ -133,5 +136,13 @@ export abstract class BaseElement<T> {
         if (utils.isFunction(this._innerModel._ngMarkAsUnTouched)) {
             this._innerModel.ngControl.markAsUntouched = this._innerModel._ngMarkAsUnTouched.bind(this._innerModel.ngControl);
         }
+    }
+
+    defaultValue(): any {
+        if (this._innerModel.original['defaultControlValue']) {
+            return this._innerModel.original['defaultControlValue'];
+        }
+
+        return this.isGroup() ? {} : null;
     }
 }

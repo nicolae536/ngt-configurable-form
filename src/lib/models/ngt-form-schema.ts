@@ -5,17 +5,16 @@ import { elementErrorMessages } from '../element-wrapper/element-wrapper.consts'
 import { BaseElement } from './base-element';
 import { IElementConfig } from './element.config.interfaces';
 import { GROUP_TYPES, GroupUiElement } from './group-ui-element';
-import { IFormConfig, IGroupElementConfig, ILayoutModel, ILayoutViewModel, ILayoutElement } from './groups.config.interfaces';
+import { IFormConfig, IGroupElementConfig, ILayoutElement, ILayoutModel, ILayoutViewModel } from './groups.config.interfaces';
 import { Dictionary, IConfigurationChangeDescription } from './shared.interfaces';
 import { UiElement } from './ui-element';
 import { utils } from './utils';
 
-export class NgtFormSchema {
+export class NgtFormSchemaController {
     name: string;
     ngFormGroup: FormGroup;
     attachedLayout: ILayoutViewModel;
     layoutModel: ILayoutModel;
-    layoutUpdateStatus$: Subject<boolean> = new Subject<boolean>();
     validityChange$: Subject<boolean> = new Subject<boolean>();
 
     private _uiGroupElementsMap: Dictionary<GroupUiElement> = {};
@@ -55,42 +54,32 @@ export class NgtFormSchema {
             return;
         }
 
-        let wasUpdated = false;
-        const oldUpdateValueAndValidity = this.ngFormGroup.updateValueAndValidity.bind(this.ngFormGroup);
-        this.ngFormGroup.updateValueAndValidity = () => {
-            oldUpdateValueAndValidity({onlySelf: true, emitEvent: false});
+        const flagsForReferenceChange = {
+            shouldRootUpdate: false,
+            wasElementUpdated: false,
         };
-        this.attachedLayout.forEach(element => {
-            if (element.group !== this._uiGroupElementsMap[element.group.name]) {
-                element.group = this._uiGroupElementsMap[element.group.name];
-                this.setGroupValidation(element);
-                this.attachGroupToForm(element);
-                wasUpdated = true;
-            }
+        utils.runControlFunctionInSafeContext(this.ngFormGroup, () => {
+            this.attachedLayout.forEach((element, index) => {
+                this.refreshGroupElementReference(element, flagsForReferenceChange);
+                flagsForReferenceChange.wasElementUpdated = false;
+                element.lines.forEach(matrixLine => {
+                    this.refreshUiElement(matrixLine, element, flagsForReferenceChange);
+                });
 
-            for (let line = 0; line < element.lines.length; line++) {
-                for (let column = 0; column < element.lines[line].length; column++) {
-                    const elementName = element.lines[line][column].name;
-                    this.setElementValidation(element, line, column);
-                    if (element.lines[line][column] === this._uiElementsMap[elementName]) {
-                        continue;
-                    }
-
-                    element.lines[line][column] = this._uiElementsMap[elementName];
-                    this.attachUiElementToForm(
-                        element.lines[line][column],
-                        element.group
-                            ? element.group.getControl() as FormGroup
-                            : this.ngFormGroup
-                    );
-                    wasUpdated = true;
+                if (flagsForReferenceChange.wasElementUpdated) {
+                    this.attachedLayout[index] = {
+                        group: element.group,
+                        lines: [...element.lines]
+                    };
+                    flagsForReferenceChange.shouldRootUpdate = true;
                 }
-            }
-        });
+            });
 
-        this.ngFormGroup.updateValueAndValidity = oldUpdateValueAndValidity;
+            this.attachedLayout = flagsForReferenceChange.shouldRootUpdate
+                ? [...this.attachedLayout]
+                : this.attachedLayout;
+        }, {onlySelf: true});
         this.ngFormGroup.updateValueAndValidity({onlySelf: false, emitEvent: false});
-        this.layoutUpdateStatus$.next(wasUpdated);
         this.validityChange$.next(this.ngFormGroup.value);
     }
 
@@ -102,7 +91,6 @@ export class NgtFormSchema {
         for (const key in this._uiGroupElementsMap) {
             this._uiGroupElementsMap[key].isExpanded = groups[key] ? true : false;
         }
-        this.layoutUpdateStatus$.next(true);
     }
 
     setTouchedControls(touchedMap: Dictionary<boolean>) {
@@ -130,8 +118,6 @@ export class NgtFormSchema {
             this._uiGroupElementsMap[key].isExpanded = false;
         }
         this.attachedLayout = null;
-        this.layoutUpdateStatus$.next(true);
-        this.layoutUpdateStatus$.complete();
         this.validityChange$.complete();
     }
 
@@ -410,6 +396,18 @@ export class NgtFormSchema {
         return null;
     }
 
+    private refreshGroupElementReference(element: ILayoutElement,
+                                         flagsForReferenceChange: {shouldRootUpdate: boolean; wasElementUpdated: boolean}) {
+        if (element.group === this._uiGroupElementsMap[element.group.name]) {
+            return;
+        }
+
+        element.group = this._uiGroupElementsMap[element.group.name];
+        this.setGroupValidation(element);
+        this.attachGroupToForm(element);
+        flagsForReferenceChange.shouldRootUpdate = true;
+    }
+
     private setGroupValidation(element) {
         if (!element.group) {
             return;
@@ -432,13 +430,28 @@ export class NgtFormSchema {
         this.ngFormGroup.addControl(element.group.name, element.group.getControl());
     }
 
-    private setElementValidation(element: ILayoutElement, line: number, column: number) {
-        const uiElement = element.lines[line][column];
-        element.lines[line][column].setValidation(
-            (element.group && (element.group.hidden || element.group.disabled)) || uiElement.hidden || uiElement.disabled
-                ? () => null
-                : this._validationFactory.getElementValidation(this.ngFormGroup, element.lines[line][column])
-        );
+    private refreshUiElement(matrixLine, element, flagsForReferenceChange: { shouldRootUpdate: boolean; wasElementUpdated: boolean }) {
+        for (let column = 0; column < matrixLine.length; column++) {
+            const uiElement = matrixLine[column];
+            const elementName = uiElement.name;
+            uiElement.setValidation(
+                uiElement.isNotReachable(element.group)
+                    ? () => null
+                    : this._validationFactory.getElementValidation(this.ngFormGroup, uiElement)
+            );
+            if (uiElement === this._uiElementsMap[elementName]) {
+                continue;
+            }
+
+            matrixLine[column] = this._uiElementsMap[elementName];
+            this.attachUiElementToForm(
+                matrixLine[column],
+                element.group
+                    ? element.group.getControl() as FormGroup
+                    : this.ngFormGroup
+            );
+            flagsForReferenceChange.wasElementUpdated = true;
+        }
     }
 
     private attachUiElementToForm(element: UiElement, formToAttach: FormGroup) {
@@ -452,12 +465,9 @@ export class NgtFormSchema {
             return;
         }
 
-        const oldUpdateValueAndValidity = formToAttach.updateValueAndValidity.bind(formToAttach);
-        formToAttach.updateValueAndValidity = () => {
-            oldUpdateValueAndValidity({onlySelf: false, emitEvent: false});
-        };
-        formToAttach.removeControl(element.name);
-        formToAttach.addControl(element.name, element.getControl());
-        formToAttach.updateValueAndValidity = oldUpdateValueAndValidity;
+        utils.runControlFunctionInSafeContext(formToAttach, () => {
+            formToAttach.removeControl(element.name);
+            formToAttach.addControl(element.name, element.getControl());
+        });
     }
 }
